@@ -71,12 +71,21 @@
       <div class="form-group">
         <label class="form-label">Brand Name</label>
         <input 
+          *ngIf="!isMultiline"
           type="text" 
           class="form-input" 
           [(ngModel)]="brandName" 
           (ngModelChange)="onBrandNameChange()" 
           placeholder="Enter your brand name"
         >
+        <textarea 
+          *ngIf="isMultiline"
+          class="form-input multiline-input" 
+          [(ngModel)]="brandName" 
+          (ngModelChange)="onBrandNameChange()" 
+          placeholder="Enter your brand name (use Enter for new lines)"
+          rows="3"
+        ></textarea>
       </div>
       
       <div class="fonts-section">
@@ -96,12 +105,73 @@
       
       <div class="custom-font-section">
         <h3 class="subsection-title">Custom Font</h3>
-        <button class="upload-btn">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
-          </svg>
-          Upload your own fonts
-        </button>
+        <div class="upload-dropdown-container">
+          <button class="upload-btn" (click)="toggleUploadDropdown()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+            </svg>
+            Upload your own fonts
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" 
+                 [style.transform]="showUploadDropdown ? 'rotate(180deg)' : 'rotate(0deg)'">
+              <path d="M7,10L12,15L17,10H7Z" />
+            </svg>
+          </button>
+          
+          <!-- Upload Dropdown -->
+          <div class="upload-dropdown" *ngIf="showUploadDropdown">
+            <div class="upload-zone">
+              <input type="file" 
+                     id="font-upload" 
+                     (change)="onFileUpload($event)" 
+                     accept=".ttf,.otf,.woff,.woff2"
+                     style="display: none;">
+              <label for="font-upload" class="upload-label">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                </svg>
+                <span>Choose font file</span>
+                <small>TTF, OTF, WOFF, WOFF2</small>
+              </label>
+            </div>
+            
+            <!-- Uploaded Fonts List -->
+            <div class="uploaded-fonts" *ngIf="uploadedFonts.length > 0">
+              <div class="uploaded-font-item" 
+                   *ngFor="let font of uploadedFonts"
+                   (click)="selectUploadedFont(font)">
+                <span class="font-name" [style.font-family]="font.family">{{ font.name }}</span>
+              </div>
+            </div>
+            
+            <!-- Font Formatting Controls -->
+            <div class="font-formatting" *ngIf="uploadedFonts.length > 0 || selectedFont !== 'Arial'">
+              <div class="formatting-label">Text Style</div>
+              <div class="formatting-buttons">
+                <button class="format-btn" 
+                        [class.active]="isBold" 
+                        (click)="toggleBold()"
+                        title="Bold">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M13.5,15.5H10V12.5H13.5A1.5,1.5 0 0,1 15,14A1.5,1.5 0 0,1 13.5,15.5M10,6.5H13A1.5,1.5 0 0,1 14.5,8A1.5,1.5 0 0,1 13,9.5H10M15.6,10.79C16.57,10.11 17.25,9.02 17.25,8C17.25,5.74 15.5,4 13.25,4H7V18H14.04C16.14,18 17.75,16.3 17.75,14.21C17.75,12.69 16.89,11.39 15.6,10.79Z" />
+                  </svg>
+                </button>
+                <button class="format-btn" 
+                        [class.active]="isItalic" 
+                        (click)="toggleItalic()"
+                        title="Italic">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M10,4V7H12.21L8.79,15H6V18H14V15H11.79L15.21,7H18V4H10Z" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            
+            <div class="upload-loading" *ngIf="isUploadingFont">
+              <div class="loading-spinner"></div>
+              <span>Uploading font...</span>
+            </div>
+          </div>
+        </div>
       </div>
       
       <div class="controls-section">
@@ -109,9 +179,14 @@
           <div class="control-group multiline-control">
             <label class="control-label">Multiline</label>
             <div class="toggle-switch">
-              <input type="checkbox" id="multiline" [(ngModel)]="isMultiline">
+              <input type="checkbox" id="multiline" [(ngModel)]="isMultiline" (ngModelChange)="onMultilineToggle()">
               <label for="multiline" class="toggle-slider"></label>
             </div>
+          </div>
+          <div class="control-helper">
+            <small class="helper-text">
+              {{ isMultiline ? 'Text will display on multiple lines' : 'Text will display on a single line' }}
+            </small>
           </div>
         </div>
         

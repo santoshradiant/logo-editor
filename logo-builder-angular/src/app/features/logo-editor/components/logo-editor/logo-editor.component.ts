@@ -43,12 +43,18 @@ class FontChangeCommand implements UndoRedoCommand {
 
   execute(): void {
     this.component.selectedFont = this.newFont;
-    this.component.updateLogoPreview();
+    // Force immediate canvas update
+    setTimeout(() => {
+      this.component.updateLogoPreview();
+    }, 10);
   }
 
   undo(): void {
     this.component.selectedFont = this.oldFont;
-    this.component.updateLogoPreview();
+    // Force immediate canvas update
+    setTimeout(() => {
+      this.component.updateLogoPreview();
+    }, 10);
   }
 
   description = 'Change font';
@@ -105,6 +111,15 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   letterSpacing: number = 0;
   lineHeight: number = 1.2;
   isMultiline: boolean = false;
+  
+  // Font formatting options
+  isBold: boolean = false;
+  isItalic: boolean = false;
+  
+  // Uploaded fonts
+  uploadedFonts: Array<{ name: string; family: string; file?: File }> = [];
+  showUploadDropdown: boolean = false;
+  isUploadingFont: boolean = false;
 
   // Slogan section
   sloganText: string = '';
@@ -138,13 +153,14 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
 
   // Colors section
   colorPalettes: string[][] = [
+    // Network Solutions Brand Palette (top priority)
+    ['#00B894', '#00A085', '#10C9A5', '#2D3436', '#636E72'],
     ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7'],
     ['#6C5CE7', '#A29BFE', '#FD79A8', '#FDCB6E', '#E17055'],
     ['#2D3436', '#636E72', '#B2BEC3', '#DDD', '#FFF'],
-    ['#00B894', '#00CEC9', '#0984E3', '#6C5CE7', '#A29BFE'],
     ['#E84393', '#FD79A8', '#FDCB6E', '#E17055', '#D63031']
   ];
-  customColor: string = '#2196F3';
+  customColor: string = '#00B894'; // Network Solutions green
 
   // Undo/Redo functionality
   canUndo: boolean = false;
@@ -193,6 +209,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       undoRedoService: !!this.undoRedoService
     });
     
+    this.loadCustomFonts();
     this.loadAdvancedFeatures();
     this.setupUndoRedo();
     
@@ -217,6 +234,14 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   // Brand section methods
   selectFont(font: string): void {
     const oldFont = this.selectedFont;
+    this.selectedFont = font;
+    
+    // Force canvas update with a small delay to ensure font is applied
+    setTimeout(() => {
+      this.updateLogoPreview();
+    }, 50);
+    
+    // Create undo/redo command
     const command = new FontChangeCommand(this, font, oldFont);
     this.undoRedoService.executeCommand(command);
   }
@@ -235,6 +260,69 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
 
   onBrandNameChange(): void {
     this.updateLogoPreview();
+  }
+
+  // Font formatting methods
+  toggleBold(): void {
+    this.isBold = !this.isBold;
+    this.updateLogoPreview();
+  }
+
+  toggleItalic(): void {
+    this.isItalic = !this.isItalic;
+    this.updateLogoPreview();
+  }
+
+  onMultilineToggle(): void {
+    this.updateLogoPreview();
+  }
+
+  // Font upload methods
+  toggleUploadDropdown(): void {
+    this.showUploadDropdown = !this.showUploadDropdown;
+  }
+
+  onFileUpload(event: any): void {
+    const file = event.target.files[0];
+    if (file && file.type.includes('font')) {
+      this.uploadFont(file);
+    }
+  }
+
+  private uploadFont(file: File): void {
+    this.isUploadingFont = true;
+    
+    // Create a URL for the font file
+    const fontUrl = URL.createObjectURL(file);
+    const fontName = file.name.replace(/\.[^/.]+$/, ""); // Remove extension
+    
+    // Create a new FontFace
+    const fontFace = new FontFace(fontName, `url(${fontUrl})`);
+    
+    fontFace.load().then(() => {
+      // Add font to document
+      (document.fonts as any).add(fontFace);
+      
+      // Add to uploaded fonts list
+      this.uploadedFonts.push({
+        name: fontName,
+        family: fontName,
+        file: file
+      });
+      
+      this.isUploadingFont = false;
+      this.showUploadDropdown = false;
+      
+      console.log('Font uploaded successfully:', fontName);
+    }).catch((error) => {
+      console.error('Error loading font:', error);
+      this.isUploadingFont = false;
+    });
+  }
+
+  selectUploadedFont(font: { name: string; family: string }): void {
+    this.selectFont(font.name);
+    this.showUploadDropdown = false;
   }
 
   // Slogan section methods
@@ -292,7 +380,10 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     // This method will be called whenever any property changes
     // It should update the canvas or preview area
     if (this.canvasRef) {
-      this.renderLogo();
+      // Add a small delay to ensure DOM updates are complete
+      requestAnimationFrame(() => {
+        this.renderLogo();
+      });
     }
   }
 
@@ -415,10 +506,10 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     this.selectedIcon = null;
     this.selectedShape = null;
     
-    // Initialize canvas after view is ready
+    // Initialize canvas after view is ready with proper timing
     setTimeout(() => {
-      this.renderLogo();
-    }, 100);
+      this.updateLogoPreview();
+    }, 200);
   }
 
   private populateForm(logo: Logo): void {
@@ -543,7 +634,12 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
 
     // Draw brand name
     if (this.brandName) {
-      ctx.font = `${this.fontSize}px ${this.selectedFont}`;
+      // Create font string with fallbacks
+      const fontFamily = this.getFontWithFallback(this.selectedFont);
+      const fontWeight = this.isBold ? 'bold' : 'normal';
+      const fontStyle = this.isItalic ? 'italic' : 'normal';
+      
+      ctx.font = `${fontStyle} ${fontWeight} ${this.fontSize}px ${fontFamily}`;
       ctx.fillStyle = this.customColor;
       ctx.textAlign = this.textAlignment;
       
@@ -551,17 +647,28 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
                 this.textAlignment === 'right' ? canvas.width - 50 : 
                 centerX;
       
-      // Apply letter spacing (approximate)
-      if (this.letterSpacing !== 0) {
-        this.drawTextWithSpacing(ctx, this.brandName, x, brandY, this.letterSpacing);
+      if (this.isMultiline) {
+        // Multiline ON: Display text with line breaks
+        this.drawMultilineText(ctx, this.brandName, x, brandY, this.fontSize * this.lineHeight);
       } else {
-        ctx.fillText(this.brandName, x, brandY);
+        // Multiline OFF: Display all text as single line (remove line breaks)
+        const singleLineText = this.brandName.replace(/\n/g, ' ');
+        if (this.letterSpacing !== 0) {
+          this.drawTextWithSpacing(ctx, singleLineText, x, brandY, this.letterSpacing);
+        } else {
+          ctx.fillText(singleLineText, x, brandY);
+        }
       }
     }
 
     // Draw slogan
     if (this.sloganText) {
-      ctx.font = `${this.fontSize * 0.4}px ${this.selectedFont}`;
+      // Create font string with fallbacks
+      const fontFamily = this.getFontWithFallback(this.selectedFont);
+      const fontWeight = this.isBold ? 'bold' : 'normal';
+      const fontStyle = this.isItalic ? 'italic' : 'normal';
+      
+      ctx.font = `${fontStyle} ${fontWeight} ${this.fontSize * 0.4}px ${fontFamily}`;
       ctx.fillStyle = this.customColor;
       ctx.textAlign = this.textAlignment;
       
@@ -569,8 +676,66 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
                 this.textAlignment === 'right' ? canvas.width - 50 : 
                 centerX;
       
-      ctx.fillText(this.sloganText, x, sloganY);
+      if (this.isMultiline) {
+        // Multiline ON: Display slogan with line breaks
+        this.drawMultilineText(ctx, this.sloganText, x, sloganY, this.fontSize * 0.4 * this.lineHeight);
+      } else {
+        // Multiline OFF: Display slogan as single line
+        const singleLineSlogan = this.sloganText.replace(/\n/g, ' ');
+        ctx.fillText(singleLineSlogan, x, sloganY);
+      }
     }
+  }
+
+  private drawMultilineText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, lineHeight: number): void {
+    const lines = text.split('\n').filter(line => line.trim() !== ''); // Remove empty lines
+    
+    if (lines.length === 0) return;
+    
+    // Calculate total height of all lines
+    const totalHeight = (lines.length - 1) * lineHeight;
+    
+    // Center the text block vertically
+    const startY = y - totalHeight / 2;
+    
+    lines.forEach((line, index) => {
+      const lineY = startY + index * lineHeight;
+      if (this.letterSpacing !== 0) {
+        this.drawTextWithSpacing(ctx, line.trim(), x, lineY, this.letterSpacing);
+      } else {
+        ctx.fillText(line.trim(), x, lineY);
+      }
+    });
+  }
+
+  private getFontWithFallback(fontName: string): string {
+    // Check if it's an uploaded font first
+    const uploadedFont = this.uploadedFonts.find(f => f.name === fontName);
+    if (uploadedFont) {
+      return `"${uploadedFont.family}", Arial, sans-serif`;
+    }
+    
+    // Create a font family string with appropriate fallbacks using actual loaded fonts
+    const fontMap: { [key: string]: string } = {
+      'Ostelika One': '"Playfair Display", "Times New Roman", serif',
+      'Venova Oder': '"Crimson Text", "Georgia", serif',
+      'Hollendai': '"Dancing Script", "Brush Script MT", cursive',
+      'Bodoni': '"Playfair Display", "Times New Roman", serif',
+      'Giaomene': '"Open Sans", "Arial", sans-serif',
+      'Chamge': '"Oswald", "Impact", sans-serif',
+      'Arial': 'Arial, sans-serif',
+      'Helvetica': 'Helvetica, Arial, sans-serif',
+      'Times New Roman': '"Times New Roman", serif',
+      'Georgia': 'Georgia, serif',
+      'Verdana': 'Verdana, sans-serif',
+      'Trebuchet MS': '"Trebuchet MS", sans-serif',
+      'Impact': 'Impact, fantasy',
+      'Comic Sans MS': '"Comic Sans MS", cursive',
+      'Courier New': '"Courier New", monospace',
+      'Lucida Console': '"Lucida Console", monospace'
+    };
+
+    return fontMap[fontName] || `"${fontName}", Arial, sans-serif`;
   }
 
   private drawTextWithSpacing(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, spacing: number): void {
@@ -833,5 +998,24 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       { name: 'Giaomene', family: 'sans-serif', display: 'Giaomene' },
       { name: 'Chamge', family: 'display', display: 'Chamge' }
     ];
+  }
+
+  private loadCustomFonts(): void {
+    // Load custom fonts for better display
+    const customFonts = [
+      { name: 'Ostelika One', url: 'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap' },
+      { name: 'Venova Oder', url: 'https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;700&display=swap' },
+      { name: 'Hollendai', url: 'https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap' },
+      { name: 'Bodoni', url: 'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap' },
+      { name: 'Giaomene', url: 'https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap' },
+      { name: 'Chamge', url: 'https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap' }
+    ];
+
+    customFonts.forEach(font => {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = font.url;
+      document.head.appendChild(link);
+    });
   }
 } 

@@ -1,1 +1,63 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* Network Solutions Brand Colors */
+:root {
+  /* Primary Brand Colors */
+  --ns-green-primary: #00B894;
+  --ns-green-dark: #00A085;
+  --ns-green-light: #10C9A5;
+  --ns-green-lighter: #E6F7F4;
+  
+  /* Secondary Brand Colors */
+  --ns-grey-dark: #2D3436;
+  --ns-grey-medium: #636E72;
+  --ns-grey-light: #B2BEC3;
+  --ns-grey-lighter: #DDD;
+  --ns-grey-lightest: #F8F9FA;
+  
+  /* Semantic Colors */
+  --ns-primary: var(--ns-green-primary);
+  --ns-primary-hover: var(--ns-green-dark);
+  --ns-primary-light: var(--ns-green-lighter);
+  --ns-text-primary: var(--ns-grey-dark);
+  --ns-text-secondary: var(--ns-grey-medium);
+  --ns-text-muted: var(--ns-grey-light);
+  --ns-background: #ffffff;
+  --ns-background-light: var(--ns-grey-lightest);
+  --ns-border: var(--ns-grey-light);
+  --ns-border-light: var(--ns-grey-lighter);
+  
+  /* Status Colors */
+  --ns-success: var(--ns-green-primary);
+  --ns-warning: #FDCB6E;
+  --ns-error: #E84393;
+  --ns-info: #0984E3;
+}
+
+/* Global Network Solutions Theme Styles */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  color: var(--ns-text-primary);
+  background-color: var(--ns-background-light);
+}
+
+/* Brand-themed buttons */
+.btn-primary {
+  background-color: var(--ns-primary);
+  border-color: var(--ns-primary);
+  color: white;
+  
+  &:hover {
+    background-color: var(--ns-primary-hover);
+    border-color: var(--ns-primary-hover);
+  }
+}
+
+/* Brand-themed links */
+a {
+  color: var(--ns-primary);
+  
+  &:hover {
+    color: var(--ns-primary-hover);
+  }
+}

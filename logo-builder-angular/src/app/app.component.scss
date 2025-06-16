@@ -39,13 +39,13 @@
         transition: all 0.3s ease;
 
         &:hover {
-          color: #007bff;
-          background: rgba(0, 123, 255, 0.1);
+          color: var(--ns-primary);
+          background: var(--ns-primary-light);
         }
 
         &.active {
-          color: #007bff;
-          background: rgba(0, 123, 255, 0.1);
+          color: var(--ns-primary);
+          background: var(--ns-primary-light);
         }
       }
     }

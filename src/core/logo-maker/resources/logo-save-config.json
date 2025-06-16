@@ -1,0 +1,522 @@
+{
+  "Low Res": {
+    "_limitation": "low_res",
+    "logo": {
+      "type": "png",
+      "width": 360
+    }
+  },
+  "Standard (image)": {
+    "_limitation": "standard_files",
+    "Original on Transparent": {
+      "type": "png",
+      "width": 3840
+    },
+    "Original on White": {
+      "type": "png",
+      "background": "white",
+      "width": 3840
+    },
+    "Grayscale": {
+      "type": "png",
+      "colorMode": "Grayscale",
+      "width": 3840
+    },
+    "Black on Transparent": {
+      "type": "png",
+      "colorMode": "Black",
+      "width": 3840
+    },
+    "Black on White": {
+      "type": "png",
+      "background": "white",
+      "colorMode": "Black",
+      "width": 3840
+    },
+    "White on Transparent": {
+      "type": "png",
+      "colorMode": "White",
+      "width": 3840
+    },
+    "White on Black": {
+      "type": "png",
+      "background": "black",
+      "colorMode": "White",
+      "width": 3840
+    }
+  },
+  "Scalable (vector)": {
+    "_limitation": "vector_files",
+    "Logo Animated": {
+      "animate": true,
+      "type": "svg"
+    },
+    "Logo": {
+      "type": "svg"
+    },
+    "Grayscale": {
+      "type": "svg",
+      "colorMode": "Grayscale"
+    },
+    "Black": {
+      "type": "svg",
+      "colorMode": "Black"
+    },
+    "White": {
+      "type": "svg",
+      "colorMode": "White"
+    }
+  },
+  "Social media": {
+    "_limitation": "social_media_files",
+    "Facebook profile": {
+      "type": "png",
+      "background": "auto",
+      "width": 800,
+      "height": 800,
+      "margin": 0.2
+    },
+    "Facebook cover": {
+      "type": "png",
+      "background": "auto",
+      "width": 2460,
+      "height": 936,
+      "margin": 0.4
+    },
+    "Twitter profile": {
+      "type": "png",
+      "background": "auto",
+      "isCircle": true,
+      "width": 800,
+      "height": 800,
+      "margin": 0.1
+    },
+    "Twitter header": {
+      "type": "png",
+      "background": "auto",
+      "width": 1500,
+      "height": 500,
+      "margin": 0.4
+    },
+    "Instagram profile": {
+      "type": "jpg",
+      "background": "auto",
+      "isCircle": true,
+      "width": 800,
+      "height": 800,
+      "margin": 0.1
+    },
+    "LinkedIn profile": {
+      "type": "png",
+      "background": "auto",
+      "isCircle": true,
+      "width": 1200,
+      "height": 1200,
+      "margin": 0.1
+    },
+    "YouTube profile": {
+      "type": "png",
+      "background": "auto",
+      "isCircle": true,
+      "width": 800,
+      "height": 800,
+      "margin": 0.1
+    },
+    "Pinterest profile": {
+      "type": "png",
+      "background": "auto",
+      "isCircle": true,
+      "width": 360,
+      "height": 360,
+      "margin": 0.1
+    },
+    "Etsy cover": {
+      "type": "png",
+      "background": "auto",
+      "width": 3360,
+      "height": 840,
+      "margin": 0.1
+    },
+    "Etsy profile": {
+      "type": "png",
+      "background": "auto",
+      "isCircle": true,
+      "width": 400,
+      "height": 400,
+      "margin": 0.1
+    },
+    "Etsy shop banner": {
+      "type": "png",
+      "background": "auto",
+      "width": 760,
+      "height": 100,
+      "margin": 0.1
+    },
+    "Etsy shop icon": {
+      "type": "png",
+      "background": "auto",
+      "width": 500,
+      "height": 500,
+      "margin": 0.1
+    },
+    "Etsy team logo": {
+      "type": "png",
+      "background": "auto",
+      "width": 170,
+      "height": 100,
+      "margin": 0.1
+    }
+  },
+  "Web and Apps/Android": {
+    "_limitation": "app_icon_files",
+    "Launcher": {
+      "type": "png",
+      "background": "white",
+      "isCircle": true,
+      "width": 192,
+      "height": 192,
+      "margin": 0.05
+    },
+    "Feature graphic": {
+      "type": "png",
+      "background": "white",
+      "width": 1024,
+      "height": 500,
+      "margin": 0.2
+    },
+    "Play store": {
+      "type": "png",
+      "background": "transparent",
+      "width": 512,
+      "height": 512,
+      "margin": 0.1
+    }
+  },
+  "Web and Apps/Apple/Icons": {
+    "_limitation": "app_icon_files",
+    "Icon-60@2x": {
+      "width": 120,
+      "height": 120,
+      "background": "white",
+      "type": "png"
+    },
+    "Icon-60@3x": {
+      "width": 180,
+      "height": 180,
+      "background": "white",
+      "type": "png"
+    },
+    "Icon-76": {
+      "width": 76,
+      "height": 76,
+      "background": "white",
+      "type": "png"
+    },
+    "Icon-76@2x": {
+      "width": 152,
+      "height": 152,
+      "background": "white",
+      "type": "png"
+    },
+    "Icon-83.5@2x": {
+      "width": 167,
+      "height": 167,
+      "background": "white",
+      "type": "png"
+    },
+    "Icon-Small-40": {
+      "width": 40,
+      "height": 40,
+      "background": "white",
+      "type": "png"
+    },
+    "Icon-Small-40@2x": {
+      "width": 80,
+      "height": 80,
+      "background": "white",
+      "type": "png"
+    },
+    "Icon-Small-40@3x": {
+      "width": 120,
+      "height": 120,
+      "background": "white",
+      "type": "png"
+    },
+    "Icon-Small": {
+      "width": 29,
+      "height": 29,
+      "background": "white",
+      "type": "png"
+    },
+    "Icon-Small@2x": {
+      "width": 58,
+      "height": 58,
+      "background": "white",
+      "type": "png"
+    },
+    "Icon-Small@3x": {
+      "width": 87,
+      "height": 87,
+      "background": "white",
+      "type": "png"
+    }
+  },
+  "Icons": {
+    "Icon-SVG": {
+      "type": "svg",
+      "isIcon": true
+    },
+    "Icon-White-Black": {
+      "width": 256,
+      "height": 256,
+      "background": "black",
+      "colorMode": "White",
+      "type": "png",
+      "isIcon": true
+    },
+    "Icon-Default": {
+      "width": 256,
+      "height": 256,
+      "background": "auto",
+      "type": "png",
+      "isIcon": true
+    }
+  },
+  "Web and Apps/Apple/Screens": {
+    "_limitation": "app_icon_files",
+    "iTunesArtwork": {
+      "width": 512,
+      "height": 512,
+      "margin": 0.1,
+      "background": "white",
+      "type": "png",
+      "noExtension": true
+    },
+    "iTunesArtwork@2x": {
+      "width": 1024,
+      "height": 1024,
+      "margin": 0.2,
+      "background": "white",
+      "type": "png",
+      "noExtension": true
+    },
+    "Default-667h@2x": {
+      "width": 750,
+      "height": 1334,
+      "margin": 0.25,
+      "background": "white",
+      "type": "png"
+    },
+    "Default-Landscape-736h@3x": {
+      "width": 2208,
+      "height": 1242,
+      "margin": 0.25,
+      "background": "white",
+      "type": "png"
+    },
+    "Default-Landscape-1134@2x": {
+      "width": 1334,
+      "height": 750,
+      "margin": 0.25,
+      "background": "white",
+      "type": "png"
+    },
+    "Default-Landscape-1136h@2x": {
+      "width": 1136,
+      "height": 640,
+      "margin": 0.25,
+      "background": "white",
+      "type": "png"
+    },
+    "Default-Landscape-1792h@2x": {
+      "width": 1792,
+      "height": 828,
+      "margin": 0.25,
+      "background": "white",
+      "type": "png"
+    },
+    "Default-Landscape-2048h@2x": {
+      "width": 2048,
+      "height": 1536,
+      "margin": 0.25,
+      "background": "white",
+      "type": "png"
+    },
+    "Default-Landscape-2208h@3x": {
+      "width": 2208,
+      "height": 1242,
+      "margin": 0.25,
+      "background": "white",
+      "type": "png"
+    },
+    "Default-Landscape-2426h@3x": {
+      "width": 2436,
+      "height": 1125,
+      "margin": 0.25,
+      "background": "white",
+      "type": "png"
+    },
+    "Default-Landscape-2436h@3x": {
+      "width": 2436,
+      "height": 1125,
+      "margin": 0.25,
+      "background": "white",
+      "type": "png"
+    },
+    "Default-Landscape-2688h@3x": {
+      "width": 2688,
+      "height": 1242,
+      "margin": 0.25,
+      "background": "white",
+      "type": "png"
+    },
+    "Default-Landscape": {
+      "width": 1024,
+      "height": 768,
+      "margin": 0.25,
+      "background": "white",
+      "type": "png"
+    },
+    "Default-Landscape@2x": {
+      "width": 2048,
+      "height": 1536,
+      "margin": 0.25,
+      "background": "white",
+      "type": "png"
+    },
+    "Default-Portrait-640h@2x": {
+      "width": 640,
+      "height": 1136,
+      "margin": 0.25,
+      "background": "white",
+      "type": "png"
+    },
+    "Default-Portrait-736h@3x": {
+      "width": 1242,
+      "height": 2208,
+      "margin": 0.25,
+      "background": "white",
+      "type": "png"
+    },
+    "Default-Portrait-750h@2x": {
+      "width": 750,
+      "height": 1334,
+      "margin": 0.25,
+      "background": "white",
+      "type": "png"
+    },
+    "Default-Portrait-1125h@3x": {
+      "width": 1125,
+      "height": 2436,
+      "margin": 0.25,
+      "background": "white",
+      "type": "png"
+    },
+    "Default-Portrait-1242h@3x": {
+      "width": 1242,
+      "height": 2208,
+      "margin": 0.25,
+      "background": "white",
+      "type": "png"
+    },
+    "Default-Portrait-1536h@2x": {
+      "width": 1536,
+      "height": 2048,
+      "margin": 0.25,
+      "background": "white",
+      "type": "png"
+    },
+    "Default-Portrait-1792h@2x": {
+      "width": 828,
+      "height": 1792,
+      "margin": 0.25,
+      "background": "white",
+      "type": "png"
+    },
+    "Default-Portrait-2436h@3x": {
+      "width": 1125,
+      "height": 2436,
+      "margin": 0.25,
+      "background": "white",
+      "type": "png"
+    },
+    "Default-Portrait-2688h@3x": {
+      "width": 1242,
+      "height": 2688,
+      "margin": 0.25,
+      "background": "white",
+      "type": "png"
+    },
+    "Default-Portrait": {
+      "width": 768,
+      "height": 1024,
+      "margin": 0.25,
+      "background": "white",
+      "type": "png"
+    },
+    "Default-Portrait@2x": {
+      "width": 1536,
+      "height": 2048,
+      "margin": 0.25,
+      "background": "white",
+      "type": "png"
+    },
+    "Default@2x": {
+      "width": 640,
+      "height": 960,
+      "margin": 0.25,
+      "background": "white",
+      "type": "png"
+    }
+  },
+  "Web and Apps/favicon": {
+    "_limitation": "app_icon_files",
+    "favicon-128": {
+      "width": 128,
+      "height": 128,
+      "margin": 0.1,
+      "type": "png",
+      "background": "transparent"
+    },
+    "favicon-152": {
+      "width": 152,
+      "height": 152,
+      "margin": 0.1,
+      "type": "png",
+      "background": "transparent"
+    },
+    "favicon-167": {
+      "width": 167,
+      "height": 167,
+      "margin": 0.1,
+      "type": "png",
+      "background": "transparent"
+    },
+    "favicon-180": {
+      "width": 180,
+      "height": 180,
+      "margin": 0.1,
+      "type": "png",
+      "background": "transparent"
+    },
+    "favicon-192": {
+      "width": 192,
+      "height": 192,
+      "margin": 0.1,
+      "type": "png",
+      "background": "transparent"
+    }
+  },
+  "Legacy ZIP": {
+    "_limitation": "legacy_zip",
+    "_useOldStyle": true,
+    "logoPNG": {
+      "type": "png",
+      "width": 800,
+      "height": 800
+    },
+    "logoSVG": {
+      "type": "svg"
+    }
+  }
+}

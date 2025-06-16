@@ -1,0 +1,39 @@
+{
+  "defaultCommandTimeout": 2500,
+  "chromeWebSecurity": false,
+  "env": {
+    "dev": {
+      "loginUrl": "https://login.sitey.latest.wzdev.co/login",
+      "mylogosUrl": "https://my.sitey.latest.wzdev.co/logo/my",
+      "logoOnboarding": "https://my.sitey.latest.wzdev.co/logo-onboarding/onboarding/1"
+    },
+    "qa": {
+      "loginUrl": "https://login.sitey.qa.wzdev.co/login",
+      "mylogosUrl": "https://my.sitey.qa.wzdev.co/logo/my",
+      "logoOnboarding": "https://my.sitey.qa.wzdev.co/logo-onboarding/onboarding/1"
+    },
+    "uat": {
+      "loginUrl": "https://login.sitey.uat.wzdev.co/login",
+      "mylogosUrl": "https://my.sitey.uat.wzdev.co/logo/my",
+      "logoOnboarding": "https://my.sitey.uat.wzdev.co/logo-onboarding/onboarding/1"
+    },
+    "prod": {
+      "loginUrl": "https://login.sitey.com",
+      "mylogosUrl": "https://my.sitey.com/logo/my",
+      "logoOnboarding": "https://my.sitey.com/logo-onboarding/onboarding/1"
+    }
+  },
+  "userAgent": "eigi-testing",
+  "blacklistHosts": [
+    "www.google-analytics.com",
+    "*.google-analytics.com",
+    "*google-analytics.com",
+    "api.raygun.io"
+  ],
+  "reporter": "mocha-multi-reporters",
+  "reporterOptions": {
+    "configFile": "reporter-config.json"
+  },
+  "screenshotsFolder": "test-results/assets",
+  "videosFolder": "test-results/assets"
+}

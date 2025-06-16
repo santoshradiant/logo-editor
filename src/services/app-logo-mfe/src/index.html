@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logo MFE</title>
+
+    <script src="https://unpkg.com/systemjs@6/dist/system.js"></script>
+    <link href="https://assets.mywebsitebuilder.com/bootstrap/17/custom.min.css" rel="stylesheet"/>
+
+    <script type="systemjs-importmap">
+      {
+        "imports": {
+          "data-wordnet": "https://assets.mywebsitebuilder.com/p/universal/wordnet-min.json"
+        }
+      }
+    </script>
+  </head>
+  <body style="background: #f5f5f5; margin: 0;">
+    <div id="app"></div>
+    <script>
+      const { init } = logo
+      const theme = {
+        spacing: 4,
+        breakpoints: {
+          keys: ['xs', 'sm', 'md', 'lg', 'xl'],
+          values: {
+            xs: 0,
+            sm: 600,
+            md: 960,
+            lg: 1280,
+            xl: 1920
+          }
+        },
+        direction: 'ltr',
+        mixins: {
+          toolbar: {
+            minHeight: 56,
+            '@media (min-width:0px) and (orientation: landscape)': {
+              minHeight: 48
+            },
+            '@media (min-width:600px)': {
+              minHeight: 64
+            }
+          }
+        },
+        overrides: {
+          MuiPopover: {
+            paper: {
+              boxShadow: '0 0 0 1px rgba(0,0,0,0.05), 0 4px 8px rgba(0,0,0,0.1)',
+              marginTop: '8px'
+            }
+          },
+          MuiTabs: {
+            indicator: {
+              bottom: '-1px',
+              height: '3px'
+            },
+            root: {
+              overflow: 'initial',
+              border: 'initial',
+              'font-size': '14px',
+              'font-weight': '600',
+              boxSizing: 'border-box',
+              minHeight: '38px',
+              lineHeight: '38px',
+              color: 'rgba(0,0,0,0.9)',
+              '& path': {
+                fill: 'black',
+                opacity: '0.9'
+              },
+              '& div': {
+                overflow: 'initial'
+              }
+            }
+          },
+          MuiTypography: {
+            gutterBottom: {
+              marginBottom: 12
+            }
+          },
+          MuiBackdrop: {
+            root: {
+              background: 'rgba(49, 57, 68, .7)'
+            }
+          },
+          MuiSelect: {
+            selectMenu: {
+              minHeight: '32px',
+              lineHeight: '32px',
+              padding: '4px 24px 4px 8px'
+            }
+          },
+          MuiAppBar: {
+            colorPrimary: {
+              backgroundColor: '#FFFFFF'
+            },
+            root: {
+              backgroundColor: '#FFFFFF'
+            }
+          },
+          MuiTab: {
+            root: {
+              padding: '0 24px',
+              textTransform: 'none',
+              fontSize: '14px !important',
+              fontWeight: 'bold',
+              minWidth: 'auto !important'
+            },
+            textColorInherit: {
+              color: 'rgba(0,0,0,0.9)'
+            }
+          },
+          MuiListItem: {
+            root: {
+              minHeight: '40px'
+            },
+            dense: {
+              '& .MuiListItemText-multiline': {
+                '& .MuiListItemText-primary': {
+                  paddingBottom: '0px'
+                }
+              }
+            }
+          },
+          MuiListItemText: {
+            root: {
+              textAlign: 'left',
+              padding: 0
+            },
+            multiline: {
+              '& .MuiListItemText-primary': {
+                fontWeight: 'bold',
+                paddingBottom: '4px'
+              }
+            }
+          },
+          MuiListItemIcon: {
+            root: {
+              color: 'rgba(0,0,0,0.6)',
+              minWidth: '24px'
+            }
+          },
+          MuiListItemAvatar: {
+            root: {
+              minWidth: '40px'
+            }
+          },
+          MuiPrivateTabIndicator: {
+            root: {
+              height: 3
+            },
+            colorSecondary: {
+              backgroundColor: '#3c37a4'
+            },
+            colorPrimary: {
+              backgroundColor: '#3c37a4'
+            }
+          },
+          MuiTabIndicator: {
+            colorSecondary: {
+              backgroundColor: '#3c37a4'
+            },
+            colorPrimary: {
+              backgroundColor: '#3c37a4'
+            }
+          },
+          MuiLinearProgress: {
+            colorPrimary: {},
+            barColorPrimary: {
+              backgroundColor: '#3c37a4'
+            }
+          },
+          MuiSlider: {
+            track: {
+              backgroundColor: '#3c37a4'
+            },
+            root: {
+              color: '#3c37a4'
+            },
+            trackBefore: {
+              backgroundColor: '#3c37a4'
+            }
+          },
+          MuiButton: {
+            root: {
+              shadows: 'none',
+              textTransform: 'none',
+              boxShadow: 'none',
+              minWidth: 'auto',
+              height: '40px',
+              lineHeight: 'inherit',
+              fontSize: '14px',
+              '&$disabled': {
+                border: 'none',
+                color: '#FFFFFF',
+                backgroundColor: 'rgba(0,0,0,0.4)'
+              }
+            },
+            sizeLarge: {
+              padding: '0 20px',
+              fontSize: '16px',
+              minHeight: 48
+            },
+            contained: {
+              backgroundColor: 'rgba(0,0,0,0.1)',
+              borderColor: 'rgba(0,0,0,0.1)',
+              textTransform: 'none',
+              boxShadow: 'none',
+              '&$focusVisible': {
+                boxShadow: 'none'
+              },
+              '&:active': {
+                boxShadow: 'none'
+              },
+              '&:hover': {
+                boxShadow: 'none'
+              },
+              '&$disabled': {
+                boxShadow: 'none'
+              }
+            },
+            containedPrimary: {
+              color: '#FFFFFF',
+              fontSize: '14px',
+              fontWeight: '700',
+              border: '1px solid #3c37a4',
+              '&:hover': {
+                backgroundColor: '#4b45cd',
+                border: '1px solid #3c37a4',
+                boxShadow: ['none']
+              },
+              '&$disabled': {
+                border: 'none',
+                color: '#FFFFFF',
+                backgroundColor: 'rgba(0,0,0,0.4)'
+              },
+              backgroundColor: '#3c37a4'
+            },
+            containedSecondary: {
+              border: '1px solid #FFFFFF',
+              fontSize: '14px',
+              fontWeight: '700',
+              backgroundColor: '#FFFFFF',
+              color: '#3c37a4',
+              '&:hover': {
+                backgroundColor: '#f5f6f7 !important',
+                border: '1px solid #f5f6f7 !important',
+                boxShadow: ['none']
+              },
+              '&$disabled': {
+                border: 'none',
+                color: '#FFFFFF',
+                backgroundColor: 'rgba(0,0,0,0.4)'
+              }
+            },
+            outlined: {
+              '&$disabled': {
+                border: '1px solid rgba(0,0,0,0.4)',
+                color: 'rgba(0,0,0,0.4)',
+                background: 'none !important'
+              }
+            },
+            outlinedPrimary: {
+              fontWeight: '700',
+              '&$disabled': {
+                border: '1px solid rgba(0,0,0,0.4)',
+                color: 'rgba(0,0,0,0.4)',
+                background: 'none !important'
+              },
+              border: '1px solid #3c37a4',
+              color: '#3c37a4',
+              '&:hover': {
+                border: '1px solid #4b45cd',
+                color: '#4b45cd'
+              }
+            },
+            outlinedSecondary: {
+              fontWeight: '700',
+              fontSize: '14px',
+              border: '1px solid rgba(0,0,0,0.1)',
+              color: '#3c37a4',
+              '&:hover': {
+                border: '1px solid rgba(0,0,0,0.1)',
+                backgroundColor: 'rgba(0, 0, 0, 0.08)',
+                color: '#3c37a4'
+              },
+              '&$disabled': {
+                border: '1px solid rgba(0,0,0,0.4)',
+                color: 'rgba(0,0,0,0.4)',
+                background: 'none !important'
+              }
+            }
+          },
+          MuiIcon: {
+            root: {
+              fontSizeSmall: {
+                fontSize: 5
+              },
+              fontSizeLarge: {
+                fontSize: 50
+              }
+            }
+          },
+          MuiIconButton: {
+            root: {
+              borderRadius: '4px',
+              padding: '8px'
+            }
+          },
+          MuiFormControl: {
+            root: {
+              '& .MuiOutlinedInput-root legend span': {
+                padding: 0
+              },
+              '& .MuiFormLabel-root + .MuiOutlinedInput-root legend > span': {
+                padding: '0 5px'
+              }
+            }
+          },
+          MuiOutlinedInput: {
+            root: {
+              '&$focused $notchedOutline': {
+                borderColor: '#3c37a4'
+              },
+              '&$disabled': {
+                color: 'rgba(0,0,0,0.4)',
+                borderRadius: '3px'
+              }
+            },
+            input: {
+              padding: '0px 14px',
+              lineHeight: '16px',
+              fontSize: '16px',
+              height: '40px'
+            },
+            inputMarginDense: {
+              paddingTop: 0,
+              paddingBottom: 0
+            }
+          },
+          MuiInputLabel: {
+            outlined: {
+              transform: 'translate(14px, 15px) scale(1)'
+            },
+            formControl: {
+              top: '-3px'
+            },
+            root: {
+              '&$focused': {
+                color: '#3c37a4'
+              }
+            }
+          },
+          MuiFilledInput: {
+            root: {
+              backgroundColor: '#F6F6F6',
+              borderRadius: '0 !important'
+            }
+          },
+          MuiExpansionPanel: {
+            root: {
+              '&$expanded': {
+                margin: 0,
+                minHeight: '48px',
+                '&:before': {
+                  opacity: 1
+                }
+              }
+            }
+          },
+          MuiExpansionPanelSummary: {
+            root: {
+              minHeight: '48px !important'
+            },
+            content: {
+              margin: '12px 0 !important'
+            }
+          },
+          MuiExpansionPanelDetails: {
+            root: {
+              padding: '24px',
+              backgroundColor: 'rgba(0,0,0,0.05)'
+            }
+          },
+          MuiModal: {
+            root: {
+              zIndex: '1800',
+              '&[role="presentation"]': {
+                maxHeight: '600px !important'
+              }
+            }
+          },
+          MuiSwitch: {
+            root: {
+              width: 60,
+              height: 44,
+              '&$checked': {
+                backgroundColor: '#0082ED !important'
+              }
+            },
+            colorPrimary: {
+              '&$disabled': {
+                '& + $track': {
+                  opacity: 0.4
+                },
+                '&$checked': {
+                  '& + $track': {
+                    backgroundColor: '#0076DF !important'
+                  }
+                }
+              }
+            },
+            switchBase: {
+              padding: 6,
+              margin: 8,
+              borderRadius: '50%',
+              transition:
+                'transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, background-color 300ms cubic-bezier(0.08, 0.57, 0.52, 0.89) 0ms',
+              '&$checked': {
+                left: 0,
+                transform: 'translateX(57%)',
+                '& + $track': {
+                  opacity: 1
+                }
+              },
+              '&$disabled': {
+                '& + $track': {
+                  backgroundColor: 'rgba(0,0,0,0.1) !important'
+                }
+              }
+            },
+            track: {
+              borderRadius: 10,
+              opacity: 1,
+              backgroundColor: 'rgba(0,0,0,0.4)'
+            },
+            thumb: {
+              width: 16,
+              height: 16,
+              boxShadow: '0 3px 6px rgba(0,0,0,0.1), 0 2px 2px rgba(0,0,0,0.4)',
+              backgroundColor: '#FFFFFF',
+              '&$disabled': {
+                backgroundColor: '#F6F6F6'
+              }
+            },
+            'colorPrimary &track': {
+              '&$checked ': {
+                color: '#3c37a4',
+                backgroundColor: '#3c37a4'
+              }
+            }
+          },
+          MuiCheckbox: {
+            root: {
+              padding: '4px',
+              margin: '0 8px',
+              '&$checked': {
+                color: '#3c37a4'
+              }
+            },
+            colorSecondary: {
+              color: '#3c37a4',
+              '&$checked': {
+                color: '#3c37a4'
+              }
+            },
+            colorPrimary: {
+              color: '#3c37a4',
+              '&$checked': {
+                color: '#3c37a4'
+              }
+            }
+          },
+          MuiTableRow: {
+            root: {
+              height: '48px'
+            }
+          },
+          MuiMenuItem: {
+            root: {
+              fontSize: 16,
+              color: 'rgba(0,0,0,0.9)'
+            }
+          },
+          MuiCardHeader: {
+            action: {
+              marginTop: 0,
+              marginBottom: 0
+            }
+          },
+          MuiButtonGroup: {
+            root: {
+              boxShadow: 'none',
+              '& button': {
+                '&:not(:first-child)': {
+                  marginLeft: 0
+                }
+              }
+            },
+            contained: {
+              boxShadow: 'none'
+            }
+          },
+          MuiChip: {
+            root: {
+              '& label': {
+                padding: '0px 14px !important'
+              },
+              '& span': {
+                padding: '0px 14px !important'
+              }
+            }
+          },
+          MuiAutocomplete: {
+            root: {
+              '& [class*="MuiInputLabel-formControl"]': {
+                top: 0
+              }
+            },
+            inputRoot: {
+              '&[class*="MuiOutlinedInput-root"]': {
+                padding: 0,
+                paddingLeft: 9,
+                '& [class*="MuiAutocomplete-input"]': {
+                  padding: 0
+                },
+                '& [class*="MuiOutlinedInput-input"]': {
+                  height: 'inherit',
+                  padding: '18.5px 14px',
+                  lineHeight: 'inherit'
+                },
+                '& [class*="MuiOutlinedInput-inputMarginDense"]': {
+                  paddingTop: 10.5,
+                  paddingBottom: 10.5
+                }
+              }
+            }
+          },
+          MuiCircularProgress: {
+            colorPrimary: {
+              color: '#3c37a4'
+            }
+          }
+        },
+        palette: {
+          common: {
+            black: '#000',
+            white: '#fff'
+          },
+          type: 'light',
+          primary: {
+            background: 'rgba(0, 118, 223, 0.1)',
+            backgroundText: '#001666',
+            lighter: '#9DDEFF',
+            lighterText: '#001666',
+            light: '#7874da',
+            lightText: '#001666',
+            main: '#4b45cd',
+            mainText: '#fff',
+            dark: '#3c37a4',
+            darkText: '#fff',
+            text: '#001666',
+            _isBasePalette: true,
+            contrastText: '#fff'
+          },
+          secondary: {
+            background: 'rgba(158, 48, 209, 0.1)',
+            backgroundText: '#320266',
+            lighter: '#F9B4FD',
+            lighterText: '#320266',
+            light: '#e7effe',
+            lightText: '#320266',
+            main: '#1164f3',
+            mainText: '#fff',
+            dark: '#0e50c2',
+            darkText: '#fff',
+            text: '#320266',
+            _isBasePalette: true,
+            contrastText: '#fff'
+          },
+          error: {
+            background: 'rgba(212, 36, 36, 0.1)',
+            backgroundText: '#570000',
+            lighter: '#FA8B75',
+            lighterText: '#570000',
+            light: '#ffebea',
+            lightText: '#570000',
+            main: '#E84A50',
+            mainText: '#fff',
+            dark: '#701116',
+            darkText: '#fff',
+            text: '#570000',
+            _isBasePalette: true,
+            contrastText: '#fff'
+          },
+          warning: {
+            background: 'rgba(255, 133, 15, 0.1)',
+            backgroundText: '#551E00',
+            lighter: '#FCD583',
+            lighterText: '#551600',
+            light: '#fae2af',
+            lightText: '#551E00',
+            main: '#f2b61b',
+            mainText: '#551E00',
+            dark: '#be5a00',
+            darkText: '#fff',
+            text: '#571600',
+            _isBasePalette: true,
+            contrastText: 'rgba(0, 0, 0, 0.87)'
+          },
+          info: {
+            light: '#e7effe',
+            main: '#1164f3',
+            dark: '#0e50c2',
+            contrastText: '#fff'
+          },
+          success: {
+            background: 'rgba(0, 135, 74, 0.1)',
+            backgroundText: '#002902',
+            lighter: '#98DC8E',
+            lighterText: '#002902',
+            light: '#ebf9ed',
+            lightText: '#002902',
+            main: '#2F964B',
+            mainText: '#fff',
+            dark: '#034a1d',
+            darkText: '#fff',
+            text: '#002902',
+            _isBasePalette: true,
+            contrastText: '#fff'
+          },
+          grey: {
+            50: '#fafafa',
+            100: '#f5f5f5',
+            200: '#eeeeee',
+            300: '#e0e0e0',
+            400: '#bdbdbd',
+            500: '#9e9e9e',
+            600: '#757575',
+            700: '#616161',
+            800: '#424242',
+            900: '#212121',
+            A100: '#f5f5f5',
+            A200: '#a3a3a3',
+            A400: '#7c7c7c',
+            A700: '#404040'
+          },
+          contrastThreshold: 3,
+          tonalOffset: 0.2,
+          text: {
+            primary: 'rgba(0,0,0,0.9)',
+            secondary: 'rgba(0,0,0,0.6)',
+            disabled: '#7C7C7C',
+            hint: 'rgba(0,0,0,0.4)',
+            main: 'rgba(0,0,0,0.9)'
+          },
+          divider: 'rgba(0, 0, 0, 0.12)',
+          background: {
+            paper: '#fff',
+            default: '#F6F6F6'
+          },
+          action: {
+            active: 'rgba(0, 0, 0, 0.54)',
+            hover: 'rgba(0, 0, 0, 0.04)',
+            hoverOpacity: 0,
+            selected: 'rgba(0, 0, 0, 0.08)',
+            selectedOpacity: 0.08,
+            disabled: '#bdbdbd',
+            disabledBackground: 'rgba(0, 0, 0, 0.12)',
+            disabledOpacity: 0.38,
+            focus: 'rgba(0, 0, 0, 0.12)',
+            focusOpacity: 0.12,
+            activatedOpacity: 0.12
+          },
+          orange: {
+            background: 'rgba(255, 133, 15, 0.1)',
+            backgroundText: '#551E00',
+            lighter: '#FCD583',
+            lighterText: '#551600',
+            light: '#FFB947',
+            lightText: '#551E00',
+            main: '#FF850F',
+            mainText: '#551E00',
+            dark: '#D93F02',
+            darkText: '#fff',
+            text: '#571600',
+            _isBasePalette: true
+          },
+          red: {
+            background: 'rgba(212, 36, 36, 0.1)',
+            backgroundText: '#570000',
+            lighter: '#FA8B75',
+            lighterText: '#570000',
+            light: '#F45B4D',
+            lightText: '#570000',
+            main: '#D42424',
+            mainText: '#fff',
+            dark: '#920125',
+            darkText: '#fff',
+            text: '#570000',
+            _isBasePalette: true
+          },
+          green: {
+            background: 'rgba(0, 135, 74, 0.1)',
+            backgroundText: '#002902',
+            lighter: '#98DC8E',
+            lighterText: '#002902',
+            light: '#53C65E',
+            lightText: '#002902',
+            main: '#00874A',
+            mainText: '#fff',
+            dark: '#004E03',
+            darkText: '#fff',
+            text: '#002902',
+            _isBasePalette: true
+          },
+          purple: {
+            background: 'rgba(158, 48, 209, 0.1)',
+            backgroundText: '#320266',
+            lighter: '#F9B4FD',
+            lighterText: '#320266',
+            light: '#E680FF',
+            lightText: '#320266',
+            main: '#9E30D1',
+            mainText: '#fff',
+            dark: '#550F9B',
+            darkText: '#fff',
+            text: '#320266',
+            _isBasePalette: true
+          },
+          teal: {
+            background: 'rgba(0, 204, 191, 0.1)',
+            backgroundText: '#073C37',
+            lighter: '#B7EEEA',
+            lighterText: '#073C37',
+            light: '#85E7E0',
+            lightText: '#073C37',
+            main: '#00CABD',
+            mainText: '#073C37',
+            dark: '#007165',
+            darkText: '#fff',
+            text: '#073C37',
+            _isBasePalette: true
+          },
+          black: {
+            lightest: 'rgba(0,0,0,0.05)',
+            lightestText: '#000',
+            lighter: 'rgba(0,0,0,0.1)',
+            lighterText: '#000',
+            light: 'rgba(0,0,0,0.4)',
+            lightText: '#fff',
+            main: 'rgba(0,0,0,0.6)',
+            mainText: '#fff',
+            dark: 'rgba(0,0,0,0.9)',
+            darkText: '#fff',
+            solid: 'rgb(0,0,0)',
+            solidText: '#fff',
+            _isBasePalette: true
+          },
+          lightGray: {
+            main: '#F6F6F6',
+            mainText: '#000',
+            _isBasePalette: true
+          },
+          darkGray: {
+            light: 'rgba(49, 57, 68, 0.7)',
+            lightText: '#fff',
+            main: '#313944',
+            mainText: '#fff',
+            _isBasePalette: true
+          },
+          white: {
+            main: '#FFFFFF',
+            mainText: '#000000',
+            _isBasePalette: true
+          },
+          disabled: {
+            main: 'rgba(0,0,0,0.4)'
+          },
+          border: {
+            main: 'rgba(0,0,0,0.1)'
+          },
+          neutral: {
+            main: '#7C7C7C',
+            light: '#CCCCCC'
+          },
+          greys: {
+            main: '#404040',
+            light: '#f5f5f5'
+          },
+          process: {
+            main: '#2592BD',
+            light: '#3EA7D0'
+          }
+        },
+        props: {
+          MuiButtonBase: {
+            disableRipple: false
+          },
+          MuiCheckbox: {
+            disableRipple: false
+          },
+          MuiFormControl: {
+            fullWidth: true
+          },
+          MuiTextField: {},
+          MuiRadio: {
+            color: 'primary'
+          },
+          MuiSwitch: {
+            color: 'primary'
+          },
+          MuiModal: {
+            open: false
+          },
+          MuiCardHeader: {
+            titleTypographyProps: {
+              variant: 'h3'
+            }
+          }
+        },
+        shadows: [
+          'none',
+          '0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12)',
+          '0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12)',
+          '0px 3px 3px -2px rgba(0,0,0,0.2),0px 3px 4px 0px rgba(0,0,0,0.14),0px 1px 8px 0px rgba(0,0,0,0.12)',
+          '0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)',
+          '0px 3px 5px -1px rgba(0,0,0,0.2),0px 5px 8px 0px rgba(0,0,0,0.14),0px 1px 14px 0px rgba(0,0,0,0.12)',
+          '0px 3px 5px -1px rgba(0,0,0,0.2),0px 6px 10px 0px rgba(0,0,0,0.14),0px 1px 18px 0px rgba(0,0,0,0.12)',
+          '0px 4px 5px -2px rgba(0,0,0,0.2),0px 7px 10px 1px rgba(0,0,0,0.14),0px 2px 16px 1px rgba(0,0,0,0.12)',
+          '0px 5px 5px -3px rgba(0,0,0,0.2),0px 8px 10px 1px rgba(0,0,0,0.14),0px 3px 14px 2px rgba(0,0,0,0.12)',
+          '0px 5px 6px -3px rgba(0,0,0,0.2),0px 9px 12px 1px rgba(0,0,0,0.14),0px 3px 16px 2px rgba(0,0,0,0.12)',
+          '0px 6px 6px -3px rgba(0,0,0,0.2),0px 10px 14px 1px rgba(0,0,0,0.14),0px 4px 18px 3px rgba(0,0,0,0.12)',
+          '0px 6px 7px -4px rgba(0,0,0,0.2),0px 11px 15px 1px rgba(0,0,0,0.14),0px 4px 20px 3px rgba(0,0,0,0.12)',
+          '0px 7px 8px -4px rgba(0,0,0,0.2),0px 12px 17px 2px rgba(0,0,0,0.14),0px 5px 22px 4px rgba(0,0,0,0.12)',
+          '0px 7px 8px -4px rgba(0,0,0,0.2),0px 13px 19px 2px rgba(0,0,0,0.14),0px 5px 24px 4px rgba(0,0,0,0.12)',
+          '0px 7px 9px -4px rgba(0,0,0,0.2),0px 14px 21px 2px rgba(0,0,0,0.14),0px 5px 26px 4px rgba(0,0,0,0.12)',
+          '0px 8px 9px -5px rgba(0,0,0,0.2),0px 15px 22px 2px rgba(0,0,0,0.14),0px 6px 28px 5px rgba(0,0,0,0.12)',
+          '0px 8px 10px -5px rgba(0,0,0,0.2),0px 16px 24px 2px rgba(0,0,0,0.14),0px 6px 30px 5px rgba(0,0,0,0.12)',
+          '0px 8px 11px -5px rgba(0,0,0,0.2),0px 17px 26px 2px rgba(0,0,0,0.14),0px 6px 32px 5px rgba(0,0,0,0.12)',
+          '0px 9px 11px -5px rgba(0,0,0,0.2),0px 18px 28px 2px rgba(0,0,0,0.14),0px 7px 34px 6px rgba(0,0,0,0.12)',
+          '0px 9px 12px -6px rgba(0,0,0,0.2),0px 19px 29px 2px rgba(0,0,0,0.14),0px 7px 36px 6px rgba(0,0,0,0.12)',
+          '0px 10px 13px -6px rgba(0,0,0,0.2),0px 20px 31px 3px rgba(0,0,0,0.14),0px 8px 38px 7px rgba(0,0,0,0.12)',
+          '0px 10px 13px -6px rgba(0,0,0,0.2),0px 21px 33px 3px rgba(0,0,0,0.14),0px 8px 40px 7px rgba(0,0,0,0.12)',
+          '0px 10px 14px -6px rgba(0,0,0,0.2),0px 22px 35px 3px rgba(0,0,0,0.14),0px 8px 42px 7px rgba(0,0,0,0.12)',
+          '0px 11px 14px -7px rgba(0,0,0,0.2),0px 23px 36px 3px rgba(0,0,0,0.14),0px 9px 44px 8px rgba(0,0,0,0.12)',
+          '0px 11px 15px -7px rgba(0,0,0,0.2),0px 24px 38px 3px rgba(0,0,0,0.14),0px 9px 46px 8px rgba(0,0,0,0.12)'
+        ],
+        typography: {
+          htmlFontSize: 16,
+          fontFamily: "'Open Sans', Helvetica, sans-serif",
+          fontSize: 14,
+          fontWeightLight: 300,
+          fontWeightRegular: 400,
+          fontWeightMedium: 500,
+          fontWeightBold: 700,
+          h1: {
+            fontFamily: "'Open Sans', Helvetica, sans-serif",
+            fontWeight: 600,
+            fontSize: 28,
+            lineHeight: '36px',
+            letterSpacing: -0.8
+          },
+          h2: {
+            fontFamily: "'Open Sans', Helvetica, sans-serif",
+            fontWeight: 600,
+            fontSize: 20,
+            lineHeight: '27px',
+            letterSpacing: 0.15
+          },
+          h3: {
+            fontFamily: "'Open Sans', Helvetica, sans-serif",
+            fontWeight: 600,
+            fontSize: 16,
+            lineHeight: '20px'
+          },
+          h4: {
+            fontFamily: "'Open Sans', Helvetica, sans-serif",
+            fontWeight: 600,
+            fontSize: 14,
+            lineHeight: '20px'
+          },
+          h5: {
+            fontFamily: "'Open Sans', Helvetica, sans-serif",
+            fontWeight: 600,
+            fontSize: 12,
+            lineHeight: '20px'
+          },
+          h6: {
+            fontFamily: "'Open Sans', Helvetica, sans-serif",
+            fontWeight: 600,
+            fontSize: 10,
+            lineHeight: 1.6
+          },
+          subtitle1: {
+            fontFamily: "'Open Sans', Helvetica, sans-serif",
+            fontWeight: 400,
+            fontSize: 16,
+            lineHeight: '24px',
+            color: 'rgba(0,0,0,0.6)'
+          },
+          subtitle2: {
+            fontFamily: "'Open Sans', Helvetica, sans-serif",
+            fontWeight: 400,
+            fontSize: 14,
+            lineHeight: '20px',
+            color: 'rgba(0,0,0,0.6)'
+          },
+          body1: {
+            fontFamily: "'Open Sans', Helvetica, sans-serif",
+            fontWeight: 400,
+            fontSize: 16,
+            lineHeight: '24px'
+          },
+          body2: {
+            fontFamily: "'Open Sans', Helvetica, sans-serif",
+            fontWeight: 400,
+            fontSize: 14,
+            lineHeight: '20px'
+          },
+          button: {
+            fontFamily: "'Open Sans', Helvetica, sans-serif",
+            fontWeight: 600,
+            fontSize: 14,
+            lineHeight: '15px',
+            textTransform: 'uppercase',
+            letterSpacing: 0.75
+          },
+          caption: {
+            fontFamily: "'Open Sans', Helvetica, sans-serif",
+            fontWeight: 600,
+            fontSize: 11,
+            lineHeight: '15px',
+            letterSpacing: '0.12em'
+          },
+          overline: {
+            fontFamily: "'Open Sans', Helvetica, sans-serif",
+            fontWeight: 400,
+            fontSize: '0.75rem',
+            lineHeight: 2.66,
+            textTransform: 'uppercase'
+          },
+          fontWeight: 400
+        },
+        shape: {
+          borderRadius: 4
+        },
+        transitions: {
+          easing: {
+            easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
+            easeOut: 'cubic-bezier(0.0, 0, 0.2, 1)',
+            easeIn: 'cubic-bezier(0.4, 0, 1, 1)',
+            sharp: 'cubic-bezier(0.4, 0, 0.6, 1)'
+          },
+          duration: {
+            shortest: 150,
+            shorter: 200,
+            short: 250,
+            standard: 300,
+            complex: 375,
+            enteringScreen: 225,
+            leavingScreen: 195
+          }
+        },
+        zIndex: {
+          mobileStepper: 1000,
+          speedDial: 1050,
+          appBar: 1100,
+          drawer: 1200,
+          modal: 1300,
+          snackbar: 1400,
+          tooltip: 1500
+        },
+        interactivity: {
+          transition: '0.1s ease-out'
+        },
+        
+      }
+      init({
+        element: document.getElementById('app'),
+        theme,
+        locale: 'en-US',
+        token: 'eyJhbGciOiJIUzI1NiIsImtpZCI6ImUyOGEzN2RjLTBhZWYtNDQ2MS1hNmI0LWJlZDAxNjM4ODcyZiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3Mzg3NzE2NzksIm5iZiI6MTczODc3MTY3OSwiYXVkIjoiLndlYnNpdGVidWlsZGVyLnVhdC53emRldi5jbyIsInRpZCI6IjQ2Nzc3NTk4LTRjM2ItMTE2OS1mMWMzLWRlZDQ3MWJjNzM5YyIsInBhcnRuZXJfaWQiOiIzIiwic3ViIjoiMTAwMDI4NDc5NSIsImFjY291bnRfaWQiOiIxMDAwMjg0Nzk1IiwidXNlcl9pZCI6IjEwMDAyODQ2NzIiLCJyZWZyZXNoX2tleSI6Ijg5OGM3NTE4Njg5MzRkYzg4ZDBiZTk4NmMwNzE5MzY5IiwibmZfYW1yIjoiQ3BUb2tlbkNvb2tpZSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiMTAwMDI4NDc5NSIsImV4cCI6MTczODc3NTMwOSwiaXNzIjoiU2l0ZUJ1aWxkZXJJc3N1ZXIifQ.h1DO0xlXiG3agamfxZP7iN30b4xhL-jouOqI-7c6tA8',
+      })
+    </script>
+  </body>
+</html>

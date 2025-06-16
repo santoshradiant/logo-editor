@@ -1,0 +1,7 @@
+src/tools/**/*
+src/sdks/**/*
+
+node_modules/
+
+**/__mocks__/**/*
+**/tests-old/**/*

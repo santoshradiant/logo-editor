@@ -1,0 +1,64 @@
+<div class="logo-preview-container" *ngIf="logo">
+  <div class="preview-header">
+    <button class="back-btn" (click)="onBack()">← Back</button>
+    <h2>{{ logo.name }} - Preview</h2>
+    <div class="preview-actions">
+      <button class="btn btn-primary" (click)="onEdit()">Edit</button>
+      <button class="btn btn-success" (click)="onDownload()">Download</button>
+    </div>
+  </div>
+
+  <div class="preview-content">
+    <div class="preview-section">
+      <h3>Original Size</h3>
+      <div class="logo-display">
+        <canvas #logoCanvas></canvas>
+      </div>
+    </div>
+
+    <div class="context-previews">
+      <h3>Preview in Context</h3>
+      <div class="context-grid">
+        <div class="context-item">
+          <h4>Business Card</h4>
+          <div class="business-card">
+            <div class="card-logo">{{ logo.brandText || 'Logo' }}</div>
+            <div class="card-info">
+              <p>John Doe</p>
+              <p>CEO & Founder</p>
+              <p>john&#64;company.com</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="context-item">
+          <h4>Website Header</h4>
+          <div class="website-header">
+            <div class="header-logo">{{ logo.brandText || 'Logo' }}</div>
+            <nav class="header-nav">
+              <span>Home</span>
+              <span>About</span>
+              <span>Services</span>
+              <span>Contact</span>
+            </nav>
+          </div>
+        </div>
+
+        <div class="context-item">
+          <h4>Social Media Profile</h4>
+          <div class="social-profile">
+            <div class="profile-avatar">{{ (logo.brandText || 'L').charAt(0) }}</div>
+            <div class="profile-info">
+              <h5>{{ logo.brandText || 'Brand Name' }}</h5>
+              <p>{{ logo.tagline || 'Professional brand' }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="loading-state" *ngIf="!logo">
+  <p>Loading preview...</p>
+</div> 

@@ -1,0 +1,13 @@
+<div class="template-gallery">
+  <div class="templates-grid">
+    <div class="template-card" *ngFor="let template of templates" (click)="selectTemplate(template)">
+      <div class="template-preview">
+        <div class="placeholder-logo">{{ template.name }}</div>
+      </div>
+      <div class="template-info">
+        <h4>{{ template.name }}</h4>
+        <span class="template-category">{{ template.category }}</span>
+      </div>
+    </div>
+  </div>
+</div> 

@@ -1,0 +1,915 @@
+
+image: node:20-alpine 
+
+options:
+  max-time: 10
+  cloud:
+      atlassian-ip-ranges: true
+
+clone:
+  depth: 1
+
+scan:
+  scan-sourceclear: &scan-sourceclear
+    - step:
+        size: 2x
+        name: SourceClear Scan
+        script:
+          - pipe: docker://eigbuilder/pipe-frontend-scan-sourceclear
+            variables:
+              SRCCLR_API_TOKEN: $SRCCLR_API_TOKEN
+
+pipelines:
+  default: #this runs as default for any branch not elsewhere defined
+    - parallel:
+      - step:
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+
+          name: Build app-logo
+          caches:
+            - npm
+          script:
+            - npm ci 
+            - npx eig-cli build --app app-logo
+      - step:
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+
+          name: Build app-logo-parcel
+          caches:
+            - npm
+          script:
+            - npm ci 
+            - npx eig-cli build --app app-logo-parcel
+      - step:
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+
+          name: Build app-logo-builder-onboarding
+          caches:
+            - npm
+          script:
+            - npm ci 
+            - npx eig-cli build --app app-logo-builder-onboarding
+      - step:
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+
+          name: Build Logo MFE
+          caches:
+            - node
+          script:
+            - npm ci 
+            - npm run build-logo-mfe:uat
+          artifacts:
+            - src/services/app-logo-mfe/dist/**
+      - step:
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+
+          name: Build Logo MFE Loader
+          caches:
+            - node
+          script:
+            - npm ci 
+            - NODE_ENV=$(echo $BUILD_ENV | tr '[:upper:]' '[:lower:]') npm run build-mfe-loader
+          artifacts:
+            - src/services/app-mfe-loader/dist/**
+
+  branches:
+    develop:
+      - step:
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+
+          name: Notify Google Chat
+          deployment: StartLatest
+          script:
+            - apk add --no-cache curl
+            - curl "https://gchat-bitbucket-relay-cpr-2.azurewebsites.net/api/gc-bb-pipe-relay?id=${BITBUCKET_BUILD_NUMBER}&repository=${BITBUCKET_REPO_SLUG}&branch=${BITBUCKET_BRANCH}&environment=Latest&link=${BITBUCKET_REPO_FULL_NAME}&version=${BUILD_VERSION}"
+      - parallel:
+          - step:
+              size: 4x
+              runtime:
+                cloud:
+                  atlassian-ip-ranges: true
+
+              name: Build app-logo
+              caches:
+                - npm
+              script:
+                - npm ci 
+                - npx eig-cli build --app app-logo --with-default-path
+                - npx eig-cli update-translations --app app-logo --env dev --with-default-path --TRANSLATION_MANAGEMENT_API_KEY $TRANSLATION_MANAGEMENT_API_KEY
+              artifacts:
+                - build/**
+          - step:
+              size: 4x
+              runtime:
+                cloud:
+                  atlassian-ip-ranges: true
+
+              name: Build app-logo-parcel
+              caches:
+                - npm
+              script:
+                - npm ci 
+                - npx eig-cli build --app app-logo-parcel --with-default-path
+                - npx eig-cli update-translations --app app-logo-parcel --env dev --with-default-path --TRANSLATION_MANAGEMENT_API_KEY $TRANSLATION_MANAGEMENT_API_KEY
+              artifacts:
+                - build/**
+          - step:
+              size: 4x
+              runtime:
+                cloud:
+                  atlassian-ip-ranges: true
+
+              name: Build app-logo-builder-onboarding
+              caches:
+                - npm
+              script:
+                - npm ci 
+                - npx eig-cli build --app app-logo-builder-onboarding --with-default-path
+                - npx eig-cli update-translations --app app-logo-builder-onboarding --env dev --with-default-path --TRANSLATION_MANAGEMENT_API_KEY $TRANSLATION_MANAGEMENT_API_KEY
+              artifacts:
+                - build/**
+      - step:
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+
+          name: Dev deploy 
+          image: mcr.microsoft.com/azure-cli:2.2.0
+          script:
+            - az login --service-principal -u ${COMMON_AZURE_CLIENT_ID} -p ${COMMON_AZURE_CLIENT_SECRET} -t ${COMMON_AZURE_TENANT_ID}
+            - az account set -s ${COMMON_DEVELOPMENT_AZURE_SUBSCRIPTION_ID}
+
+            ## create container
+            - az storage container create -n "frontend-deployments" --account-name ${COMMON_DEV_STORAGE_ACCOUNT_NAME} --public-access blob
+
+            ## deploy (will upload the build folder containing 3 service outputs)
+            - az storage blob upload-batch -d "frontend-deployments" --account-name ${COMMON_DEV_STORAGE_ACCOUNT_NAME} -s build --content-cache-control "no-cache" --destination-path "${BITBUCKET_BUILD_NUMBER}" --no-progress
+
+            ## generate sas token and update environment variable
+            - EXPIRE=$(date -I | sed "s/$(date +%Y)/$((`date +%Y`+5))/g")
+            - TOKEN="$(az storage container generate-sas --account-name ${COMMON_DEV_STORAGE_ACCOUNT_NAME} --name "frontend-deployments" --expiry "$EXPIRE" --permissions r)"
+            - sh ./scripts/create-update-sas.sh -e "DEV" -t $TOKEN
+      - step:
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+
+          name: Dev swap 
+          caches:
+            - npm
+          script:
+            - apk add --no-cache git
+            - npm ci 
+            - npx eig-cli swap --app app-logo --env dev --sasToken ${DEV_SAS_TOKEN} --disable-feature-deployment --STORAGE_ACCOUNT_NAME ${COMMON_DEV_STORAGE_ACCOUNT_NAME}
+            - npx eig-cli swap --app app-logo-parcel --env dev --sasToken ${DEV_SAS_TOKEN} --disable-feature-deployment --STORAGE_ACCOUNT_NAME ${COMMON_DEV_STORAGE_ACCOUNT_NAME}
+            - npx eig-cli swap --app app-logo-builder-onboarding --env dev --sasToken ${DEV_SAS_TOKEN} --disable-feature-deployment --STORAGE_ACCOUNT_NAME ${COMMON_DEV_STORAGE_ACCOUNT_NAME}
+      - step :
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+          name: Dev record metrics
+          deployment: Latest
+          script:
+          - pipe: docker://eigbuilder/pipe-deploy-metrics
+            variables:
+              ENV: "development"
+              DATADOG_API_KEY: $DATADOG_API_KEY
+
+    release/*:
+      - step:
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+
+          name: Notify Google Chat
+          deployment: StartQAandUAT
+          script:
+            - apk add --no-cache curl
+            - curl "https://gchat-bitbucket-relay-cpr-2.azurewebsites.net/api/gc-bb-pipe-relay?id=${BITBUCKET_BUILD_NUMBER}&repository=${BITBUCKET_REPO_SLUG}&branch=${BITBUCKET_BRANCH}&environment=QA+and+UAT&link=${BITBUCKET_REPO_FULL_NAME}&version=${BUILD_VERSION}"
+      - parallel:
+          - step:
+              size: 4x
+              runtime:
+                cloud:
+                  atlassian-ip-ranges: true
+
+              name: Build app-logo
+              caches:
+                - npm
+              script:
+                - npm ci 
+                - npx eig-cli build --app app-logo --with-default-path
+              artifacts:
+                - build/**
+          - step:
+              size: 4x
+              runtime:
+                cloud:
+                  atlassian-ip-ranges: true
+
+              name: Build app-logo-parcel
+              caches:
+                - npm
+              script:
+                - npm ci 
+                - npx eig-cli build --app app-logo-parcel --with-default-path
+              artifacts:
+                - build/**
+          - step:
+              size: 4x
+              runtime:
+                cloud:
+                  atlassian-ip-ranges: true
+
+              name: Build app-logo-builder-onboarding
+              caches:
+                - npm
+              script:
+                - npm ci 
+                - npx eig-cli build --app app-logo-builder-onboarding --with-default-path
+              artifacts:
+                - build/**
+          - step:
+              size: 4x
+              runtime:
+                cloud:
+                  atlassian-ip-ranges: true
+
+              name: Build Logo MFE
+              caches:
+                - node
+              script:
+                - npm ci 
+                - npm run build-logo-mfe
+              artifacts:
+                - src/services/app-logo-mfe/dist/**
+          - step:
+              size: 4x
+              runtime:
+                cloud:
+                  atlassian-ip-ranges: true
+
+              name: Build Logo MFE Loader
+              caches:
+                - node
+              script:
+                - npm ci 
+                - NODE_ENV=$(echo $BUILD_ENV | tr '[:upper:]' '[:lower:]') npm run build-mfe-loader
+              artifacts:
+                - src/services/app-mfe-loader/dist/**
+      - step:
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+
+          name: QA/UAT deploy 
+          image: mcr.microsoft.com/azure-cli:2.2.0
+          script:
+            - az login --service-principal -u ${COMMON_AZURE_CLIENT_ID} -p ${COMMON_AZURE_CLIENT_SECRET} -t ${COMMON_AZURE_TENANT_ID}
+            - az account set -s ${COMMON_DEVELOPMENT_AZURE_SUBSCRIPTION_ID}
+
+            ## create container QA
+            - az storage container create -n "frontend-deployments" --account-name ${COMMON_QA_STORAGE_ACCOUNT_NAME} --public-access blob
+
+            ## deploy (will upload the build folder containing 3 service outputs) QA
+            - az storage blob upload-batch -d "frontend-deployments" --account-name ${COMMON_QA_STORAGE_ACCOUNT_NAME} -s build --content-cache-control "no-cache" --destination-path "${BITBUCKET_BUILD_NUMBER}" --no-progress
+
+            ## generate sas token and update environment variable QA
+            - EXPIRE_QA=$(date -I | sed "s/$(date +%Y)/$((`date +%Y`+5))/g")
+            - TOKEN_QA="$(az storage container generate-sas --account-name ${COMMON_QA_STORAGE_ACCOUNT_NAME} --name "frontend-deployments" --expiry "$EXPIRE_QA" --permissions r)"
+            - sh ./scripts/create-update-sas.sh -e "QA" -t $TOKEN_QA
+
+            ## create container UAT
+            - az storage container create -n "frontend-deployments" --account-name ${COMMON_UAT_STORAGE_ACCOUNT_NAME} --public-access blob
+
+            ## deploy (will upload the build folder containing 3 service outputs) UAT
+            - az storage blob upload-batch -d "frontend-deployments" --account-name ${COMMON_UAT_STORAGE_ACCOUNT_NAME} -s build --content-cache-control "no-cache" --destination-path "${BITBUCKET_BUILD_NUMBER}" --no-progress
+
+            ## generate sas token and update environment variable UAT
+            - EXPIRE_UAT=$(date -I | sed "s/$(date +%Y)/$((`date +%Y`+5))/g")
+            - TOKEN_UAT="$(az storage container generate-sas --account-name ${COMMON_UAT_STORAGE_ACCOUNT_NAME} --name "frontend-deployments" --expiry "$EXPIRE_UAT" --permissions r)"
+            - sh ./scripts/create-update-sas.sh -e "UAT" -t $TOKEN_UAT
+      - step:
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+
+          name: Deploy UAT Logo Loader
+          deployment: Staging_Loader
+          script:
+            - pipe: microsoft/azure-storage-deploy:2.0.1
+              variables:
+                SOURCE: "src/services/app-mfe-loader/dist/**"
+                DESTINATION: "https://mfeuat.blob.core.windows.net/logo/?"
+                DESTINATION_SAS_TOKEN: $AZURE_STORAGE_SAS_TOKEN_UAT
+                EXTRA_ARGS: '--from-to localBlob --recursive --cache-control="no-cache"'
+      - step:
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+
+          name: Deploy UAT Logo MFE
+          deployment: Staging
+          script:
+            - export PACKAGE_VERSION="1.0.0"
+            - export PACKAGE_VERSION_FOLDER=$(echo $PACKAGE_VERSION | tr '.' '/')
+            - export DESTINATION="https://mfeuat.blob.core.windows.net/logo/mfe/$PACKAGE_VERSION_FOLDER/js/"
+            - echo "Deploying Logo v$PACKAGE_VERSION at $DESTINATION"
+            - pipe: microsoft/azure-storage-deploy:2.0.1
+              variables:
+                SOURCE: "src/services/app-logo-mfe/dist/**"
+                DESTINATION: "$DESTINATION?"
+                DESTINATION_SAS_TOKEN: $AZURE_STORAGE_SAS_TOKEN_UAT
+                EXTRA_ARGS: '--from-to localBlob --recursive --cache-control="no-cache"'
+      - step:
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+
+          name: QA/UAT swap 
+          caches:
+            - npm
+          script:
+            - apk add --no-cache git
+            - npm ci 
+            - npx eig-cli swap --app app-logo --env qa --sasToken ${QA_SAS_TOKEN} --disable-feature-deployment --STORAGE_ACCOUNT_NAME ${COMMON_QA_STORAGE_ACCOUNT_NAME}
+            - npx eig-cli swap --app app-logo-parcel --env qa --sasToken ${QA_SAS_TOKEN} --disable-feature-deployment --STORAGE_ACCOUNT_NAME ${COMMON_QA_STORAGE_ACCOUNT_NAME}
+            - npx eig-cli swap --app app-logo-builder-onboarding --env qa --sasToken ${QA_SAS_TOKEN} --disable-feature-deployment --STORAGE_ACCOUNT_NAME ${COMMON_QA_STORAGE_ACCOUNT_NAME}
+            - npx eig-cli swap --app app-logo --env uat --sasToken ${UAT_SAS_TOKEN} --disable-feature-deployment --STORAGE_ACCOUNT_NAME ${COMMON_UAT_STORAGE_ACCOUNT_NAME}
+            - npx eig-cli swap --app app-logo-parcel --env uat --sasToken ${UAT_SAS_TOKEN} --disable-feature-deployment --STORAGE_ACCOUNT_NAME ${COMMON_UAT_STORAGE_ACCOUNT_NAME}
+            - npx eig-cli swap --app app-logo-builder-onboarding --env uat --sasToken ${UAT_SAS_TOKEN} --disable-feature-deployment --STORAGE_ACCOUNT_NAME ${COMMON_UAT_STORAGE_ACCOUNT_NAME}
+      - parallel:
+        - step :
+            size: 4x
+            runtime:
+              cloud:
+                atlassian-ip-ranges: true
+
+            name: UAT record metrics
+            deployment: UAT
+            script:
+            - pipe: docker://eigbuilder/pipe-deploy-metrics
+              variables:
+                ENV: "uat"
+                DATADOG_API_KEY: $DATADOG_API_KEY
+        - step :
+            size: 4x
+            runtime:
+              cloud:
+                atlassian-ip-ranges: true
+
+            name: QA record metrics
+            deployment: QA
+            script:
+            - pipe: docker://eigbuilder/pipe-deploy-metrics
+              variables:
+                ENV: "qa"
+                DATADOG_API_KEY: $DATADOG_API_KEY
+
+    master:
+      - step:
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+
+          name: Notify Google Chat
+          deployment: StartProd
+          script:
+            - apk add --no-cache curl
+            - curl "https://gchat-bitbucket-relay-cpr-2.azurewebsites.net/api/gc-bb-pipe-relay?id=${BITBUCKET_BUILD_NUMBER}&repository=${BITBUCKET_REPO_SLUG}&branch=${BITBUCKET_BRANCH}&environment=Production&link=${BITBUCKET_REPO_FULL_NAME}&version=${BUILD_VERSION}"
+      - parallel:
+          - step:
+              size: 4x
+              runtime:
+                cloud:
+                  atlassian-ip-ranges: true
+
+              name: Build app-logo
+                  - npm
+              script:
+                - npm ci 
+                - npx eig-cli build --app app-logo --with-default-path
+              artifacts:
+                - build/**
+          - step:
+              size: 4x
+              runtime:
+                cloud:
+                  atlassian-ip-ranges: true
+              name: Build app-logo-parcel
+                  - npm
+              script:
+                - npm ci 
+                - npx eig-cli build --app app-logo-parcel --with-default-path
+              artifacts:
+                - build/**
+          - step:
+              size: 4x
+              runtime:
+                cloud:
+                  atlassian-ip-ranges: true
+              name: Build app-logo-builder-onboarding
+                  - npm
+              script:
+                - npm ci 
+                - npx eig-cli build --app app-logo-builder-onboarding --with-default-path
+              artifacts:
+                - build/**
+          - step:
+              size: 4x
+              runtime:
+                cloud:
+                  atlassian-ip-ranges: true
+              name: Build Logo MFE
+              caches:
+                - node
+              script:
+                - npm ci 
+                - npm run build-logo-mfe
+              artifacts:
+                - src/services/app-logo-mfe/dist/**
+          - step:
+              size: 4x
+              runtime:
+                cloud:
+                  atlassian-ip-ranges: true
+              name: Build Logo MFE Loader
+              caches:
+                - node
+              script:
+                - npm ci 
+                - NODE_ENV=$(echo $BUILD_ENV | tr '[:upper:]' '[:lower:]') npm run build-mfe-loader
+              artifacts:
+                - src/services/app-mfe-loader/dist/**
+      - step:
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+          name: Prod deploy 
+          image: mcr.microsoft.com/azure-cli:2.2.0
+          script:
+            - az login --service-principal -u ${COMMON_AZURE_CLIENT_ID} -p ${COMMON_AZURE_CLIENT_SECRET} -t ${COMMON_AZURE_TENANT_ID}
+            - az account set -s ${COMMON_PRODUCTION_AZURE_SUBSCRIPTION_ID}
+
+            ## create container
+            - az storage container create -n "frontend-deployments" --account-name ${COMMON_PROD_STORAGE_ACCOUNT_NAME} --public-access blob
+
+            ## deploy (will upload the build folder containing 3 service outputs)
+            - az storage blob upload-batch -d "frontend-deployments" --account-name ${COMMON_PROD_STORAGE_ACCOUNT_NAME} -s build --content-cache-control "no-cache" --destination-path "${BITBUCKET_BUILD_NUMBER}" --no-progress
+
+            ## generate sas token and update environment variable
+            - EXPIRE=$(date -I | sed "s/$(date +%Y)/$((`date +%Y`+5))/g")
+            - TOKEN="$(az storage container generate-sas --account-name ${COMMON_PROD_STORAGE_ACCOUNT_NAME} --name "frontend-deployments" --expiry "$EXPIRE" --permissions r)"
+            - sh ./scripts/create-update-sas.sh -e "PROD" -t $TOKEN
+      - step:
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+          name: Deploy Production Logo Loader
+          deployment: Production_Loader
+          script:
+            - pipe: microsoft/azure-storage-deploy:2.0.1
+              variables:
+                SOURCE: "src/services/app-mfe-loader/dist/**"
+                DESTINATION: "https://mfeprod.blob.core.windows.net/logo/?"
+                DESTINATION_SAS_TOKEN: $AZURE_STORAGE_SAS_TOKEN_PROD
+                EXTRA_ARGS: '--from-to localBlob --recursive --cache-control="no-cache"'
+      - step:
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+          name: Deploy Production Logo MFE
+          deployment: Production_MFE
+          script:
+            - export PACKAGE_VERSION="1.0.0"
+            - export PACKAGE_VERSION_FOLDER=$(echo $PACKAGE_VERSION | tr '.' '/')
+            - export DESTINATION="https://mfeprod.blob.core.windows.net/logo/mfe/$PACKAGE_VERSION_FOLDER/js/"
+            - echo "Deploying Logo v$PACKAGE_VERSION at $DESTINATION"
+            - pipe: microsoft/azure-storage-deploy:2.0.1
+              variables:
+                SOURCE: "src/services/app-logo-mfe/dist/**"
+                DESTINATION: "$DESTINATION?"
+                DESTINATION_SAS_TOKEN: $AZURE_STORAGE_SAS_TOKEN_PROD
+                EXTRA_ARGS: '--from-to localBlob --recursive --cache-control="no-cache"'
+      - step:
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+          name: Prod swap 
+          caches:
+            - npm
+          script:
+            - apk add --no-cache git
+            - npm ci 
+            - npx eig-cli swap --app app-logo --env prod --sasToken ${PROD_SAS_TOKEN} --disable-feature-deployment --STORAGE_ACCOUNT_NAME ${COMMON_PROD_STORAGE_ACCOUNT_NAME}
+            - npx eig-cli swap --app app-logo-parcel --env prod --sasToken ${PROD_SAS_TOKEN} --disable-feature-deployment --STORAGE_ACCOUNT_NAME ${COMMON_PROD_STORAGE_ACCOUNT_NAME}
+            - npx eig-cli swap --app app-logo-builder-onboarding --env prod --sasToken ${PROD_SAS_TOKEN} --disable-feature-deployment --STORAGE_ACCOUNT_NAME ${COMMON_PROD_STORAGE_ACCOUNT_NAME}
+      - step :
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+          name: Prod record metrics
+          deployment: Production
+          script:
+          - pipe: docker://eigbuilder/pipe-deploy-metrics
+            variables:
+              ENV: "production"
+              DATADOG_API_KEY: $DATADOG_API_KEY
+
+  custom:
+    develop:
+      - step:
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+          name: Notify Google Chat
+          deployment: StartLatest
+          script:
+            - apk add --no-cache curl
+            - curl "https://gchat-bitbucket-relay-cpr-2.azurewebsites.net/api/gc-bb-pipe-relay?id=${BITBUCKET_BUILD_NUMBER}&repository=${BITBUCKET_REPO_SLUG}&branch=${BITBUCKET_BRANCH}&environment=Latest&link=${BITBUCKET_REPO_FULL_NAME}&version=${BUILD_VERSION}"
+      - parallel:
+          - step:
+              size: 4x
+              runtime:
+                cloud:
+                  atlassian-ip-ranges: true
+              name: Build app-logo
+              caches:
+                - npm
+              script:
+                - npm ci 
+                - npx eig-cli build --app app-logo --with-default-path
+                - npx eig-cli update-translations --app app-logo --env dev --with-default-path --TRANSLATION_MANAGEMENT_API_KEY $TRANSLATION_MANAGEMENT_API_KEY
+              artifacts:
+                - build/**
+          - step:
+              size: 4x
+              runtime:
+                cloud:
+                  atlassian-ip-ranges: true
+              name: Build app-logo-parcel
+              caches:
+                - npm
+              script:
+                - npm ci 
+                - npx eig-cli build --app app-logo-parcel --with-default-path
+                - npx eig-cli update-translations --app app-logo-parcel --env dev --with-default-path --TRANSLATION_MANAGEMENT_API_KEY $TRANSLATION_MANAGEMENT_API_KEY
+              artifacts:
+                - build/**
+          - step:
+              size: 4x
+              runtime:
+                cloud:
+                  atlassian-ip-ranges: true
+              name: Build app-logo-builder-onboarding
+              caches:
+                - npm
+              script:
+                - npm ci 
+                - npx eig-cli build --app app-logo-builder-onboarding --with-default-path
+                - npx eig-cli update-translations --app app-logo-builder-onboarding --env dev --with-default-path --TRANSLATION_MANAGEMENT_API_KEY $TRANSLATION_MANAGEMENT_API_KEY
+              artifacts:
+                - build/**
+      - step:
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+          name: Dev deploy 
+          image: mcr.microsoft.com/azure-cli:2.2.0
+          script:
+            - az login --service-principal -u ${COMMON_AZURE_CLIENT_ID} -p ${COMMON_AZURE_CLIENT_SECRET} -t ${COMMON_AZURE_TENANT_ID}
+            - az account set -s ${COMMON_DEVELOPMENT_AZURE_SUBSCRIPTION_ID}
+
+            ## create container
+            - az storage container create -n "frontend-deployments" --account-name ${COMMON_DEV_STORAGE_ACCOUNT_NAME} --public-access blob
+
+            ## deploy (will upload the build folder containing 3 service outputs)
+            - az storage blob upload-batch -d "frontend-deployments" --account-name ${COMMON_DEV_STORAGE_ACCOUNT_NAME} -s build --content-cache-control "no-cache" --destination-path "${BITBUCKET_BUILD_NUMBER}" --no-progress
+
+            ## generate sas token and update environment variable
+            - EXPIRE=$(date -I | sed "s/$(date +%Y)/$((`date +%Y`+5))/g")
+            - TOKEN="$(az storage container generate-sas --account-name ${COMMON_DEV_STORAGE_ACCOUNT_NAME} --name "frontend-deployments" --expiry "$EXPIRE" --permissions r)"
+            - sh ./scripts/create-update-sas.sh -e "DEV" -t $TOKEN
+      - step:
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+          name: Dev swap 
+          caches:
+            - npm
+          script:
+            - apk add --no-cache git
+            - npm ci 
+            - npx eig-cli swap --app app-logo --env dev --sasToken ${DEV_SAS_TOKEN} --disable-feature-deployment --STORAGE_ACCOUNT_NAME ${COMMON_DEV_STORAGE_ACCOUNT_NAME}
+            - npx eig-cli swap --app app-logo-parcel --env dev --sasToken ${DEV_SAS_TOKEN} --disable-feature-deployment --STORAGE_ACCOUNT_NAME ${COMMON_DEV_STORAGE_ACCOUNT_NAME}
+            - npx eig-cli swap --app app-logo-builder-onboarding --env dev --sasToken ${DEV_SAS_TOKEN} --disable-feature-deployment --STORAGE_ACCOUNT_NAME ${COMMON_DEV_STORAGE_ACCOUNT_NAME}
+      - step :
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+          name: Dev record metrics
+          deployment: Latest
+          script:
+          - pipe: docker://eigbuilder/pipe-deploy-metrics
+            variables:
+              ENV: "development"
+              DATADOG_API_KEY: $DATADOG_API_KEY
+    qa:
+      - step:
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+          name: Notify Google Chat
+          deployment: StartQAandUAT
+          script:
+            - apk add --no-cache curl
+            - curl "https://gchat-bitbucket-relay-cpr-2.azurewebsites.net/api/gc-bb-pipe-relay?id=${BITBUCKET_BUILD_NUMBER}&repository=${BITBUCKET_REPO_SLUG}&branch=${BITBUCKET_BRANCH}&environment=QA+and+UAT&link=${BITBUCKET_REPO_FULL_NAME}&version=${BUILD_VERSION}"
+      - parallel:
+          - step:
+              size: 4x
+              runtime:
+                cloud:
+                  atlassian-ip-ranges: true
+              name: Build app-logo
+              caches:
+                - npm
+              script:
+                - npm ci 
+                - npx eig-cli build --app app-logo --with-default-path
+              artifacts:
+                - build/**
+          - step:
+              size: 4x
+              runtime:
+                cloud:
+                  atlassian-ip-ranges: true
+              name: Build app-logo-parcel
+              caches:
+                - npm
+              script:
+                - npm ci 
+                - npx eig-cli build --app app-logo-parcel --with-default-path
+              artifacts:
+                - build/**
+          - step:
+              size: 4x
+              runtime:
+                cloud:
+                  atlassian-ip-ranges: true
+              name: Build app-logo-builder-onboarding
+              caches:
+                - npm
+              script:
+                - npm ci 
+                - npx eig-cli build --app app-logo-builder-onboarding --with-default-path
+              artifacts:
+                - build/**
+      - step:
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+          name: QA deploy 
+          image: mcr.microsoft.com/azure-cli:2.2.0
+          script:
+            - az login --service-principal -u ${COMMON_AZURE_CLIENT_ID} -p ${COMMON_AZURE_CLIENT_SECRET} -t ${COMMON_AZURE_TENANT_ID}
+            - az account set -s ${COMMON_DEVELOPMENT_AZURE_SUBSCRIPTION_ID}
+
+            ## create container
+            - az storage container create -n "frontend-deployments" --account-name ${COMMON_QA_STORAGE_ACCOUNT_NAME} --public-access blob
+
+            ## deploy (will upload the build folder containing 3 service outputs)
+            - az storage blob upload-batch -d "frontend-deployments" --account-name ${COMMON_QA_STORAGE_ACCOUNT_NAME} -s build --content-cache-control "no-cache" --destination-path "${BITBUCKET_BUILD_NUMBER}" --no-progress
+
+            ## generate sas token and update environment variable
+            - EXPIRE=$(date -I | sed "s/$(date +%Y)/$((`date +%Y`+5))/g")
+            - TOKEN="$(az storage container generate-sas --account-name ${COMMON_QA_STORAGE_ACCOUNT_NAME} --name "frontend-deployments" --expiry "$EXPIRE" --permissions r)"
+            - sh ./scripts/create-update-sas.sh -e "QA" -t $TOKEN
+      - step:
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+          name: QA swap 
+          caches:
+            - npm
+          script:
+            - apk add --no-cache git
+            - npm ci 
+            - npx eig-cli swap --app app-logo --env qa --sasToken ${QA_SAS_TOKEN} --disable-feature-deployment --STORAGE_ACCOUNT_NAME ${COMMON_QA_STORAGE_ACCOUNT_NAME}
+            - npx eig-cli swap --app app-logo-parcel --env qa --sasToken ${QA_SAS_TOKEN} --disable-feature-deployment --STORAGE_ACCOUNT_NAME ${COMMON_QA_STORAGE_ACCOUNT_NAME}
+            - npx eig-cli swap --app app-logo-builder-onboarding --env qa --sasToken ${QA_SAS_TOKEN} --disable-feature-deployment --STORAGE_ACCOUNT_NAME ${COMMON_QA_STORAGE_ACCOUNT_NAME}
+      - step :
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+          name: QA record metrics
+          deployment: QA
+          script:
+          - pipe: docker://eigbuilder/pipe-deploy-metrics
+            variables:
+              ENV: "qa"
+              DATADOG_API_KEY: $DATADOG_API_KEY
+    uat:
+      - step:
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+          name: Notify Google Chat
+          deployment: StartUAT
+          script:
+            - apk add --no-cache curl
+            - curl "https://gchat-bitbucket-relay-cpr-2.azurewebsites.net/api/gc-bb-pipe-relay?id=${BITBUCKET_BUILD_NUMBER}&repository=${BITBUCKET_REPO_SLUG}&branch=${BITBUCKET_BRANCH}&environment=UAT&link=${BITBUCKET_REPO_FULL_NAME}&version=${BUILD_VERSION}"
+      - parallel:
+        - step:
+            size: 4x
+            runtime:
+              cloud:
+                atlassian-ip-ranges: true
+            name: Build app-logo
+            caches:
+              - npm
+            script:
+              - npm ci 
+              - npx eig-cli build --app app-logo --with-default-path
+            artifacts:
+              - build/**
+        - step:
+            size: 4x
+            runtime:
+              cloud:
+                atlassian-ip-ranges: true
+            name: Build app-logo-parcel
+            caches:
+              - npm
+            script:
+              - npm ci 
+              - npx eig-cli build --app app-logo-parcel --with-default-path
+            artifacts:
+              - build/**
+        - step:
+            size: 4x
+            runtime:
+              cloud:
+                atlassian-ip-ranges: true
+            name: Build app-logo-builder-onboarding
+            caches:
+              - npm
+            script:
+              - npm ci 
+              - npx eig-cli build --app app-logo-builder-onboarding --with-default-path
+            artifacts:
+              - build/**
+        - step:
+            size: 4x
+            runtime:
+              cloud:
+                atlassian-ip-ranges: true
+            name: Build Logo MFE UAT
+            caches:
+              - node
+            script:
+              - npm ci 
+              - npm run build-logo-mfe:uat
+            artifacts:
+              - src/services/app-logo-mfe/dist/**
+        - step:
+            size: 4x
+            runtime:
+              cloud:
+                atlassian-ip-ranges: true
+            name: Build Logo MFE Loader UAT
+            caches:
+              - node
+            script:
+              - npm ci 
+              - NODE_ENV=$(echo $BUILD_ENV | tr '[:upper:]' '[:lower:]') npm run build-mfe-loader-uat
+            artifacts:
+              - src/services/app-mfe-loader/dist/**
+      - step:
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+          name: UAT deploy 
+          image: mcr.microsoft.com/azure-cli:2.2.0
+          script:
+            - az login --service-principal -u ${COMMON_AZURE_CLIENT_ID} -p ${COMMON_AZURE_CLIENT_SECRET} -t ${COMMON_AZURE_TENANT_ID}
+            - az account set -s ${COMMON_DEVELOPMENT_AZURE_SUBSCRIPTION_ID}
+
+            ## create container
+            - az storage container create -n "frontend-deployments" --account-name ${COMMON_UAT_STORAGE_ACCOUNT_NAME} --public-access blob
+
+            ## deploy (will upload the build folder containing 3 service outputs)
+            - az storage blob upload-batch -d "frontend-deployments" --account-name ${COMMON_UAT_STORAGE_ACCOUNT_NAME} -s build --content-cache-control "no-cache" --destination-path "${BITBUCKET_BUILD_NUMBER}" --no-progress
+
+            ## generate sas token and update environment variable
+            - EXPIRE=$(date -I | sed "s/$(date +%Y)/$((`date +%Y`+5))/g")
+            - TOKEN="$(az storage container generate-sas --account-name ${COMMON_UAT_STORAGE_ACCOUNT_NAME} --name "frontend-deployments" --expiry "$EXPIRE" --permissions r)"
+            - sh ./scripts/create-update-sas.sh -e "UAT" -t $TOKEN
+      - step:
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+          name: Deploy UAT Logo Loader
+          deployment: Staging_Loader
+          script:
+            - pipe: microsoft/azure-storage-deploy:2.0.1
+              variables:
+                SOURCE: "src/services/app-mfe-loader/dist/**"
+                DESTINATION: "https://mfeuat.blob.core.windows.net/logo/?"
+                DESTINATION_SAS_TOKEN: $AZURE_STORAGE_SAS_TOKEN_UAT
+                EXTRA_ARGS: '--from-to localBlob --recursive --cache-control="no-cache"'
+      - step:
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+          name: Deploy UAT Logo MFE
+          deployment: Staging
+          script:
+            - export PACKAGE_VERSION="1.0.0"
+            - export PACKAGE_VERSION_FOLDER=$(echo $PACKAGE_VERSION | tr '.' '/')
+            - export DESTINATION="https://mfeuat.blob.core.windows.net/logo/mfe/$PACKAGE_VERSION_FOLDER/js/"
+            - echo "Deploying Logo v$PACKAGE_VERSION at $DESTINATION"
+            - pipe: microsoft/azure-storage-deploy:2.0.1
+              variables:
+                SOURCE: "src/services/app-logo-mfe/dist/**"
+                DESTINATION: "$DESTINATION?"
+                DESTINATION_SAS_TOKEN: $AZURE_STORAGE_SAS_TOKEN_UAT
+                EXTRA_ARGS: '--from-to localBlob --recursive --cache-control="no-cache"'
+      - step:
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+          name: UAT swap 
+          caches:
+            - npm
+          script:
+            - apk add --no-cache git
+            - npm ci 
+            - npx eig-cli swap --app app-logo --env uat --sasToken ${UAT_SAS_TOKEN} --disable-feature-deployment --STORAGE_ACCOUNT_NAME ${COMMON_UAT_STORAGE_ACCOUNT_NAME}
+            - npx eig-cli swap --app app-logo-parcel --env uat --sasToken ${UAT_SAS_TOKEN} --disable-feature-deployment --STORAGE_ACCOUNT_NAME ${COMMON_UAT_STORAGE_ACCOUNT_NAME}
+            - npx eig-cli swap --app app-logo-builder-onboarding --env uat --sasToken ${UAT_SAS_TOKEN} --disable-feature-deployment --STORAGE_ACCOUNT_NAME ${COMMON_UAT_STORAGE_ACCOUNT_NAME}
+      - step :
+          size: 4x
+          runtime:
+            cloud:
+              atlassian-ip-ranges: true
+          name: UAT record metrics
+          deployment: UAT
+          script:
+          - pipe: docker://eigbuilder/pipe-deploy-metrics
+            variables:
+              ENV: "uat"
+              DATADOG_API_KEY: $DATADOG_API_KEY
+
+
+    scan-sourceclear:
+      - <<: *scan-sourceclear
+
+definitions:
+  caches:
+   npm: $HOME/.npm
+

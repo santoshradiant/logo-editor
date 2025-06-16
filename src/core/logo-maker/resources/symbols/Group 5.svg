@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="126" height="126" viewBox="0 0 126 126">
+  <g fill="none" fill-rule="evenodd" transform="translate(1 1)">
+    <polygon stroke="#000" points="62.5 0 77.241 10.71 71.611 28.04 53.389 28.04 47.759 10.71"/>
+    <polygon fill="#000" points="61.5 43 78.387 52.75 78.387 72.25 61.5 82 44.613 72.25 44.613 52.75"/>
+    <polygon stroke="#000" points="94.5 14 109.241 24.71 103.611 42.04 85.389 42.04 79.759 24.71" transform="rotate(45 94.5 29.5)"/>
+    <polygon stroke="#000" points="108.5 47 123.241 57.71 117.611 75.04 99.389 75.04 93.759 57.71" transform="rotate(90 108.5 62.5)"/>
+    <polygon stroke="#000" points="94.5 79 109.241 89.71 103.611 107.04 85.389 107.04 79.759 89.71" transform="rotate(135 94.5 94.5)"/>
+    <polygon stroke="#000" points="62.5 93 77.241 103.71 71.611 121.04 53.389 121.04 47.759 103.71" transform="rotate(180 62.5 108.5)"/>
+    <polygon stroke="#000" points="29.5 79 44.241 89.71 38.611 107.04 20.389 107.04 14.759 89.71" transform="rotate(-135 29.5 94.5)"/>
+    <polygon stroke="#000" points="15.5 47 30.241 57.71 24.611 75.04 6.389 75.04 .759 57.71" transform="rotate(-90 15.5 62.5)"/>
+    <polygon stroke="#000" points="29.5 14 44.241 24.71 38.611 42.04 20.389 42.04 14.759 24.71" transform="rotate(-45 29.5 29.5)"/>
+  </g>
+</svg>

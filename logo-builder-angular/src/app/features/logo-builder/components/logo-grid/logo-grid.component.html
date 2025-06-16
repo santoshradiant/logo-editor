@@ -1,0 +1,10 @@
+<div class="logo-grid">
+  <app-logo-card
+    *ngFor="let logo of logos; trackBy: trackByLogoId"
+    [logo]="logo"
+    (edit)="onEditLogo(logo)"
+    (preview)="onPreviewLogo(logo)"
+    (clone)="onCloneLogo(logo)"
+    (delete)="onDeleteLogo(logo)">
+  </app-logo-card>
+</div> 

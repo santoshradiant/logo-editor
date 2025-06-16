@@ -1,0 +1,153 @@
+<div class="logo-builder-container">
+  <div class="hero-section">
+    <div class="hero-content">
+      <h1>Create Stunning Logos</h1>
+      <p>Design professional logos in minutes with our intuitive logo builder</p>
+      <div class="hero-actions">
+        <button class="create-btn primary" (click)="onCreateNewLogo()">
+          Create Your Logo
+        </button>
+        <button class="create-btn secondary" (click)="onOpenTestPage()">
+          Test Advanced Features
+        </button>
+        <button class="create-btn secondary" (click)="onTestAdvancedFeatures()">
+          Demo All Features
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Advanced Controls Bar -->
+  <div class="advanced-controls" *ngIf="isAdvancedFeaturesLoaded">
+    <div class="controls-section">
+      <div class="undo-redo-controls">
+        <button 
+          class="control-btn" 
+          [disabled]="!canUndo" 
+          (click)="onUndo()"
+          title="Undo last action"
+        >
+          ↶ Undo
+        </button>
+        <button 
+          class="control-btn" 
+          [disabled]="!canRedo" 
+          (click)="onRedo()"
+          title="Redo last action"
+        >
+          ↷ Redo
+        </button>
+      </div>
+      
+      <div class="export-controls">
+        <span class="control-label">Quick Export:</span>
+        <button 
+          *ngFor="let format of exportFormats" 
+          class="export-btn"
+          [disabled]="true"
+          title="Export as {{format}}"
+        >
+          {{format}}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Advanced Features Section -->
+  <div class="features-section" *ngIf="isAdvancedFeaturesLoaded">
+    <div class="section-header">
+      <h2>Quick Start with Fonts & Symbols</h2>
+      <p>Choose a font or symbol to start your logo design</p>
+    </div>
+
+    <!-- Fonts Section -->
+    <div class="fonts-section">
+      <h3>Popular Fonts</h3>
+      <div class="fonts-grid">
+        <div 
+          *ngFor="let font of availableFonts.slice(0, 6)" 
+          class="font-card"
+          (click)="onCreateLogoWithFont(font)"
+        >
+          <div class="font-preview" [style.font-family]="font.name">
+            {{ font.name }}
+          </div>
+          <div class="font-info">
+            <span class="font-name">{{ font.name }}</span>
+            <span class="font-category">{{ font.category }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Symbols Section -->
+    <div class="symbols-section">
+      <h3>Popular Symbols</h3>
+      <div class="symbols-grid">
+        <div 
+          *ngFor="let symbol of availableSymbols.slice(0, 6)" 
+          class="symbol-card"
+          (click)="onCreateLogoWithSymbol(symbol)"
+        >
+          <div class="symbol-preview">
+            <div class="symbol-icon">
+              {{ symbol.name?.charAt(0) || '?' }}
+            </div>
+          </div>
+          <div class="symbol-info">
+            <span class="symbol-name">{{ symbol.name }}</span>
+            <span class="symbol-type">{{ symbol.type }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-section">
+    <div class="section-header">
+      <h2>Your Logos</h2>
+      <div class="search-bar">
+        <input 
+          type="text" 
+          placeholder="Search logos..." 
+          [(ngModel)]="searchQuery"
+          (input)="onSearch()"
+        >
+      </div>
+    </div>
+
+    <div class="logos-grid">
+      <app-logo-grid 
+        [logos]="logos$ | async"
+        (editLogo)="onEditLogo($event)"
+        (previewLogo)="onPreviewLogo($event)"
+        (cloneLogo)="onCloneLogo($event)"
+        (deleteLogo)="onDeleteLogo($event)">
+      </app-logo-grid>
+    </div>
+
+    <div class="empty-state" *ngIf="(logos$ | async)?.length === 0">
+      <h3>No logos found</h3>
+      <p>Start creating your first logo!</p>
+      <button class="create-btn" (click)="onCreateNewLogo()">
+        Create Your First Logo
+      </button>
+    </div>
+  </div>
+
+  <div class="template-gallery-section">
+    <h2>Template Gallery</h2>
+    <app-logo-template-gallery></app-logo-template-gallery>
+  </div>
+
+  <!-- Features Status -->
+  <div class="status-section" *ngIf="isAdvancedFeaturesLoaded">
+    <div class="status-info">
+      <span>✅ {{ availableFonts.length }} fonts loaded</span>
+      <span>✅ {{ availableSymbols.length }} symbols loaded</span>
+      <span>✅ {{ fontCategories.length }} font categories</span>
+      <span>✅ {{ exportFormats.length }} export formats</span>
+      <span>✅ Undo/Redo system active</span>
+    </div>
+  </div>
+</div> 

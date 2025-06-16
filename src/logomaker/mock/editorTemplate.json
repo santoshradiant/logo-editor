@@ -1,0 +1,66 @@
+{
+  "text": {
+    "brandName": "bean [bastion]",
+    "slogan": "",
+    "stopRandomize": true
+  },
+  "layout": {
+    "decoration": {
+      "style": "none"
+    },
+    "brand": {
+      "alignment": "vertical"
+    },
+    "slogan": {
+      "style": "center"
+    },
+    "symbol": {
+      "position": "top",
+      "decoration": "none"
+    }
+  },
+  "color": {
+    "palette": [
+      "#FFFFFF",
+      "#000000",
+      "#44798e"
+    ],
+    "brand1": 2,
+    "brand2": 2,
+    "slogan": 1,
+    "symbol": 1,
+    "decoration": 2
+  },
+  "font": {
+    "brand1": {
+      "id": "molle",
+      "size": 1,
+      "lineSpacing": 1,
+      "letterSpacing": 1
+    },
+    "brand2": {
+      "id": "lobstertwo",
+      "size": 1,
+      "lineSpacing": 1,
+      "letterSpacing": 1
+    },
+    "decoration": {
+      "id": "cammronlight"
+    },
+    "slogan": {
+      "id": "leymarkregular",
+      "size": 1,
+      "lineSpacing": 1,
+      "letterSpacing": 1
+    }
+  },
+  "symbol": {
+    "icon": {
+      "type": "external",
+      "id": "nounproject.234500",
+      "url": "https://static.thenounproject.com/noun-svg/234500.svg?Expires=1551699914&Signature=R6TVYRvhZFBWfQNcmaKLv~iYulXUAdJ3XD500FUGEiB~fsnK2uP1oWNzp3f7VBZRZoY6NbQVlNhPjKF47~47ITQOHgcAbrV1rgqTRPfpHSEEsRcvmx4NmJel7tPsalKwcWyA2VRUGLpkaHrE-ftwe5HZukJKhgECRrhHJVjoT38_&Key-Pair-Id=APKAI5ZVHAXN65CHVU2Q"
+    },
+    "size": 1,
+    "spacing": 1
+  }
+}

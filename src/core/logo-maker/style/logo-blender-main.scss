@@ -1,0 +1,251 @@
+// @import '~base_style/base';
+// @import '../../onboarding/style/onboarding';
+
+.preview-box .logo-container {
+  perspective: 450px;
+  height: 395px;
+  perspective-origin: center;
+  border: blue;
+}
+
+.book {
+  fill:red
+}
+
+.preview-box.half {
+  width:50%
+}
+
+.preview-box.iphone {
+  background-image: url(//d12yytx8r5nmn3.cloudfront.net/assets/previews/iphone@2x-en-e1e3cb83b9c7dc2ba8635a1d1f10f5744be426b276f0d5a3c8073afb6c826797.jpg);
+}
+
+.preview-box.iphone .logo-container {
+  transform: translate(385px, 260px) rotateY(5deg)
+}
+
+.preview-box.building {
+  background-image: url(//d12yytx8r5nmn3.cloudfront.net/assets/previews/building@2x-6d5eb04b146d99e6975549fbb5d7b40b5c1ee497bd66ebeeec25326f8e76fe3c.jpg);
+  background-size: 1060px;
+  height: 640px;
+}
+
+.preview-box.building .logo-container {
+  transform: translate(385px, 260px) rotateY(5deg);
+}
+
+.logo-blender-main {
+  .top-header {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: white;
+  }
+
+  .text-settings-test {
+    width: 100%;
+    padding: 0 16px;
+
+    // div {
+    //   margin-top: 0 !important;
+    //   margin-right: 20px;
+    // }
+    > div {
+      max-width: calc(33% - 12px);
+      min-width: calc(33% - 12px);
+      margin: 0 6px 0 0 ;
+      display: inline-block;
+      position: relative;
+    }
+
+    .slider > div {
+      margin: 4px !important;
+    }
+
+    .select {
+      margin: 0;
+      top: -10px;
+      height: 40px;
+    }
+  }
+
+  .font-settings-test {
+    display: inline-block;
+
+    .sliderLabel {
+      width: 120px;
+      vertical-align: top;
+      display: inline-block;
+    }
+
+    .slider {
+      vertical-align: bottom;
+      width: calc(100% - 120px);
+      display: inline-block;
+      margin: 0;
+    }
+
+    .slider > div {
+      margin: 4px !important;
+    }
+
+    .select {
+      margin: -40px 0;
+      top: -10px;
+      height: 40px;
+    }
+  }
+
+
+
+
+  // .regenerateButton {
+  //   position: absolute;
+  //   margin: 16px;
+  //   right: 0;
+  //   bottom: 0;
+
+  //   &:hover {
+  //     background: rgba(2,136,209,1);;
+  //   }
+  // }
+
+  // .symbolButton {
+  //   position: absolute;
+  //   margin: 16px;
+  //   right: 0;
+  //   bottom: 32px;
+
+  //   &:hover {
+  //     background: rgba(2,136,209,1);;
+  //   }
+  // }
+
+  .symbol-grid {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+
+    .symbol-preview {
+      transition: opacity 500ms ease-in-out;
+      position: relative;
+      background: radial-gradient(ellipse at center,#FFF 0,#FFF 46%, #F8F8F8 100%);
+      // background-color: #FFF;
+      border-radius: 5px;
+      padding: 8px;
+      width: 280px;
+      height: 64px;
+      // width: 480px;
+      // height: 360px;
+      margin: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+      &:hover {
+        outline: 1px solid blue;
+      }
+
+      .symbol-svg {
+        position: relative;
+        display: inline-block;
+        margin: 0 14px 0 0;
+        width: 64px;
+        height: 64px;
+      }
+
+      .symbol-info {
+        position: relative;
+        display: inline-block;
+        vertical-align: top;
+        font-size: 14px !important;
+        line-height: 115%;
+        width: calc(100% - 80px);
+
+        label {
+          left: 0;
+          font-size: 14px !important;
+          position: relative;
+          display: inline-block;
+          width: 50%;
+        }
+
+        data {
+          text-align: right;
+          position: relative;
+          display: inline-block;
+          font-weight: 600;
+          width: 50%;
+        }
+      }
+
+      .react-json-view {
+        position: absolute !important;  // Another annoying framework with position tags on it's elements :(
+        font-family: sans-serif !important; // Use theme's, yeah go away css is for themes idiots of react-json-view
+        background-color: rgba(0,0,0,0.03) !important; 
+        overflow: auto;
+        margin: 9px;
+        padding: 10px;
+        left: 0;
+        bottom: 0;
+        width: 300px;
+        height: 240px;
+      }
+    }
+  }
+
+  .button-bar {
+    display: block;
+    height: 48px;
+    text-align: right;
+    padding-top: 16px;
+    padding-right: 24px;
+    font-size: 16px;
+
+    > button {
+      margin-left: 6px;
+    }
+  }
+
+  .logo-grid {
+    // display: grid;
+    // grid-template-columns: auto auto auto;
+    // grid-gap: 10px;
+    // padding: 10px;
+    // background: #dddddd;
+    .logo-preview {
+      .animate-button {
+        position: absolute;
+        cursor: pointer;
+        transition: all 200ms;
+        padding-top: 7px;
+        border-radius: 16px;
+        background: rgba(255,255,255,0.2);
+        color: rgba(0,0,0,0.3);
+        top: 6px;
+        right: 8px;
+        width: 27px;
+        height: 27px;
+        z-index: 10;
+        padding-right: 24px;
+
+        &:hover {
+          color: rgba(2,136,209,1);
+          background: rgba(255,255,255,1);
+        }
+      }
+
+      // opacity: 0; This is done on the logo now not on the preview div
+      transition: opacity 500ms ease-in-out;
+      position: relative;
+      background: radial-gradient(ellipse at center,#FFF 0,#FFF 46%, #F8F8F8 100%);
+      // background-color: #FFF;
+      border-radius: 5px;
+      padding: 20px;
+      width: 960px;
+      height: 540px;      
+      // width: 480px;
+      // height: 360px;
+      margin: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+  }
+}

@@ -1,0 +1,220 @@
+@use '@eig-builder/core-utils/base-style/mixins.scss' as *;
+
+.wrapper-inputfields {
+  // overflow: hidden;
+  height: 62px;
+  transition: height 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  flex-wrap: wrap;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  // textfields
+  > div {
+    // width: 69%;
+    @include phone {
+      width: 100%;
+    }
+  }
+
+  &.slogan {
+    &--show {
+      height: auto;
+      transition: height 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+      @media (max-width: 500px) {
+        height: 120px;
+      }
+    }
+  }
+  input {
+    [data-ai-id="ai-mfe-launch-button"] {
+      opacity: 0 !important;
+    }
+    &:active {
+      [data-ai-id="ai-mfe-launch-button"] {
+        opacity: 100;
+      }
+    }
+  }
+}
+
+.onboarding-page {
+  padding: 16px;
+
+  .font-card,
+  .color-card {
+    padding: 15px;
+    margin: 5px;
+
+    &.active {
+      background: blue;
+      color: white;
+    }
+  }
+}
+
+.logo-grid {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-around;
+  align-content: flex-start;
+  margin-top: 16px;
+
+  // margin-left: -16px;
+  // margin-right: -16px;
+  // margin-top: -12px;
+
+  .logo-preview-wrapper {
+    background: #FAFAFA;
+    margin: 24px;
+    position: relative;
+
+    &.variationsBox {
+      margin: 16px;
+      min-width: 100px;
+      min-height: 100px;
+      display: flex;
+      padding-top: 70%;
+      // height: 14%;
+      width: 100%;
+    }
+
+    // logo selection
+    width: calc(33% - 52px);
+    padding-top: 20%;
+    overflow: initial;
+
+    @media (max-width: 1284px) {
+      width: calc(50% - 48px);
+      padding-top: 35%;
+    }
+
+    @media (max-width: 500px) {
+      width: calc(100% - 16px);
+      padding-top: 65%;
+    }
+
+    @media (min-width: 1441px) {
+      // logo editor
+      &.variationsBox {
+        width: calc(50% - 32px);
+        padding-top: 35%;
+
+        .logo-preview {
+          padding: 8px;
+        }
+      }
+    }
+
+    @media (max-width: 1366px) {
+      &.variationsBox {
+        width: calc(100% - 16px);
+        padding-top: 65%;
+      }
+    }
+
+    //mobile
+    @media (max-width: 800px) {
+      &.variationsBox {
+        width: calc(50% - 16px);
+        padding-top: 34%;
+        margin: 8px;
+
+        .logo-preview {
+          padding: 8px;
+        }
+      }
+    }
+
+    // border: 1px solid #FFF;
+    // box-shadow: 0 4px 8px 0 rgba(0,0,0,0.08);
+    // border-radius: 4px;
+
+    .logo-wrapper-inner {
+      // box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo-domain {
+      cursor: pointer;
+    }
+
+    .logo-info {
+      background-color: white;
+      padding: 20px;
+      position: relative;
+      cursor: pointer;
+
+      .logo-info-domain {
+        color: #5C5F6A;
+        font-size: 16px;
+        font-weight: 500;
+        position: relative;
+        // max-width: 170px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+
+      .logo-info-price {
+        font-size: 23px;
+        color: #BABABA;
+        font-size: 14px;
+      }
+    }
+
+    .logo-preview {
+      // background-image: url('~core/images/watermark.png');
+      // background-size: cover;
+      // border: 1px solid rgba(0,0,0,0.04);
+      // box-shadow: 0 1px 3px 0 rgba(0,0,0,0.10) !important;
+      transition: opacity 200ms;
+      position: absolute;
+      margin: auto;
+      padding: 26px;
+      // background-color: #FFF;
+
+      // smaller screen
+      // width: 290px;
+      // height: 200px;
+
+      // remove in &. tags?
+      bottom: 0;
+      top: 0;
+      width: 100%;
+      box-sizing: border-box;
+      overflow: hidden;
+
+
+      // height: 260px;
+      cursor: pointer;
+      &.variationsBox {
+        // width: 100%;
+        // height: 100%;
+        bottom: 0;
+        top: 0;
+        width: 100%;
+        position: absolute;
+      }
+      &.preview {
+        // width: 640px;
+        // height: 480px;
+        bottom: 0;
+        top: 0;
+        width: 100%;
+        position: absolute;
+      }
+
+      &.domain {
+        width: 270px;
+        height: 202px;
+      }
+    }
+
+    .logo-preview:hover {
+      // box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1) !important;
+      // border: 1px solid rgba(0, 0, 0, 0.1);
+      // border-radius: 4px;
+      // background-color: rgba(255, 255, 255, 0.40);
+    }
+  }
+}

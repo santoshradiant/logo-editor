@@ -1,0 +1,336 @@
+<div class="logo-editor-container">
+  <!-- Left Icon Sidebar -->
+  <div class="icon-sidebar">
+    <div class="icon-nav">
+      <button 
+        class="nav-icon-btn" 
+        [class.active]="activeTab === 'brand'" 
+        (click)="setActiveTab('brand')" 
+        title="Brand Name"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M5,4V7H10.5V19H13.5V7H19V4H5Z" />
+        </svg>
+      </button>
+      
+      <button 
+        class="nav-icon-btn" 
+        [class.active]="activeTab === 'slogan'" 
+        (click)="setActiveTab('slogan')" 
+        title="Slogan"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M4,9H20V7H4V9M4,13H16V11H4V13M4,17H12V15H4V17Z" />
+        </svg>
+      </button>
+      
+      <button 
+        class="nav-icon-btn" 
+        [class.active]="activeTab === 'icons'" 
+        (click)="setActiveTab('icons')" 
+        title="Icons"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12,2A7,7 0 0,1 19,9C19,11.38 17.81,13.47 16,14.74V17A1,1 0 0,1 15,18H9A1,1 0 0,1 8,17V14.74C6.19,13.47 5,11.38 5,9A7,7 0 0,1 12,2M9,21V20H15V21A1,1 0 0,1 14,22H10A1,1 0 0,1 9,21M12,4A5,5 0 0,0 7,9C7,10.68 7.59,12.2 8.54,13.34L9,13.75V16H15V13.75L15.46,13.34C16.41,12.2 17,10.68 17,9A5,5 0 0,0 12,4Z" />
+        </svg>
+      </button>
+      
+      <button 
+        class="nav-icon-btn" 
+        [class.active]="activeTab === 'shapes'" 
+        (click)="setActiveTab('shapes')" 
+        title="Shapes"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M11,13.5V21.5H3.5V13.5H11M12,2L17.5,11H6.5L12,2M17.5,13A4,4 0 0,1 21.5,17A4,4 0 0,1 17.5,21A4,4 0 0,1 13.5,17A4,4 0 0,1 17.5,13Z" />
+        </svg>
+      </button>
+      
+      <button 
+        class="nav-icon-btn" 
+        [class.active]="activeTab === 'colors'" 
+        (click)="setActiveTab('colors')" 
+        title="Colors"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.5,12A1.5,1.5 0 0,1 16,10.5A1.5,1.5 0 0,1 17.5,9A1.5,1.5 0 0,1 19,10.5A1.5,1.5 0 0,1 17.5,12M14.5,8A1.5,1.5 0 0,1 13,6.5A1.5,1.5 0 0,1 14.5,5A1.5,1.5 0 0,1 16,6.5A1.5,1.5 0 0,1 14.5,8M9.5,8A1.5,1.5 0 0,1 8,6.5A1.5,1.5 0 0,1 9.5,5A1.5,1.5 0 0,1 11,6.5A1.5,1.5 0 0,1 9.5,8M6.5,12A1.5,1.5 0 0,1 5,10.5A1.5,1.5 0 0,1 6.5,9A1.5,1.5 0 0,1 8,10.5A1.5,1.5 0 0,1 6.5,12M12,3A9,9 0 0,0 3,12A9,9 0 0,0 12,21A1.5,1.5 0 0,0 13.5,19.5C13.5,19.11 13.35,18.76 13.11,18.5C12.88,18.23 12.73,17.88 12.73,17.5A1.5,1.5 0 0,1 14.23,16H16A5,5 0 0,0 21,11C21,6.58 16.97,3 12,3Z" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Middle Panel - Editor Controls -->
+  <div class="editor-panel">
+    <!-- Brand Name Section -->
+    <div class="editor-section brand-section" *ngIf="activeTab === 'brand'">
+      <div class="section-header">
+        <h2>Make your name shine</h2>
+        <p class="section-description">A few small tweaks can help your logo feel just right and totally on brand.</p>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Brand Name</label>
+        <input 
+          type="text" 
+          class="form-input" 
+          [(ngModel)]="brandName" 
+          (ngModelChange)="onBrandNameChange()" 
+          placeholder="Enter your brand name"
+        >
+      </div>
+      
+      <div class="fonts-section">
+        <h3 class="subsection-title">Recommended Fonts</h3>
+        <div class="fonts-grid">
+          <button 
+            *ngFor="let font of getDisplayFonts()" 
+            class="font-tile"
+            [class.active]="selectedFont === font.name"
+            (click)="selectFont(font.name)"
+            [style.font-family]="font.family"
+          >
+            {{ font.display }}
+          </button>
+        </div>
+      </div>
+      
+      <div class="custom-font-section">
+        <h3 class="subsection-title">Custom Font</h3>
+        <button class="upload-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+          </svg>
+          Upload your own fonts
+        </button>
+      </div>
+      
+      <div class="controls-section">
+        <div class="control-row">
+          <div class="control-group multiline-control">
+            <label class="control-label">Multiline</label>
+            <div class="toggle-switch">
+              <input type="checkbox" id="multiline" [(ngModel)]="isMultiline">
+              <label for="multiline" class="toggle-slider"></label>
+            </div>
+          </div>
+        </div>
+        
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Font Size</label>
+            <div class="slider-wrapper">
+              <input 
+                type="range" 
+                class="range-slider"
+                [(ngModel)]="fontSize" 
+                (ngModelChange)="onFontSizeChange()" 
+                min="12" 
+                max="72"
+              >
+            </div>
+          </div>
+        </div>
+        
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Letter Spacing</label>
+            <div class="slider-wrapper">
+              <input 
+                type="range" 
+                class="range-slider"
+                [(ngModel)]="letterSpacing" 
+                (ngModelChange)="onLetterSpacingChange()" 
+                min="-2" 
+                max="10"
+              >
+            </div>
+          </div>
+        </div>
+        
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Line Height</label>
+            <div class="slider-wrapper">
+              <input 
+                type="range" 
+                class="range-slider"
+                [(ngModel)]="lineHeight" 
+                (ngModelChange)="onLineHeightChange()" 
+                min="0.8" 
+                max="2" 
+                step="0.1"
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slogan Section -->
+    <div class="editor-section" *ngIf="activeTab === 'slogan'">
+      <div class="section-header">
+        <h2>Bring your slogan to life</h2>
+        <p class="section-description">Add a tagline that captures your brand's essence.</p>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Slogan Text</label>
+        <input 
+          type="text" 
+          class="form-input" 
+          [(ngModel)]="sloganText" 
+          (ngModelChange)="onSloganChange()" 
+          placeholder="Enter your slogan"
+        >
+      </div>
+      
+      <div class="text-alignment">
+        <label class="form-label">Alignment</label>
+        <div class="alignment-buttons">
+          <button class="align-btn" [class.active]="textAlignment === 'left'" (click)="setAlignment('left')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3,3H21V5H3V3M3,7H15V9H3V7M3,11H21V13H3V11M3,15H15V17H3V15M3,19H21V21H3V19Z" />
+            </svg>
+          </button>
+          <button class="align-btn" [class.active]="textAlignment === 'center'" (click)="setAlignment('center')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3,3H21V5H3V3M7,7H17V9H7V7M3,11H21V13H3V11M7,15H17V17H7V15M3,19H21V21H3V19Z" />
+            </svg>
+          </button>
+          <button class="align-btn" [class.active]="textAlignment === 'right'" (click)="setAlignment('right')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3,3H21V5H3V3M9,7H21V9H9V7M3,11H21V13H3V11M9,15H21V17H9V15M3,19H21V21H3V19Z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Icons Section -->
+    <div class="editor-section" *ngIf="activeTab === 'icons'">
+      <div class="section-header">
+        <h2>Make your mark</h2>
+        <p class="section-description">Choose an icon that represents your brand.</p>
+      </div>
+      
+      <div class="icon-grid">
+        <button 
+          *ngFor="let icon of availableIcons.slice(0, 9)" 
+          class="icon-option"
+          [class.active]="selectedIcon?.name === icon.name"
+          (click)="selectIcon(icon)"
+        >
+          <div class="icon-placeholder">
+            {{ icon.name.charAt(0) }}
+          </div>
+          <span class="icon-name">{{ icon.name }}</span>
+        </button>
+      </div>
+      
+      <div class="icon-controls" *ngIf="selectedIcon">
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Size</label>
+            <div class="slider-wrapper">
+              <input 
+                type="range" 
+                class="range-slider"
+                [(ngModel)]="iconSize" 
+                (ngModelChange)="onIconSizeChange()" 
+                min="16" 
+                max="128"
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shapes Section -->
+    <div class="editor-section" *ngIf="activeTab === 'shapes'">
+      <div class="section-header">
+        <h2>Frame your logo</h2>
+        <p class="section-description">Add a shape to frame your design.</p>
+      </div>
+      
+      <div class="shapes-grid">
+        <button 
+          *ngFor="let shape of shapes" 
+          class="shape-option"
+          [class.active]="selectedShape?.name === shape.name"
+          (click)="selectShape(shape)"
+        >
+          <div class="shape-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path *ngIf="shape.name === 'Circle'" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" />
+              <path *ngIf="shape.name === 'Square'" d="M3,3V21H21V3H3M5,5H19V19H5V5Z" />
+              <path *ngIf="shape.name === 'Triangle'" d="M12,2L22,20H2L12,2Z" />
+            </svg>
+          </div>
+          <span class="shape-name">{{ shape.name }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Colors Section -->
+    <div class="editor-section" *ngIf="activeTab === 'colors'">
+      <div class="section-header">
+        <h2>Define your brand's tone</h2>
+        <p class="section-description">Choose colors that reflect your brand personality.</p>
+      </div>
+      
+      <div class="color-palettes">
+        <div class="palette-row" *ngFor="let palette of colorPalettes">
+          <div 
+            *ngFor="let color of palette" 
+            class="color-swatch"
+            [style.backgroundColor]="color"
+            [class.active]="customColor === color"
+            (click)="selectColor(color)"
+          >
+          </div>
+        </div>
+      </div>
+      
+      <div class="custom-color-section">
+        <label class="form-label">Custom Color</label>
+        <input 
+          type="color" 
+          class="color-input"
+          [(ngModel)]="customColor" 
+          (ngModelChange)="onCustomColorChange()"
+        >
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Panel - Logo Preview -->
+  <div class="preview-panel">
+    <div class="preview-header">
+      <div class="preview-actions">
+        <button class="action-btn secondary" (click)="undo()" [disabled]="!canUndo">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12.5,8C9.85,8 7.45,9 5.6,10.6L2,7V16H11L7.38,12.38C8.77,11.22 10.54,10.5 12.5,10.5C16.04,10.5 19.05,12.81 20.1,16L22.47,15.22C21.08,11.03 17.15,8 12.5,8Z" />
+          </svg>
+        </button>
+        <button class="action-btn secondary" (click)="redo()" [disabled]="!canRedo">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18.4,10.6C16.55,9 14.15,8 11.5,8C6.85,8 2.92,11.03 1.53,15.22L3.9,16C4.95,12.81 7.96,10.5 11.5,10.5C13.46,10.5 15.23,11.22 16.62,12.38L13,16H22V7L18.4,10.6Z" />
+          </svg>
+        </button>
+      </div>
+      <button class="action-btn primary download-btn" (click)="downloadLogo()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" />
+        </svg>
+        Download
+      </button>
+    </div>
+    
+    <div class="preview-content">
+      <div class="logo-canvas-wrapper">
+        <canvas #logoCanvas class="logo-canvas"></canvas>
+      </div>
+    </div>
+  </div>
+</div> 

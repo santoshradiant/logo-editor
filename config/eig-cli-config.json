@@ -1,0 +1,52 @@
+{
+  "defaultApp": "app-logo",
+  "repository": "logo-builder-frontend",
+  "commonStorageAccount": true,
+  "apps": {
+    "app-logo": {
+      "dir": "./src/services/app-logo",
+      "engine": "builder-service",
+      "translations": { "product": "ControlPanelLogoMaker" },
+      "cloudflare": {
+        "workerOptions": {
+          "enableInjectBranding": true
+        },
+        "routes": [
+          {
+            "pattern": "{env}/logo"
+          }
+        ]
+      }
+    },
+    "app-logo-parcel": {
+      "dir": "./src/services/app-logo-parcel",
+      "engine": "builder-service",
+      "translations": { "product": "ControlPanelLogoMaker" },
+      "cloudflare": {
+        "workerOptions": {
+          "enableInjectBranding": true
+        },
+        "routes": [
+          {
+            "pattern": "{env}/logo-parcel"
+          }
+        ]
+      }
+    },
+    "app-logo-builder-onboarding": {
+      "dir": "./src/services/app-logo-builder-onboarding",
+      "engine": "builder-service",
+      "translations": { "product": "ControlPanelLogoMaker" },
+      "cloudflare": {
+        "workerOptions": {
+          "enableInjectBranding": true
+        },
+        "routes": [
+          {
+            "pattern": "{env}/logo-onboarding"
+          }
+        ]
+      }
+    }
+  }
+}

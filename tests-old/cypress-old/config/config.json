@@ -1,0 +1,7 @@
+{
+  "eventsApi": "https://events.dev.appmachine.com/v1.0",
+  "localBaseUrl": "http://localhost:3210",
+  "chromeWebSecurity": false,
+  "testFiles": "**/*.spec.js",
+  "env": {}
+}

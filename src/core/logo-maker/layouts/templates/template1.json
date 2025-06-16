@@ -1,0 +1,145 @@
+{
+  "type": "group",
+  "position": {
+    "left": 0,
+    "top": 0,
+    "width": 1,
+    "height": 1
+  },
+  "layers": [
+    {
+      "type": "group",
+      "tag": "decoration",
+      "position": {
+        "autoWidth": true,
+        "autoHeight": true,
+        "smartTop": 0.5, 
+        "smartLeft": 0.5
+      },
+      "layers": [
+        {
+          "type": "shape",
+          "position": {
+            "autoWidth": true,
+            "autoHeight": true
+          },
+          "shape": {
+            "name": "rectangle",
+            "isBackground": true,
+            "colorFrom": "decoration"
+          },
+          "linkedToParent": "fill",
+          "linkStyle": "mask"
+        },
+        {
+          "type": "group",
+          "position": {
+            "autoWidth": true,
+            "autoHeight": true,
+            "left": 0
+          },
+          "layers": [
+            {
+              "type": "group",
+              "position": {
+                "top": 0,
+                "autoWidth": true,
+                "autoHeight": true,
+                "centerLeft": 0
+              },
+              "layers": [
+                {
+                  "type": "group",
+                  "tag": "brand",
+                  "position": {
+                    "left": 0,
+                    "autoWidth": true,
+                    "autoHeight": true
+                  },
+                  "layers": [
+                    {
+                      "type": "text",
+                      "position": {
+                        "top": 0,
+                        "left": 0,
+                        "autoHeight": true,
+                        "autoWidth": true
+                      },
+                      "text": "{brandName:0}",
+                      "font": {
+                        "fontFrom": "brand1",
+                        "family": "egoregular",
+                        "size": 56,
+                        "colorFrom": "brand1"
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "position": {
+                        "topFrom": "child(-1).bottom + 0.003",
+                        "widthFrom": "child(-1)",
+                        "autoHeight": true
+                      },
+                      "text": "{brandName:1}",
+                      "font": {
+                        "family": "egooutline",
+                        "size": 56,
+                        "fontFrom": "brand2",
+                        "colorFrom": "brand2"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "group",
+                  "tag": "slogan",
+                  "position": {
+                    "topFrom": "child(-1).bottom + 0.005",
+                    "widthFrom": "child(-1)",
+                    "autoHeight": true,
+                    "left": 0
+                  },
+                  "layers": [
+                    {
+                      "type": "text",
+                      "tag": "slogan",
+                      "position": {
+                        "top": 0,
+                        "smartLeft": 0.5,
+                        "autoWidth": true,
+                        "autoHeight": true
+                      },
+                      "text": "{slogan}",
+                      "font": {
+                        "fontFrom": "slogan",
+                        "family": "absideregular",
+                        "size": 20,
+                        "colorFrom": "slogan"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "shape",
+              "tag": "symbol",
+              "position": {
+                "bottom": -0.0075,
+                "width": 0.05,
+                "centerLeft": 0,
+                "maxWidth": 0.075,
+                "maxHeight": 0.1
+              },
+              "shape": {
+                "name": "symbol",
+                "decoration": "none",
+                "colorFrom": "symbol"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

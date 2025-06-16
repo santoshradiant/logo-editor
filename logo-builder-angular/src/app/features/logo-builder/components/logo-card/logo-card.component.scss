@@ -1,0 +1,152 @@
+.logo-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+
+    .logo-overlay {
+      opacity: 1;
+    }
+  }
+}
+
+.logo-preview {
+  position: relative;
+  background: #f8f9fa;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  canvas {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 8px;
+  }
+
+  .logo-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+
+    .logo-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .action-btn {
+      width: 40px;
+      height: 40px;
+      border: none;
+      border-radius: 50%;
+      background: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+      &:hover {
+        transform: scale(1.1);
+      }
+
+      &.edit-btn:hover {
+        background: #007bff;
+        color: white;
+      }
+
+      &.preview-btn:hover {
+        background: #28a745;
+        color: white;
+      }
+
+      &.clone-btn:hover {
+        background: #ffc107;
+        color: white;
+      }
+
+      &.delete-btn:hover {
+        background: #dc3545;
+        color: white;
+      }
+    }
+  }
+}
+
+.logo-info {
+  padding: 1rem;
+
+  .logo-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 0.5rem 0;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .logo-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+
+    .logo-date {
+      font-size: 0.875rem;
+      color: #6c757d;
+    }
+
+    .logo-tags {
+      display: flex;
+      gap: 0.25rem;
+      flex-wrap: wrap;
+
+      .tag {
+        background: #e9ecef;
+        color: #495057;
+        padding: 0.25rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .logo-card {
+    &:hover {
+      transform: none;
+    }
+
+    .logo-overlay {
+      opacity: 1;
+      background: rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  .logo-info {
+    .logo-meta {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+} 

@@ -1,0 +1,13 @@
+.logo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  padding: 1rem 0;
+}
+
+@media (max-width: 768px) {
+  .logo-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+} 

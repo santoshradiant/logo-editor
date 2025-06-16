@@ -1,0 +1,31 @@
+<div class="logo-card">
+  <div class="logo-preview">
+    <canvas #logoCanvas></canvas>
+    <div class="logo-overlay">
+      <div class="logo-actions">
+        <button class="action-btn edit-btn" (click)="onEdit()" title="Edit Logo">
+          ✏️
+        </button>
+        <button class="action-btn preview-btn" (click)="onPreview()" title="Preview Logo">
+          👁️
+        </button>
+        <button class="action-btn clone-btn" (click)="onClone()" title="Clone Logo">
+          📋
+        </button>
+        <button class="action-btn delete-btn" (click)="onDelete()" title="Delete Logo">
+          🗑️
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="logo-info">
+    <h3 class="logo-name">{{ logo.name }}</h3>
+    <div class="logo-meta">
+      <span class="logo-date">{{ formatDate(logo.updatedAt) }}</span>
+      <div class="logo-tags" *ngIf="logo.tags && logo.tags.length > 0">
+        <span class="tag" *ngFor="let tag of logo.tags">{{ tag }}</span>
+      </div>
+    </div>
+  </div>
+</div> 

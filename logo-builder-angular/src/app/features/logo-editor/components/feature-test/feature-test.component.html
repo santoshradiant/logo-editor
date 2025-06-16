@@ -1,0 +1,157 @@
+<div class="feature-test-container">
+  <h1>Logo Builder - Advanced Features Test</h1>
+  
+  <!-- Test Controls -->
+  <div class="test-controls">
+    <div class="brand-inputs">
+      <label>
+        Brand Name:
+        <input type="text" [(ngModel)]="testBrandName" (input)="onBrandNameChange(testBrandName)" />
+      </label>
+      <label>
+        Tagline:
+        <input type="text" [(ngModel)]="testTagline" (input)="onTaglineChange(testTagline)" />
+      </label>
+    </div>
+    
+    <div class="quick-tests">
+      <button (click)="testFullIntegration()" class="btn-primary">Test Full Integration</button>
+      <button (click)="testRandomFont()" class="btn-secondary">Random Font</button>
+      <button (click)="testRandomSymbol()" class="btn-secondary">Random Symbol</button>
+      <button (click)="testInitialsGeneration()" class="btn-secondary">Test Initials</button>
+    </div>
+  </div>
+
+  <!-- Canvas Preview -->
+  <div class="preview-section">
+    <h2>Live Preview</h2>
+    <div class="canvas-container">
+      <canvas #testCanvas width="400" height="300"></canvas>
+    </div>
+  </div>
+
+  <!-- Font Testing Section -->
+  <div class="font-section">
+    <h2>Font Testing</h2>
+    
+    <div class="font-controls">
+      <div class="search-box">
+        <input type="text" placeholder="Search fonts..." #fontSearch />
+        <button (click)="testFontSearch(fontSearch.value)">Search</button>
+      </div>
+      
+      <div class="category-filter">
+        <label>Category:</label>
+        <select (change)="onCategoryChange($event)">
+          <option value="">All Categories</option>
+          <option *ngFor="let category of fontCategories" [value]="category">
+            {{ category | titlecase }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div class="font-grid">
+      <div 
+        *ngFor="let font of availableFonts" 
+        class="font-card"
+        [class.selected]="selectedFont?.id === font.id"
+        (click)="onFontSelect(font)"
+      >
+        <div class="font-preview" [style.font-family]="font.name">
+          {{ font.name }}
+        </div>
+        <div class="font-info">
+          <span class="font-name">{{ font.name }}</span>
+          <span class="font-category">{{ font.category }}</span>
+          <div class="font-status">
+            <span 
+              class="status-indicator"
+              [class]="fontLoadStatus[font.id] || 'unloaded'"
+            >
+              {{ fontLoadStatus[font.id] || 'Not Loaded' }}
+            </span>
+          </div>
+        </div>
+        <div class="font-actions">
+          <button (click)="testFontLoading(font); $event.stopPropagation()" class="btn-small">
+            Load Font
+          </button>
+          <button (click)="testFontPairing(); $event.stopPropagation()" class="btn-small">
+            Show Pairs
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Symbol Testing Section -->
+  <div class="symbol-section">
+    <h2>Symbol Testing</h2>
+    
+    <div class="symbol-controls">
+      <div class="search-box">
+        <input type="text" placeholder="Search symbols..." #symbolSearch />
+        <button (click)="testSymbolSearch(symbolSearch.value)">Search</button>
+      </div>
+      
+      <div class="symbol-actions">
+        <button (click)="testSymbolByBrand()" class="btn-secondary">Get Brand Symbol</button>
+      </div>
+    </div>
+
+    <div class="symbol-grid">
+      <div 
+        *ngFor="let symbol of availableSymbols" 
+        class="symbol-card"
+        [class.selected]="selectedSymbol?.id === symbol.id"
+        (click)="onSymbolSelect(symbol)"
+      >
+        <div class="symbol-preview">
+          <div class="symbol-icon" [attr.data-symbol]="symbol.id">
+            {{ symbol.name?.charAt(0) || '?' }}
+          </div>
+        </div>
+        <div class="symbol-info">
+          <span class="symbol-name">{{ symbol.name }}</span>
+          <span class="symbol-type">{{ symbol.type }}</span>
+          <div class="symbol-status">
+            <span 
+              class="status-indicator"
+              [class]="symbolLoadStatus[symbol.id] || 'unloaded'"
+            >
+              {{ symbolLoadStatus[symbol.id] || 'Not Loaded' }}
+            </span>
+          </div>
+        </div>
+        <div class="symbol-actions">
+          <button (click)="testSymbolLoading(symbol); $event.stopPropagation()" class="btn-small">
+            Load Symbol
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Test Results -->
+  <div class="results-section">
+    <h2>Test Results</h2>
+    <div class="results-console">
+      <p>Check browser console for detailed test results and logs.</p>
+      <div class="stats">
+        <div class="stat">
+          <label>Available Fonts:</label>
+          <span>{{ availableFonts.length }}</span>
+        </div>
+        <div class="stat">
+          <label>Available Symbols:</label>
+          <span>{{ availableSymbols.length }}</span>
+        </div>
+        <div class="stat">
+          <label>Font Categories:</label>
+          <span>{{ fontCategories.length }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

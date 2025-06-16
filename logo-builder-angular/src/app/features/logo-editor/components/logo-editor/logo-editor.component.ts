@@ -398,6 +398,11 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     }
   }
 
+  publishLogo(): void {
+    console.log('Publishing logo...');
+    // Add your publishing logic here
+  }
+  
   private loadAdvancedFeatures(): void {
     console.log('Loading advanced features...');
     try {

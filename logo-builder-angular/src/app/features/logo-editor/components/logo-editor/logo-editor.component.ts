@@ -10,7 +10,7 @@ import { FontResourcesService } from '../../../../core/services/font-resources.s
 import { SymbolResourcesService } from '../../../../core/services/symbol-resources.service';
 import { ExportService } from '../../../../core/services/export.service';
 import { UndoRedoService, UndoRedoCommand } from '../../../../core/services/undo-redo.service';
-import { Logo, LogoTemplate } from '../../../../core/models/logo.model';
+import { Logo, LogoTemplate, NounIconItem } from '../../../../core/models/logo.model';
 import { FontDefinition, FontCategory } from '../../../../core/models/font.model';
 import { SymbolDefinition } from '../../../../core/models/symbol.model';
 
@@ -93,9 +93,10 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   editorForm: FormGroup;
   private subscription = new Subscription();
 
+
   // Tab management
   activeTab: string = 'brand';
-
+ loading = false;
   // UI State for collapsible sections
   showSloganSection: boolean = false;
   showIconSection: boolean = false;
@@ -148,9 +149,25 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     { name: 'Leaf', url: 'assets/icons/leaf.svg' },
     { name: 'Globe', url: 'assets/icons/globe.svg' }
   ];
-  selectedIcon: { name: string; url: string } | null = null;
+  selectedIcon: NounIconItem | null = null;
   iconSize: number = 48;
   iconRotation: number = 0;
+  availableNounIcons: NounIconItem[] = [];
+
+ fetchLogos() {
+    this.loading = true;
+    this.logoService.getLogos('cat', 20).subscribe({
+      next: (data: any) => {
+        
+        this.availableNounIcons = data.data.icons || [];
+        console.log('Logosfetched11', this.availableNounIcons);
+        
+        this.loading = false;
+      },
+      error: () => this.loading = false
+    });
+  }
+
 
   // Shapes section
   shapes: Array<{ name: string; icon: string }> = [
@@ -247,6 +264,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   // Tab management
   setActiveTab(tab: string): void {
     this.activeTab = tab;
+    this.fetchLogos()
   }
 
   // Brand section methods
@@ -417,7 +435,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   }
 
   // Icons section methods
-  selectIcon(icon: { name: string; url: string }): void {
+  selectIcon(icon: NounIconItem): void {
     this.selectedIcon = icon;
     this.updateLogoPreview();
   }
@@ -959,10 +977,14 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       } else {
         // Multiline OFF: Display slogan as single line
         const singleLineSlogan = this.sloganText.replace(/\n/g, ' ');
-        if (this.sloganLetterSpacing !== 0) {
+         if (this.sloganLetterSpacing !== 0) {
+
           this.drawTextWithSpacing(ctx, singleLineSlogan, x, sloganY, this.sloganLetterSpacing);
+
         } else {
+
           ctx.fillText(singleLineSlogan, x, sloganY);
+
         }
       }
     }

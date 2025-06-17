@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { Logo, LogoTemplate } from '../models/logo.model';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -12,10 +13,16 @@ export class LogoService {
   public logos$ = this.logosSubject.asObservable();
   public currentLogo$ = this.currentLogoSubject.asObservable();
 
-  constructor() {
+  constructor(private http: HttpClient) {
+    
     this.initializeDefaultLogos();
   }
 
+    getLogos(query: string, limit: number): Observable<any> {
+    return this.http.get<any>(
+      `http://20.245.229.67:8082/v1/logos/search-icons?query=${query}&limit=${limit}`
+    );
+  }
   private initializeDefaultLogos(): void {
     const defaultLogos: Logo[] = [
       {

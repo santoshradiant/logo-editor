@@ -46,11 +46,11 @@
 
   <!-- Middle Panel - Editor Controls -->
   <div class="editor-panel">
+    <div class="logo-container">
+      <img src="../../../../../assets/icons/NS_Logo.svg" alt="NS_Logo" />
+    </div>
     <!-- Brand Name Section -->
     <div class="editor-section brand-section" *ngIf="activeTab === 'brand'">
-      <div class="logo-container">
-        <img src="../../../../../assets/icons/NS_Logo.svg" alt="NS_Logo" />
-      </div>
       <div class="section-header">
         <h2>Make your name shine</h2>
         <p class="section-description">A few small tweaks can help your logo feel just right and totally on brand.</p>
@@ -241,15 +241,13 @@
       <div class="form-group">
         <label class="form-label">Slogan Text</label>
         <div class="toggle-group">
-           
           <div class="toggle-switch">
-            <input type="checkbox" id="sloganToggle" [(ngModel)]="enableSlogan" (ngModelChange)="onSloganToggle()">
+            <input type="checkbox" id="sloganToggle" [(ngModel)]="enableSlogan" (ngModelChange)="onSloganToggle()" />
             <label for="sloganToggle" class="toggle-slider"></label>
           </div>
         </div>
-       
       </div>
-      
+
       <!-- Slogan Text Input -->
       <div class="form-group" *ngIf="enableSlogan">
         <input
@@ -260,22 +258,22 @@
           (ngModelChange)="onSloganChange()"
           placeholder="Enter your slogan"
         />
-        <textarea 
+        <textarea
           *ngIf="sloganIsMultiline"
-          class="form-input multiline-input" 
-          [(ngModel)]="sloganText" 
-          (ngModelChange)="onSloganChange()" 
+          class="form-input multiline-input"
+          [(ngModel)]="sloganText"
+          (ngModelChange)="onSloganChange()"
           placeholder="Enter your slogan (use Enter for new lines)"
           rows="3"
         ></textarea>
       </div>
-      
+
       <!-- Recommended Fonts -->
       <div class="fonts-section" *ngIf="enableSlogan">
         <h3 class="subsection-title">Recommended Fonts</h3>
         <div class="fonts-grid">
-          <button 
-            *ngFor="let font of getDisplayFonts()" 
+          <button
+            *ngFor="let font of getDisplayFonts()"
             class="font-tile"
             [class.active]="sloganFont === font.name"
             (click)="selectSloganFont(font.name)"
@@ -285,7 +283,7 @@
           </button>
         </div>
       </div>
-      
+
       <!-- Custom Font Upload -->
       <div class="custom-font-section" *ngIf="enableSlogan">
         <h3 class="subsection-title">Custom Font</h3>
@@ -295,27 +293,28 @@
               <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
             </svg>
             Upload your own fonts
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" 
-                 [style.transform]="showUploadDropdown ? 'rotate(180deg)' : 'rotate(0deg)'">
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              [style.transform]="showUploadDropdown ? 'rotate(180deg)' : 'rotate(0deg)'"
+            >
               <path d="M7,10L12,15L17,10H7Z" />
             </svg>
           </button>
-          
+
           <!-- Font Formatting Controls for Slogan -->
           <div class="font-formatting-inline" *ngIf="enableSlogan">
             <div class="formatting-buttons">
-              <button class="format-btn" 
-                      [class.active]="sloganIsBold" 
-                      (click)="toggleSloganBold()"
-                      title="Bold">
+              <button class="format-btn" [class.active]="sloganIsBold" (click)="toggleSloganBold()" title="Bold">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M13.5,15.5H10V12.5H13.5A1.5,1.5 0 0,1 15,14A1.5,1.5 0 0,1 13.5,15.5M10,6.5H13A1.5,1.5 0 0,1 14.5,8A1.5,1.5 0 0,1 13,9.5H10M15.6,10.79C16.57,10.11 17.25,9.02 17.25,8C17.25,5.74 15.5,4 13.25,4H7V18H14.04C16.14,18 17.75,16.3 17.75,14.21C17.75,12.69 16.89,11.39 15.6,10.79Z" />
+                  <path
+                    d="M13.5,15.5H10V12.5H13.5A1.5,1.5 0 0,1 15,14A1.5,1.5 0 0,1 13.5,15.5M10,6.5H13A1.5,1.5 0 0,1 14.5,8A1.5,1.5 0 0,1 13,9.5H10M15.6,10.79C16.57,10.11 17.25,9.02 17.25,8C17.25,5.74 15.5,4 13.25,4H7V18H14.04C16.14,18 17.75,16.3 17.75,14.21C17.75,12.69 16.89,11.39 15.6,10.79Z"
+                  />
                 </svg>
               </button>
-              <button class="format-btn" 
-                      [class.active]="sloganIsItalic" 
-                      (click)="toggleSloganItalic()"
-                      title="Italic">
+              <button class="format-btn" [class.active]="sloganIsItalic" (click)="toggleSloganItalic()" title="Italic">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M10,4V7H12.21L8.79,15H6V18H14V15H11.79L15.21,7H18V4H10Z" />
                 </svg>
@@ -329,107 +328,137 @@
       <div class="text-alignment" *ngIf="enableSlogan">
         <label class="form-label">Alignment</label>
         <div class="alignment-buttons">
-          <button class="align-btn" [class.active]="textAlignment === 'left'" (click)="setAlignment('left')" title="Left Align">
+          <button
+            class="align-btn"
+            [class.active]="textAlignment === 'left'"
+            (click)="setAlignment('left')"
+            title="Left Align"
+          >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M3,3H21V5H3V3M3,7H15V9H3V7M3,11H21V13H3V11M3,15H15V17H3V15M3,19H21V21H3V19Z" />
             </svg>
           </button>
-          <button class="align-btn" [class.active]="textAlignment === 'center'" (click)="setAlignment('center')" title="Center Align">
+          <button
+            class="align-btn"
+            [class.active]="textAlignment === 'center'"
+            (click)="setAlignment('center')"
+            title="Center Align"
+          >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M3,3H21V5H3V3M7,7H17V9H7V7M3,11H21V13H3V11M7,15H17V17H7V15M3,19H21V21H3V19Z" />
             </svg>
           </button>
-          <button class="align-btn" [class.active]="textAlignment === 'right'" (click)="setAlignment('right')" title="Right Align">
+          <button
+            class="align-btn"
+            [class.active]="textAlignment === 'right'"
+            (click)="setAlignment('right')"
+            title="Right Align"
+          >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M3,3H21V5H3V3M9,7H21V9H9V7M3,11H21V13H3V11M9,15H21V17H9V15M3,19H21V21H3V19Z" />
             </svg>
           </button>
-          <button class="align-btn" [class.active]="textAlignment === 'left-fill'" (click)="setAlignment('left-fill')" title="Left Align with Fill">
+          <button
+            class="align-btn"
+            [class.active]="textAlignment === 'left-fill'"
+            (click)="setAlignment('left-fill')"
+            title="Left Align with Fill"
+          >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M3,3H15V5H3V3M3,7H21V9H3V7M3,11H15V13H3V11M3,15H21V17H3V15M3,19H15V21H3V19Z" />
             </svg>
           </button>
-          <button class="align-btn" [class.active]="textAlignment === 'center-fill'" (click)="setAlignment('center-fill')" title="Center Align with Fill">
+          <button
+            class="align-btn"
+            [class.active]="textAlignment === 'center-fill'"
+            (click)="setAlignment('center-fill')"
+            title="Center Align with Fill"
+          >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M3,3H21V5H3V3M3,7H21V9H3V7M7,11H17V13H7V11M3,15H21V17H3V15M3,19H21V21H3V19Z" />
             </svg>
           </button>
-          <button class="align-btn" [class.active]="textAlignment === 'right-fill'" (click)="setAlignment('right-fill')" title="Right Align with Fill">
+          <button
+            class="align-btn"
+            [class.active]="textAlignment === 'right-fill'"
+            (click)="setAlignment('right-fill')"
+            title="Right Align with Fill"
+          >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M3,3H21V5H3V3M3,7H21V9H3V7M9,11H21V13H9V11M3,15H21V17H3V15M9,19H21V21H9V19Z" />
             </svg>
           </button>
         </div>
       </div>
-      
+
       <!-- Line Count -->
       <div class="line-count-section" *ngIf="enableSlogan">
         <div class="control-row">
           <div class="control-group">
             <label class="control-label">Line Count</label>
             <div class="slider-wrapper">
-              <input 
-                type="range" 
+              <input
+                type="range"
                 class="range-slider"
-                [(ngModel)]="sloganLineCount" 
-                (ngModelChange)="onSloganLineCountChange()" 
-                min="1" 
+                [(ngModel)]="sloganLineCount"
+                (ngModelChange)="onSloganLineCountChange()"
+                min="1"
                 max="4"
                 step="1"
-              >
+              />
               <div class="slider-value">{{ sloganLineCount }}</div>
             </div>
           </div>
         </div>
       </div>
-      
+
       <!-- Controls Section -->
       <div class="controls-section" *ngIf="enableSlogan">
         <div class="control-row">
           <div class="control-group">
             <label class="control-label">Font Size</label>
             <div class="slider-wrapper">
-              <input 
-                type="range" 
+              <input
+                type="range"
                 class="range-slider"
-                [(ngModel)]="sloganFontSize" 
-                (ngModelChange)="onSloganFontSizeChange()" 
-                min="10" 
+                [(ngModel)]="sloganFontSize"
+                (ngModelChange)="onSloganFontSizeChange()"
+                min="10"
                 max="48"
-              >
+              />
             </div>
           </div>
         </div>
-        
+
         <div class="control-row">
           <div class="control-group">
             <label class="control-label">Letter Spacing</label>
             <div class="slider-wrapper">
-              <input 
-                type="range" 
+              <input
+                type="range"
                 class="range-slider"
-                [(ngModel)]="sloganLetterSpacing" 
-                (ngModelChange)="onSloganLetterSpacingChange()" 
-                min="-2" 
+                [(ngModel)]="sloganLetterSpacing"
+                (ngModelChange)="onSloganLetterSpacingChange()"
+                min="-2"
                 max="10"
-              >
+              />
             </div>
           </div>
         </div>
-        
+
         <div class="control-row">
           <div class="control-group">
             <label class="control-label">Line Height</label>
             <div class="slider-wrapper">
-              <input 
-                type="range" 
+              <input
+                type="range"
                 class="range-slider"
-                [(ngModel)]="sloganLineHeight" 
-                (ngModelChange)="onSloganLineHeightChange()" 
-                min="0.8" 
-                max="2" 
+                [(ngModel)]="sloganLineHeight"
+                (ngModelChange)="onSloganLineHeightChange()"
+                min="0.8"
+                max="2"
                 step="0.1"
-              >
+              />
             </div>
           </div>
         </div>
@@ -444,10 +473,15 @@
       </div>
 
       <!-- <div class="icon-grid"> -->
-        <div *ngIf="loading">Loading...</div>
-        <div *ngIf="!loading" class="icon-grid">
-        <button *ngFor="let icon of availableNounIcons" class="icon-option" [class.active]="selectedIcon?.id === icon.id" (click)="selectIcon(icon)">
-        <img [src]="icon.thumbnailUrl" [alt]="icon.name || 'icon'" width="20" />
+      <div *ngIf="loading">Loading...</div>
+      <div *ngIf="!loading" class="icon-grid">
+        <button
+          *ngFor="let icon of availableNounIcons"
+          class="icon-option"
+          [class.active]="selectedIcon?.id === icon.id"
+          (click)="selectIcon(icon)"
+        >
+          <img [src]="icon.thumbnailUrl" [alt]="icon.name || 'icon'" width="20" />
           <!-- *ngFor="let icon of availableIcons.slice(0, 9)"
           class="icon-option"
           [class.active]="selectedIcon?.name === icon.name"
@@ -458,7 +492,7 @@
           </div>
           <span class="icon-name">{{ icon.name }}</span> -->
         </button>
-        </div>
+      </div>
       <!-- </div> -->
 
       <div class="icon-controls" *ngIf="selectedIcon">
@@ -555,7 +589,11 @@
         </button>
       </div>
       <div class="preview-buttons">
-        <button class="action-btn primary download-btn" (click)="downloadLogo()" title="Download logo pack with PNG, SVG and JPG formats">
+        <button
+          class="action-btn primary download-btn"
+          (click)="downloadLogo()"
+          title="Download logo pack with PNG, SVG and JPG formats"
+        >
           Download
         </button>
         <button class="action-btn primary publish-btn" (click)="publishLogo()">Publish</button>

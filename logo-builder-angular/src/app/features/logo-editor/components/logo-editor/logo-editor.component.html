@@ -538,46 +538,234 @@
     <div class="editor-section" *ngIf="activeTab === 'icons'">
       <div class="section-header">
         <h2>Make your mark</h2>
-        <p class="section-description">Choose an icon that represents your brand.</p>
+        <p class="section-description">Whether you want a bold symbol or a simple monogram, you're in control to make it your own.</p>
       </div>
 
-      <!-- <div class="icon-grid"> -->
-      <div *ngIf="loading">Loading...</div>
-      <div *ngIf="!loading" class="icon-grid">
-        <button
-          *ngFor="let icon of availableNounIcons"
-          class="icon-option"
-          [class.active]="selectedIcon?.id === icon.id"
-          (click)="selectIcon(icon)"
+      <!-- Logo Icon Toggle -->
+      <div class="logo-icon-toggle">
+        <label class="control-label">Logo Icon</label>
+        <div class="toggle-wrapper">
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="showLogoIcon" (ngModelChange)="onLogoIconToggle()">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Symbol/Initials Tabs -->
+      <div class="icon-type-tabs" *ngIf="showLogoIcon">
+        <button 
+          class="tab-btn" 
+          [class.active]="activeIconType === 'symbol'" 
+          (click)="setActiveIconType('symbol')"
         >
-          <img [src]="icon.thumbnailUrl" [alt]="icon.name || 'icon'" width="20" />
-          <!-- *ngFor="let icon of availableIcons.slice(0, 9)"
-          class="icon-option"
-          [class.active]="selectedIcon?.name === icon.name"
-          (click)="selectIcon(icon)"
-        > -->
-          <!-- <div class="icon-placeholder">
-            {{ icon.name.charAt(0) }}
-          </div>
-          <span class="icon-name">{{ icon.name }}</span> -->
+          Symbol
+        </button>
+        <button 
+          class="tab-btn" 
+          [class.active]="activeIconType === 'initials'" 
+          (click)="setActiveIconType('initials')"
+        >
+          Initials
         </button>
       </div>
-      <!-- </div> -->
 
-      <div class="icon-controls" *ngIf="selectedIcon">
-        <div class="control-row">
-          <div class="control-group">
-            <label class="control-label">Size</label>
-            <div class="slider-wrapper">
-              <input
-                type="range"
-                class="range-slider"
-                [(ngModel)]="iconSize"
-                (ngModelChange)="onIconSizeChange()"
-                min="16"
-                max="128"
-              />
-            </div>
+      <!-- Symbol Tab Content -->
+      <div *ngIf="showLogoIcon && activeIconType === 'symbol'">
+        <!-- Search Box -->
+        <div class="search-box-wrapper">
+          <div class="search-input-container">
+            <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+            <input 
+              type="text" 
+              class="search-input" 
+              [(ngModel)]="iconSearchTerm" 
+              (ngModelChange)="onIconSearch()"
+              placeholder="Search icons..."
+            >
+            <button 
+              class="add-icon-btn" 
+              (click)="triggerIconSearch()"
+              title="Search for icons"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Loading State -->
+        <div *ngIf="loading" class="loading-state">
+          <div class="loading-spinner"></div>
+          <p>Loading icons...</p>
+        </div>
+
+        <!-- Icon Grid -->
+        <div *ngIf="!loading && availableNounIcons.length > 0" class="icon-grid-modern">
+          <div class="grid-header">
+            <span class="grid-counter">1 of {{ totalPages }}</span>
+          </div>
+          <div class="icon-grid-container">
+            <button
+              *ngFor="let icon of paginatedIcons"
+              class="icon-item"
+              [class.selected]="selectedIcon?.id === icon.id"
+              (click)="selectIcon(icon)"
+            >
+              <div class="icon-wrapper">
+                <img [src]="icon.thumbnailUrl" [alt]="icon.name || 'icon'" />
+              </div>
+            </button>
+          </div>
+          
+          <!-- Pagination -->
+          <div class="pagination-controls" *ngIf="totalPages > 1">
+            <button 
+              class="page-btn" 
+              [disabled]="currentPage === 1"
+              (click)="goToPage(currentPage - 1)"
+            >
+              ←
+            </button>
+            <span class="page-info">{{ currentPage }} / {{ totalPages }}</span>
+            <button 
+              class="page-btn" 
+              [disabled]="currentPage === totalPages"
+              (click)="goToPage(currentPage + 1)"
+            >
+              →
+            </button>
+          </div>
+        </div>
+
+        <!-- No Results State -->
+        <div *ngIf="!loading && availableNounIcons.length === 0 && iconSearchTerm" class="no-results">
+          <p>No icons found for "{{ iconSearchTerm }}"</p>
+        </div>
+      </div>
+
+      <!-- Initials Tab Content -->
+      <div *ngIf="showLogoIcon && activeIconType === 'initials'" class="initials-content">
+        <div class="initials-input-wrapper">
+          <label class="control-label">Enter Initials</label>
+          <input 
+            type="text" 
+            class="initials-input" 
+            [(ngModel)]="userInitials" 
+            (ngModelChange)="onInitialsChange()"
+            placeholder="AB"
+            maxlength="3"
+          >
+        </div>
+      </div>
+
+      <!-- Size Control -->
+      <div class="control-row" *ngIf="showLogoIcon && (selectedIcon || userInitials)">
+        <div class="control-group">
+          <label class="control-label">Size</label>
+          <div class="slider-wrapper">
+            <input
+              type="range"
+              class="range-slider"
+              [(ngModel)]="iconSize"
+              (ngModelChange)="onIconSizeChange()"
+              min="16"
+              max="128"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Margin Control -->
+      <div class="control-row" *ngIf="showLogoIcon && (selectedIcon || userInitials)">
+        <div class="control-group">
+          <label class="control-label">Margin</label>
+          <div class="slider-wrapper">
+            <input
+              type="range"
+              class="range-slider"
+              [(ngModel)]="iconMargin"
+              (ngModelChange)="onIconMarginChange()"
+              min="0"
+              max="50"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Background Toggle -->
+      <div class="control-row" *ngIf="showLogoIcon && (selectedIcon || userInitials)">
+        <div class="control-group">
+          <label class="control-label">Background</label>
+          <div class="toggle-wrapper">
+            <label class="switch">
+              <input type="checkbox" [(ngModel)]="iconBackground" (ngModelChange)="onIconBackgroundToggle()">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Background Content Dropdown -->
+      <div class="control-row" *ngIf="showLogoIcon && iconBackground && (selectedIcon || userInitials)">
+        <div class="control-group">
+          <label class="control-label">Rounded Corners</label>
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" name="corners" value="none" [(ngModel)]="backgroundCorners" (ngModelChange)="onBackgroundCornersChange()">
+              <span class="radio-custom"></span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="corners" value="rounded" [(ngModel)]="backgroundCorners" (ngModelChange)="onBackgroundCornersChange()">
+              <span class="radio-custom"></span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="corners" value="circle" [(ngModel)]="backgroundCorners" (ngModelChange)="onBackgroundCornersChange()">
+              <span class="radio-custom"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alignment Control -->
+      <div class="control-row" *ngIf="showLogoIcon && (selectedIcon || userInitials)">
+        <div class="control-group">
+          <label class="control-label">Alignment</label>
+          <div class="alignment-controls">
+            <button 
+              class="align-btn" 
+              [class.active]="iconAlignment === 'left'"
+              (click)="setIconAlignment('left')"
+              title="Left align"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3,3H21V5H3V3M3,7H15V9H3V7M3,11H21V13H3V11M3,15H15V17H3V15M3,19H21V21H3V19Z" />
+              </svg>
+            </button>
+            <button 
+              class="align-btn active" 
+              [class.active]="iconAlignment === 'center'"
+              (click)="setIconAlignment('center')"
+              title="Center align"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3,3H21V5H3V3M7,7H17V9H7V7M3,11H21V13H3V11M7,15H17V17H7V15M3,19H21V21H3V19Z" />
+              </svg>
+            </button>
+            <button 
+              class="align-btn" 
+              [class.active]="iconAlignment === 'right'"
+              (click)="setIconAlignment('right')"
+              title="Right align"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3,3H21V5H3V3M9,7H21V9H9V7M3,11H21V13H3V11M9,15H21V17H9V15M3,19H21V21H3V19Z" />
+              </svg>
+            </button>
           </div>
         </div>
       </div>

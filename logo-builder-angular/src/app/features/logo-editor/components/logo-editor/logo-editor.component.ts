@@ -103,7 +103,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   showColorSection: boolean = false;
 
   // Brand section
-  brandName: string = 'Urban Art Figures';
+  brandName: string = 'URBAN ART FIGURES';
   recommendedFonts: string[] = [
     'Arial', 'Helvetica', 'Times New Roman', 'Georgia', 'Verdana',
     'Trebuchet MS', 'Impact', 'Comic Sans MS', 'Courier New', 'Lucida Console'
@@ -155,19 +155,49 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   iconSize: number = 48;
   iconRotation: number = 0;
   availableNounIcons: NounIconItem[] = [];
+  
+  // New icon properties for matching the screenshot design
+  showLogoIcon: boolean = true;
+  activeIconType: 'symbol' | 'initials' = 'symbol';
+  iconSearchTerm: string = '';
+  userInitials: string = '';
+  iconMargin: number = 20;
+  iconBackground: boolean = false;
+  backgroundCorners: 'none' | 'rounded' | 'circle' = 'none';
+  iconAlignment: 'left' | 'center' | 'right' = 'center';
+  
+  // Pagination properties
+  currentPage: number = 1;
+  iconsPerPage: number = 12;
+  totalPages: number = 1;
 
- fetchLogos() {
+ fetchLogos(searchTerm: string = 'cat') {
     this.loading = true;
-    this.logoService.getLogos('cat', 20).subscribe({
+    this.logoService.getLogos(searchTerm, 60).subscribe({
       next: (data: any) => {
-        
         this.availableNounIcons = data.data.icons || [];
-        console.log('Logosfetched11', this.availableNounIcons);
-        
+        this.updatePagination();
+        console.log('Icons fetched:', this.availableNounIcons.length, 'icons');
         this.loading = false;
       },
-      error: () => this.loading = false
+      error: (error) => {
+        console.error('Error fetching icons:', error);
+        this.loading = false;
+      }
     });
+  }
+
+  get paginatedIcons(): NounIconItem[] {
+    const startIndex = (this.currentPage - 1) * this.iconsPerPage;
+    const endIndex = startIndex + this.iconsPerPage;
+    return this.availableNounIcons.slice(startIndex, endIndex);
+  }
+
+  private updatePagination(): void {
+    this.totalPages = Math.ceil(this.availableNounIcons.length / this.iconsPerPage);
+    if (this.currentPage > this.totalPages) {
+      this.currentPage = 1;
+    }
   }
 
 
@@ -281,7 +311,9 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   // Tab management
   setActiveTab(tab: string): void {
     this.activeTab = tab;
-    this.fetchLogos()
+    if (tab === 'icons' && this.availableNounIcons.length === 0) {
+      this.fetchLogos('building'); // Start with building icons to match screenshot
+    }
   }
 
   /**
@@ -507,6 +539,67 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     this.updateLogoPreview();
   }
 
+  // New methods for enhanced icon functionality
+  onLogoIconToggle(): void {
+    if (!this.showLogoIcon) {
+      this.selectedIcon = null;
+      this.userInitials = '';
+    }
+    this.updateLogoPreview();
+  }
+
+  setActiveIconType(type: 'symbol' | 'initials'): void {
+    this.activeIconType = type;
+    if (type === 'symbol') {
+      this.userInitials = '';
+    } else {
+      this.selectedIcon = null;
+    }
+    this.updateLogoPreview();
+  }
+
+  onIconSearch(): void {
+    if (this.iconSearchTerm.trim()) {
+      this.currentPage = 1;
+      this.fetchLogos(this.iconSearchTerm.trim());
+    }
+  }
+
+  triggerIconSearch(): void {
+    if (this.iconSearchTerm.trim()) {
+      this.onIconSearch();
+    }
+  }
+
+  onInitialsChange(): void {
+    this.userInitials = this.userInitials.toUpperCase().slice(0, 3);
+    this.updateLogoPreview();
+  }
+
+  onIconMarginChange(): void {
+    this.updateLogoPreview();
+  }
+
+  onIconBackgroundToggle(): void {
+    this.updateLogoPreview();
+  }
+
+  onBackgroundCornersChange(): void {
+    this.updateLogoPreview();
+  }
+
+  setIconAlignment(alignment: 'left' | 'center' | 'right'): void {
+    this.iconAlignment = alignment;
+    this.updateLogoPreview();
+  }
+
+  // Pagination methods
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
+  }
+
   // Shapes section methods
   selectShape(shape: { name: string; icon: string }): void {
     this.selectedShape = shape;
@@ -539,8 +632,8 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     // It should update the canvas or preview area
     if (this.canvasRef) {
       // Add a small delay to ensure DOM updates are complete
-      requestAnimationFrame(() => {
-        this.renderLogo();
+      requestAnimationFrame(async () => {
+        await this.renderLogo();
       });
     }
   }
@@ -847,8 +940,8 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
 
   private createNewLogo(): void {
     // Initialize with default values for new design
-    this.brandName = 'Your Brand';
-    this.sloganText = '';
+    this.brandName = 'URBAN ART FIGURES';
+    this.sloganText = 'CUSTOM DESIGNER TOYS';
     this.selectedFont = 'Arial';
     this.fontSize = 48;
     this.customColor = '#2196F3';
@@ -859,11 +952,12 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     this.iconRotation = 0;
     this.selectedIcon = null;
     this.selectedShape = null;
+    this.iconSearchTerm = 'Urban Art Figures';
     
     // Initialize canvas after view is ready with proper timing
     setTimeout(() => {
       this.updateLogoPreview();
-    }, 200);
+    }, 300);
   }
 
   private populateForm(logo: Logo): void {
@@ -922,7 +1016,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     });
   }
 
-  private renderLogo(): void {
+  private async renderLogo(): Promise<void> {
     if (!this.canvasRef) return;
     
     const canvas = this.canvasRef.nativeElement;
@@ -965,25 +1059,79 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       }
     }
 
-    // Draw selected icon (if any)
-    if (this.selectedIcon) {
-      // For now, draw a placeholder circle for the icon
-      ctx.beginPath();
-      ctx.arc(canvas.width / 2, canvas.height / 2 - 80, this.iconSize / 2, 0, 2 * Math.PI);
-      ctx.fillStyle = this.customColor;
-      ctx.fill();
-    }
-
     // Calculate text positions
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
     let brandY = centerY;
     let sloganY = centerY + 40;
 
-    // Adjust positions if icon is present
-    if (this.selectedIcon) {
-      brandY = centerY + 20;
-      sloganY = centerY + 60;
+    // Draw selected icon or initials (if enabled)
+    if (this.showLogoIcon) {
+      const iconY = centerY - 80;
+      let iconX = centerX;
+      
+      // Adjust icon position based on alignment
+      if (this.iconAlignment === 'left') {
+        iconX = centerX - 100;
+      } else if (this.iconAlignment === 'right') {
+        iconX = centerX + 100;
+      }
+      
+      if (this.selectedIcon && this.activeIconType === 'symbol') {
+        // Draw icon background if enabled
+        if (this.iconBackground) {
+          ctx.fillStyle = this.customColor + '20'; // Add transparency
+          const bgSize = this.iconSize + this.iconMargin;
+          
+          if (this.backgroundCorners === 'circle') {
+            ctx.beginPath();
+            ctx.arc(iconX, iconY, bgSize / 2, 0, 2 * Math.PI);
+            ctx.fill();
+          } else {
+            const radius = this.backgroundCorners === 'rounded' ? 8 : 0;
+            this.drawRoundedRect(ctx, iconX - bgSize/2, iconY - bgSize/2, bgSize, bgSize, radius);
+            ctx.fill();
+          }
+        }
+        
+        // Draw the actual icon image
+        await this.drawIconImage(ctx, iconX, iconY, this.selectedIcon);
+        
+        // Adjust text positions when icon is present
+        if (this.iconAlignment === 'center') {
+          brandY = iconY + this.iconSize / 2 + 30;
+          sloganY = brandY + 40;
+        }
+      } else if (this.userInitials && this.activeIconType === 'initials') {
+        // Draw initials background if enabled
+        if (this.iconBackground) {
+          ctx.fillStyle = this.customColor + '20';
+          const bgSize = this.iconSize + this.iconMargin;
+          
+          if (this.backgroundCorners === 'circle') {
+            ctx.beginPath();
+            ctx.arc(iconX, iconY, bgSize / 2, 0, 2 * Math.PI);
+            ctx.fill();
+          } else {
+            const radius = this.backgroundCorners === 'rounded' ? 8 : 0;
+            this.drawRoundedRect(ctx, iconX - bgSize/2, iconY - bgSize/2, bgSize, bgSize, radius);
+            ctx.fill();
+          }
+        }
+        
+        // Draw initials text
+        ctx.fillStyle = this.customColor;
+        ctx.font = `bold ${this.iconSize * 0.6}px ${this.getFontWithFallback(this.selectedFont)}`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(this.userInitials, iconX, iconY);
+        
+        // Adjust text positions when initials are present
+        if (this.iconAlignment === 'center') {
+          brandY = iconY + this.iconSize / 2 + 30;
+          sloganY = brandY + 40;
+        }
+      }
     }
 
     // Draw brand name
@@ -1068,6 +1216,128 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
         ctx.fillText(line.trim(), x, lineY);
       }
     });
+  }
+
+  private drawRoundedRect(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number): void {
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    ctx.lineTo(x + radius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+  }
+
+  private async drawIconImage(ctx: CanvasRenderingContext2D, x: number, y: number, icon: NounIconItem): Promise<void> {
+    if (!icon || !icon.thumbnailUrl) {
+      // Fallback: draw a placeholder circle
+      ctx.beginPath();
+      ctx.arc(x, y, this.iconSize / 2, 0, 2 * Math.PI);
+      ctx.fillStyle = this.customColor;
+      ctx.fill();
+      return;
+    }
+
+    try {
+      const img = new Image();
+      
+      // Try without CORS first, then with CORS if that fails
+      const loadImage = (useCors: boolean = false): Promise<void> => {
+        return new Promise((resolve, reject) => {
+          const newImg = new Image();
+          if (useCors) {
+            newImg.crossOrigin = 'anonymous';
+          }
+          
+          newImg.onload = () => {
+            try {
+              // Calculate the drawing size and position
+              const size = this.iconSize;
+              const drawX = x - size / 2;
+              const drawY = y - size / 2;
+              
+              // Save the current context state
+              ctx.save();
+              
+              // Create a clip path for the icon area to contain any overflow
+              ctx.beginPath();
+              ctx.arc(x, y, size / 2, 0, 2 * Math.PI);
+              ctx.clip();
+              
+              // Draw the image
+              ctx.drawImage(newImg, drawX, drawY, size, size);
+              
+              // Restore the context state
+              ctx.restore();
+              resolve();
+            } catch (error) {
+              console.error('Error drawing icon:', error);
+              reject(error);
+            }
+          };
+          
+          newImg.onerror = () => {
+            reject(new Error('Failed to load icon'));
+          };
+          
+          newImg.src = icon.thumbnailUrl;
+        });
+      };
+      
+      // Try loading without CORS first
+      try {
+        await Promise.race([
+          loadImage(false),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 3000))
+        ]);
+      } catch (firstAttemptError) {
+        // If first attempt fails, try with CORS
+        try {
+          await Promise.race([
+            loadImage(true),
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 3000))
+          ]);
+        } catch (secondAttemptError) {
+          // If both attempts fail, use placeholder
+          throw secondAttemptError;
+        }
+      }
+      
+    } catch (error) {
+      console.error('Error loading icon image:', error);
+      // Fallback: draw a placeholder with icon styling
+      ctx.save();
+      
+      // Draw a styled placeholder that indicates it's an icon
+      const size = this.iconSize;
+      const radius = size / 2;
+      
+      // Draw background circle
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, 2 * Math.PI);
+      ctx.fillStyle = this.customColor + '20'; // Semi-transparent background
+      ctx.fill();
+      
+      // Draw icon border
+      ctx.beginPath();
+      ctx.arc(x, y, radius - 2, 0, 2 * Math.PI);
+      ctx.strokeStyle = this.customColor;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      
+      // Draw a simple icon symbol (generic icon placeholder)
+      ctx.fillStyle = this.customColor;
+      ctx.font = `${size * 0.4}px Arial`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('🖼', x, y);
+      
+      ctx.restore();
+    }
   }
 
   private getFontWithFallback(fontName: string): string {

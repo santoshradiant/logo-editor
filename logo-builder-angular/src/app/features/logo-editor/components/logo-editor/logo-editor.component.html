@@ -572,7 +572,7 @@
 
       <!-- Symbol Tab Content -->
       <div *ngIf="showLogoIcon && activeIconType === 'symbol'">
-        <!-- Search Box -->
+        <!-- Search Box with Pagination -->
         <div class="search-box-wrapper">
           <div class="search-input-container">
             <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -596,6 +596,25 @@
               </svg>
             </button>
           </div>
+          
+          <!-- Pagination Controls beside search -->
+          <div class="pagination-controls-inline" *ngIf="totalPages > 1">
+            <button 
+              class="page-btn-inline" 
+              [disabled]="currentPage === 1"
+              (click)="goToPage(currentPage - 1)"
+            >
+              ←
+            </button>
+            <span class="page-info-inline">{{ currentPage }} of {{ totalPages }}</span>
+            <button 
+              class="page-btn-inline" 
+              [disabled]="currentPage === totalPages"
+              (click)="goToPage(currentPage + 1)"
+            >
+              →
+            </button>
+          </div>
         </div>
 
         <!-- Loading State -->
@@ -606,9 +625,6 @@
 
         <!-- Icon Grid -->
         <div *ngIf="!loading && availableNounIcons.length > 0" class="icon-grid-modern">
-          <div class="grid-header">
-            <span class="grid-counter">1 of {{ totalPages }}</span>
-          </div>
           <div class="icon-grid-container">
             <button
               *ngFor="let icon of paginatedIcons"
@@ -619,25 +635,6 @@
               <div class="icon-wrapper">
                 <img [src]="icon.thumbnailUrl" [alt]="icon.name || 'icon'" />
               </div>
-            </button>
-          </div>
-          
-          <!-- Pagination -->
-          <div class="pagination-controls" *ngIf="totalPages > 1">
-            <button 
-              class="page-btn" 
-              [disabled]="currentPage === 1"
-              (click)="goToPage(currentPage - 1)"
-            >
-              ←
-            </button>
-            <span class="page-info">{{ currentPage }} / {{ totalPages }}</span>
-            <button 
-              class="page-btn" 
-              [disabled]="currentPage === totalPages"
-              (click)="goToPage(currentPage + 1)"
-            >
-              →
             </button>
           </div>
         </div>

@@ -443,19 +443,23 @@
         <p class="section-description">Choose an icon that represents your brand.</p>
       </div>
 
-      <div class="icon-grid">
-        <button
-          *ngFor="let icon of availableIcons.slice(0, 9)"
+      <!-- <div class="icon-grid"> -->
+        <div *ngIf="loading">Loading...</div>
+        <div *ngIf="!loading" class="icon-grid">
+        <button *ngFor="let icon of availableNounIcons" class="icon-option" [class.active]="selectedIcon?.id === icon.id" (click)="selectIcon(icon)">
+        <img [src]="icon.thumbnailUrl" [alt]="icon.name || 'icon'" width="20" />
+          <!-- *ngFor="let icon of availableIcons.slice(0, 9)"
           class="icon-option"
           [class.active]="selectedIcon?.name === icon.name"
           (click)="selectIcon(icon)"
-        >
-          <div class="icon-placeholder">
+        > -->
+          <!-- <div class="icon-placeholder">
             {{ icon.name.charAt(0) }}
           </div>
-          <span class="icon-name">{{ icon.name }}</span>
+          <span class="icon-name">{{ icon.name }}</span> -->
         </button>
-      </div>
+        </div>
+      <!-- </div> -->
 
       <div class="icon-controls" *ngIf="selectedIcon">
         <div class="control-row">

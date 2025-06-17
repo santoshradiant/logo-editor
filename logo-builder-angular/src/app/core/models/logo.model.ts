@@ -155,3 +155,22 @@ export interface SymbolConfig {
   position?: 'left' | 'right' | 'top' | 'bottom' | 'center' | 'none';
   size?: number;
 } 
+
+export interface NounIconItem {
+  id: string;
+  name: string;
+  term: string;
+  svgUrl: string | null;
+  previewUrl: string | null;
+  attribution: string;
+  dateUploaded: string | null;
+  keywords: string;
+  iconUrl: string | null;
+  thumbnailUrl: string;
+  nounProjectId: number;
+  category: string | null;
+  license: string;
+  creatorName: string | null;
+  creatorUsername: string | null;
+  explicit: boolean;
+}

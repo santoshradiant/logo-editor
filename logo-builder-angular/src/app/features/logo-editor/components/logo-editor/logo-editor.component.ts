@@ -124,7 +124,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
 
   // Slogan section
   sloganText: string = 'CUSTOM DESIGNER TOYS';
-  textAlignment: 'left' | 'center' | 'right' = 'center';
+  textAlignment: 'left' | 'center' | 'right' | 'left-fill' | 'center-fill' | 'right-fill' = 'center';
   
   // Slogan-specific properties
   enableSlogan: boolean = true; // Toggle for "Custom Designer Toys"
@@ -344,7 +344,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   }
 
   // Slogan section methods
-  setAlignment(alignment: 'left' | 'center' | 'right'): void {
+  setAlignment(alignment: 'left' | 'center' | 'right' | 'left-fill' | 'center-fill' | 'right-fill'): void {
     this.textAlignment = alignment;
     this.updateLogoPreview();
   }
@@ -918,11 +918,9 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       
       ctx.font = `${fontStyle} ${fontWeight} ${this.fontSize}px ${fontFamily}`;
       ctx.fillStyle = this.customColor;
-      ctx.textAlign = this.textAlignment;
+      ctx.textAlign = this.getCanvasAlignment(this.textAlignment);
       
-      const x = this.textAlignment === 'left' ? 50 : 
-                this.textAlignment === 'right' ? canvas.width - 50 : 
-                centerX;
+      const x = this.getTextX(this.textAlignment, canvas.width, centerX);
       
       if (this.isMultiline) {
         // Multiline ON: Display text with line breaks
@@ -947,11 +945,9 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       
       ctx.font = `${fontStyle} ${fontWeight} ${this.sloganFontSize}px ${fontFamily}`;
       ctx.fillStyle = this.customColor;
-      ctx.textAlign = this.textAlignment;
+      ctx.textAlign = this.getCanvasAlignment(this.textAlignment);
       
-      const x = this.textAlignment === 'left' ? 50 : 
-                this.textAlignment === 'right' ? canvas.width - 50 : 
-                centerX;
+      const x = this.getTextX(this.textAlignment, canvas.width, centerX);
       
       if (this.sloganIsMultiline) {
         // Multiline ON: Display slogan with line breaks
@@ -964,6 +960,10 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
         } else {
           ctx.fillText(singleLineSlogan, x, sloganY);
         }
+        
+        // Draw fill lines for slogan if needed
+        const textWidth = ctx.measureText(singleLineSlogan).width;
+        this.drawAlignmentFill(ctx, this.textAlignment, x, sloganY, textWidth, canvas.width);
       }
     }
   }
@@ -1023,10 +1023,12 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     const chars = text.split('');
     let currentX = x;
     
-    if (this.textAlignment === 'center') {
+    const baseAlignment = this.getBaseAlignment(this.textAlignment);
+    
+    if (baseAlignment === 'center') {
       const totalWidth = chars.reduce((width, char) => width + ctx.measureText(char).width + spacing, 0) - spacing;
       currentX = x - totalWidth / 2;
-    } else if (this.textAlignment === 'right') {
+    } else if (baseAlignment === 'right') {
       const totalWidth = chars.reduce((width, char) => width + ctx.measureText(char).width + spacing, 0) - spacing;
       currentX = x - totalWidth;
     }
@@ -1035,6 +1037,69 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       ctx.fillText(char, currentX, y);
       currentX += ctx.measureText(char).width + spacing;
     });
+  }
+
+  // Helper methods for alignment
+  private getCanvasAlignment(alignment: 'left' | 'center' | 'right' | 'left-fill' | 'center-fill' | 'right-fill'): CanvasTextAlign {
+    if (alignment.includes('left')) return 'left';
+    if (alignment.includes('center')) return 'center';
+    if (alignment.includes('right')) return 'right';
+    return 'center';
+  }
+
+  private getBaseAlignment(alignment: 'left' | 'center' | 'right' | 'left-fill' | 'center-fill' | 'right-fill'): 'left' | 'center' | 'right' {
+    if (alignment.includes('left')) return 'left';
+    if (alignment.includes('center')) return 'center';
+    if (alignment.includes('right')) return 'right';
+    return 'center';
+  }
+
+  private getTextX(alignment: 'left' | 'center' | 'right' | 'left-fill' | 'center-fill' | 'right-fill', canvasWidth: number, centerX: number): number {
+    const baseAlignment = this.getBaseAlignment(alignment);
+    
+    switch (baseAlignment) {
+      case 'left':
+        return 50; // Left margin
+      case 'right':
+        return canvasWidth - 50; // Right margin
+      case 'center':
+      default:
+        return centerX;
+    }
+  }
+
+  private drawAlignmentFill(ctx: CanvasRenderingContext2D, alignment: 'left' | 'center' | 'right' | 'left-fill' | 'center-fill' | 'right-fill', 
+                           textX: number, textY: number, textWidth: number, canvasWidth: number): void {
+    if (!alignment.includes('-fill')) return;
+    
+    ctx.strokeStyle = ctx.fillStyle; // Use the same color as text
+    ctx.lineWidth = 1;
+    const lineY = textY + 5; // Position line slightly below text
+    
+    if (alignment === 'left-fill') {
+      // Draw line from right edge of text to right side
+      ctx.beginPath();
+      ctx.moveTo(textX + textWidth + 10, lineY);
+      ctx.lineTo(canvasWidth - 50, lineY);
+      ctx.stroke();
+    } else if (alignment === 'right-fill') {
+      // Draw line from left side to left edge of text
+      ctx.beginPath();
+      ctx.moveTo(50, lineY);
+      ctx.lineTo(textX - 10, lineY);
+      ctx.stroke();
+    } else if (alignment === 'center-fill') {
+      // Draw lines on both sides
+      ctx.beginPath();
+      ctx.moveTo(50, lineY);
+      ctx.lineTo(textX - textWidth/2 - 10, lineY);
+      ctx.stroke();
+      
+      ctx.beginPath();
+      ctx.moveTo(textX + textWidth/2 + 10, lineY);
+      ctx.lineTo(canvasWidth - 50, lineY);
+      ctx.stroke();
+    }
   }
 
   // Font Management

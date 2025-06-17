@@ -645,6 +645,21 @@
           border: none;
         }
       }
+
+      // Slider value display
+      .slider-value {
+        position: absolute;
+        right: 0;
+        top: -2px;
+        background: var(--ns-primary);
+        color: white;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 2px 6px;
+        border-radius: 4px;
+        min-width: 20px;
+        text-align: center;
+      }
     }
 
     .toggle-switch {
@@ -697,48 +712,69 @@
 
 // Slogan Section Specific Styles
 .text-alignment {
-  margin-top: 24px;
+  margin-bottom: 24px;
 
   .form-label {
     display: block;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
     color: #374151;
     margin-bottom: 12px;
   }
 
   .alignment-buttons {
-    display: flex;
-    gap: 8px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
 
     .align-btn {
-      flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 40px;
+      height: 38px;
       border: 1px solid #e5e7eb;
-      border-radius: 8px;
+      border-radius: 6px;
       background: #ffffff;
       cursor: pointer;
       transition: all 0.2s ease;
       color: #6b7280;
 
       svg {
-        width: 16px;
-        height: 16px;
+        width: 14px;
+        height: 14px;
       }
 
       &:hover {
-        border-color: #3b82f6;
-        background: #f8faff;
-        color: #3b82f6;
+        border-color: var(--ns-primary);
+        background: var(--ns-primary-light);
+        color: var(--ns-primary);
+        transform: translateY(-1px);
       }
 
       &.active {
-        border-color: #3b82f6;
-        background: #eff6ff;
-        color: #1d4ed8;
+        border-color: var(--ns-primary);
+        background: var(--ns-primary-light);
+        color: var(--ns-primary);
+        box-shadow: 0 2px 4px rgba(0, 184, 148, 0.2);
+      }
+    }
+  }
+
+  // Mobile responsive
+  @media (max-width: 768px) {
+    margin-bottom: 16px;
+    
+    .alignment-buttons {
+      gap: 4px;
+      
+      .align-btn {
+        height: 44px;
+        min-width: 44px;
+        
+        svg {
+          width: 12px;
+          height: 12px;
+        }
       }
     }
   }
@@ -1240,25 +1276,25 @@
   }
   
   .alignment-buttons {
-    display: flex;
-    gap: 8px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
     
     .align-btn {
-      flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 12px;
       border: 1px solid var(--ns-border-light);
-      border-radius: 8px;
+      border-radius: 6px;
       background: var(--ns-background);
       color: var(--ns-text-secondary);
       cursor: pointer;
       transition: all 0.2s ease;
       
       svg {
-        width: 16px;
-        height: 16px;
+        width: 14px;
+        height: 14px;
       }
       
       &:hover {

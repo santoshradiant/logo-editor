@@ -234,21 +234,20 @@
     <div class="editor-section" *ngIf="activeTab === 'slogan'">
       <div class="section-header">
         <h2>Bring your slogan to life</h2>
-        <p class="section-description">Tweek few logos to match your brand perception</p>
+        <p class="section-description">Tweek the style to match your brand's personality</p>
       </div>
 
       <!-- Slogan Toggle -->
       <div class="form-group">
         <label class="form-label">Slogan Text</label>
-        <div class="slogan-toggle-container">
-          <div class="toggle-group">
-            <label class="toggle-label">Custom Designer Toys</label>
-            <div class="toggle-switch">
-              <input type="checkbox" id="sloganToggle" [(ngModel)]="enableSlogan" (ngModelChange)="onSloganToggle()">
-              <label for="sloganToggle" class="toggle-slider"></label>
-            </div>
+        <div class="toggle-group">
+           
+          <div class="toggle-switch">
+            <input type="checkbox" id="sloganToggle" [(ngModel)]="enableSlogan" (ngModelChange)="onSloganToggle()">
+            <label for="sloganToggle" class="toggle-slider"></label>
           </div>
         </div>
+       
       </div>
       
       <!-- Slogan Text Input -->
@@ -328,21 +327,36 @@
 
       <!-- Alignment -->
       <div class="text-alignment" *ngIf="enableSlogan">
-        <h3 class="subsection-title">Alignment</h3>
+        <label class="form-label">Alignment</label>
         <div class="alignment-buttons">
-          <button class="align-btn" [class.active]="textAlignment === 'left'" (click)="setAlignment('left')">
+          <button class="align-btn" [class.active]="textAlignment === 'left'" (click)="setAlignment('left')" title="Left Align">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M3,3H21V5H3V3M3,7H15V9H3V7M3,11H21V13H3V11M3,15H15V17H3V15M3,19H21V21H3V19Z" />
             </svg>
           </button>
-          <button class="align-btn" [class.active]="textAlignment === 'center'" (click)="setAlignment('center')">
+          <button class="align-btn" [class.active]="textAlignment === 'center'" (click)="setAlignment('center')" title="Center Align">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M3,3H21V5H3V3M7,7H17V9H7V7M3,11H21V13H3V11M7,15H17V17H7V15M3,19H21V21H3V19Z" />
             </svg>
           </button>
-          <button class="align-btn" [class.active]="textAlignment === 'right'" (click)="setAlignment('right')">
+          <button class="align-btn" [class.active]="textAlignment === 'right'" (click)="setAlignment('right')" title="Right Align">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M3,3H21V5H3V3M9,7H21V9H9V7M3,11H21V13H3V11M9,15H21V17H9V15M3,19H21V21H3V19Z" />
+            </svg>
+          </button>
+          <button class="align-btn" [class.active]="textAlignment === 'left-fill'" (click)="setAlignment('left-fill')" title="Left Align with Fill">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3,3H15V5H3V3M3,7H21V9H3V7M3,11H15V13H3V11M3,15H21V17H3V15M3,19H15V21H3V19Z" />
+            </svg>
+          </button>
+          <button class="align-btn" [class.active]="textAlignment === 'center-fill'" (click)="setAlignment('center-fill')" title="Center Align with Fill">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3,3H21V5H3V3M3,7H21V9H3V7M7,11H17V13H7V11M3,15H21V17H3V15M3,19H21V21H3V19Z" />
+            </svg>
+          </button>
+          <button class="align-btn" [class.active]="textAlignment === 'right-fill'" (click)="setAlignment('right-fill')" title="Right Align with Fill">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3,3H21V5H3V3M3,7H21V9H3V7M9,11H21V13H9V11M3,15H21V17H3V15M9,19H21V21H9V19Z" />
             </svg>
           </button>
         </div>
@@ -350,14 +364,22 @@
       
       <!-- Line Count -->
       <div class="line-count-section" *ngIf="enableSlogan">
-        <h3 class="subsection-title">Line Count</h3>
-        <div class="line-count-selector">
-          <select class="line-count-dropdown" [(ngModel)]="sloganLineCount" (ngModelChange)="onSloganLineCountChange()">
-            <option value="1">1 Line</option>
-            <option value="2">2 Lines</option>
-            <option value="3">3 Lines</option>
-            <option value="4">4 Lines</option>
-          </select>
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Line Count</label>
+            <div class="slider-wrapper">
+              <input 
+                type="range" 
+                class="range-slider"
+                [(ngModel)]="sloganLineCount" 
+                (ngModelChange)="onSloganLineCountChange()" 
+                min="1" 
+                max="4"
+                step="1"
+              >
+              <div class="slider-value">{{ sloganLineCount }}</div>
+            </div>
+          </div>
         </div>
       </div>
       

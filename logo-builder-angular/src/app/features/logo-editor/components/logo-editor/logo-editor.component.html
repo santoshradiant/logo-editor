@@ -8,7 +8,7 @@
         (click)="setActiveTab('brand')"
         title="Brand Name"
       >
-        <img src="../../../../../assets/icons/name.svg" alt="NS_Logo" />
+        <img [src]="getTabIconPath('brand')" alt="Brand Name" />
       </button>
 
       <button
@@ -17,11 +17,11 @@
         (click)="setActiveTab('slogan')"
         title="Slogan"
       >
-        <img src="../../../../../assets/icons/slogan.svg" alt="NS_Logo" />
+        <img [src]="getTabIconPath('slogan')" alt="Slogan" />
       </button>
 
       <button class="nav-icon-btn" [class.active]="activeTab === 'icons'" (click)="setActiveTab('icons')" title="Icons">
-        <img src="../../../../../assets/icons/icon.svg" alt="NS_Logo" />
+        <img [src]="getTabIconPath('icons')" alt="Icons" />
       </button>
 
       <button
@@ -30,7 +30,7 @@
         (click)="setActiveTab('shapes')"
         title="Shapes"
       >
-        <img src="../../../../../assets/icons/shape.svg" alt="NS_Logo" />
+        <img [src]="getTabIconPath('shapes')" alt="Shapes" />
       </button>
 
       <button
@@ -39,7 +39,7 @@
         (click)="setActiveTab('colors')"
         title="Colors"
       >
-        <img src="../../../../../assets/icons/color.svg" alt="NS_Logo" />
+        <img [src]="getTabIconPath('colors')" alt="Colors" />
       </button>
     </div>
   </div>
@@ -92,73 +92,91 @@
       </div>
 
       <div class="custom-font-section">
-        <h3 class="subsection-title">Custom Font</h3>
-        <div class="upload-dropdown-container">
-          <button class="upload-btn" (click)="toggleUploadDropdown()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
-            </svg>
-            Upload your own fonts
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              [style.transform]="showUploadDropdown ? 'rotate(180deg)' : 'rotate(0deg)'"
-            >
-              <path d="M7,10L12,15L17,10H7Z" />
-            </svg>
-          </button>
+        <h3 class="subsection-title">Select your own fonts</h3>
+        <div class="font-selection-row">
+          <div class="custom-font-dropdown-container">
+            <button class="custom-font-btn" (click)="toggleCustomFontDropdown()">
+              <span class="selected-font-display" [style.font-family]="selectedFont">
+                {{ selectedFont }}
+              </span>
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                [style.transform]="showCustomFontDropdown ? 'rotate(180deg)' : 'rotate(0deg)'"
+              >
+                <path d="M7,10L12,15L17,10H7Z" />
+              </svg>
+            </button>
 
-          <!-- Upload Dropdown -->
-          <div class="upload-dropdown" *ngIf="showUploadDropdown">
-            <div class="upload-zone">
-              <input
-                type="file"
-                id="font-upload"
-                (change)="onFileUpload($event)"
-                accept=".ttf,.otf,.woff,.woff2"
-                style="display: none"
-              />
-              <label for="font-upload" class="upload-label">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
-                </svg>
-                <span>Choose font file</span>
-                <small>TTF, OTF, WOFF, WOFF2</small>
-              </label>
-            </div>
+            <!-- Simplified Font Dropdown -->
+            <div class="custom-font-dropdown" *ngIf="showCustomFontDropdown">
+              <!-- Available Fonts List -->
+              <div class="font-list">
+                <div class="font-item" *ngFor="let font of getDisplayFonts()" (click)="selectFont(font.name)">
+                  <span class="font-name" [style.font-family]="font.family" [class.active]="selectedFont === font.name">
+                    {{ font.display }}
+                  </span>
+                </div>
+              </div>
 
-            <!-- Uploaded Fonts List -->
-            <div class="uploaded-fonts" *ngIf="uploadedFonts.length > 0">
-              <div class="uploaded-font-item" *ngFor="let font of uploadedFonts" (click)="selectUploadedFont(font)">
-                <span class="font-name" [style.font-family]="font.family">{{ font.name }}</span>
+              <!-- Upload Font Section -->
+              <div class="upload-section">
+                <div class="section-divider"></div>
+                <div class="upload-zone">
+                  <input
+                    type="file"
+                    id="font-upload-brand"
+                    (change)="onFileUpload($event)"
+                    accept=".ttf,.otf,.woff,.woff2"
+                    style="display: none"
+                  />
+                  <label for="font-upload-brand" class="upload-label">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                    </svg>
+                    <span>Upload custom font</span>
+                  </label>
+                </div>
+
+                <!-- Uploaded Fonts -->
+                <div class="uploaded-fonts" *ngIf="uploadedFonts.length > 0">
+                  <div class="font-item" *ngFor="let font of uploadedFonts" (click)="selectUploadedFont(font)">
+                    <span class="font-name" [style.font-family]="font.family" [class.active]="selectedFont === font.name">
+                      {{ font.name }}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="upload-loading" *ngIf="isUploadingFont">
+                  <div class="loading-spinner"></div>
+                  <span>Uploading font...</span>
+                </div>
               </div>
             </div>
+          </div>
 
-            <!-- Font Formatting Controls -->
-            <div class="font-formatting" *ngIf="uploadedFonts.length > 0 || selectedFont !== 'Arial'">
-              <div class="formatting-label">Text Style</div>
-              <div class="formatting-buttons">
-                <button class="format-btn" [class.active]="isBold" (click)="toggleBold()" title="Bold">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                    <path
-                      d="M13.5,15.5H10V12.5H13.5A1.5,1.5 0 0,1 15,14A1.5,1.5 0 0,1 13.5,15.5M10,6.5H13A1.5,1.5 0 0,1 14.5,8A1.5,1.5 0 0,1 13,9.5H10M15.6,10.79C16.57,10.11 17.25,9.02 17.25,8C17.25,5.74 15.5,4 13.25,4H7V18H14.04C16.14,18 17.75,16.3 17.75,14.21C17.75,12.69 16.89,11.39 15.6,10.79Z"
-                    />
-                  </svg>
-                </button>
-                <button class="format-btn" [class.active]="isItalic" (click)="toggleItalic()" title="Italic">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M10,4V7H12.21L8.79,15H6V18H14V15H11.79L15.21,7H18V4H10Z" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-            <div class="upload-loading" *ngIf="isUploadingFont">
-              <div class="loading-spinner"></div>
-              <span>Uploading font...</span>
-            </div>
+          <!-- Font Style Controls - Outside Dropdown -->
+          <div class="font-style-controls">
+            <button 
+              class="style-btn" 
+              [class.active]="isBold" 
+              (click)="toggleBold()"
+              title="Bold">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M13.5,15.5H10V12.5H13.5A1.5,1.5 0 0,1 15,14A1.5,1.5 0 0,1 13.5,15.5M10,6.5H13A1.5,1.5 0 0,1 14.5,8A1.5,1.5 0 0,1 13,9.5H10M15.6,10.79C16.57,10.11 17.25,9.02 17.25,8C17.25,5.74 15.5,4 13.25,4H7V18H14.04C16.14,18 17.75,16.3 17.75,14.21C17.75,12.69 16.89,11.39 15.6,10.79Z" />
+              </svg>
+            </button>
+            <button 
+              class="style-btn" 
+              [class.active]="isItalic" 
+              (click)="toggleItalic()"
+              title="Italic">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M10,4V7H12.21L8.79,15H6V18H14V15H11.79L15.21,7H18V4H10Z" />
+              </svg>
+            </button>
           </div>
         </div>
       </div>
@@ -284,42 +302,93 @@
         </div>
       </div>
 
-      <!-- Custom Font Upload -->
+      <!-- Custom Font Selection for Slogan -->
       <div class="custom-font-section" *ngIf="enableSlogan">
-        <h3 class="subsection-title">Custom Font</h3>
-        <div class="upload-dropdown-container">
-          <button class="upload-btn" (click)="toggleUploadDropdown()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
-            </svg>
-            Upload your own fonts
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              [style.transform]="showUploadDropdown ? 'rotate(180deg)' : 'rotate(0deg)'"
-            >
-              <path d="M7,10L12,15L17,10H7Z" />
-            </svg>
-          </button>
+        <h3 class="subsection-title">Select your own fonts</h3>
+        <div class="font-selection-row">
+          <div class="custom-font-dropdown-container">
+            <button class="custom-font-btn" (click)="toggleSloganCustomFontDropdown()">
+              <span class="selected-font-display" [style.font-family]="sloganFont">
+                {{ sloganFont }}
+              </span>
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                [style.transform]="showSloganCustomFontDropdown ? 'rotate(180deg)' : 'rotate(0deg)'"
+              >
+                <path d="M7,10L12,15L17,10H7Z" />
+              </svg>
+            </button>
 
-          <!-- Font Formatting Controls for Slogan -->
-          <div class="font-formatting-inline" *ngIf="enableSlogan">
-            <div class="formatting-buttons">
-              <button class="format-btn" [class.active]="sloganIsBold" (click)="toggleSloganBold()" title="Bold">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                  <path
-                    d="M13.5,15.5H10V12.5H13.5A1.5,1.5 0 0,1 15,14A1.5,1.5 0 0,1 13.5,15.5M10,6.5H13A1.5,1.5 0 0,1 14.5,8A1.5,1.5 0 0,1 13,9.5H10M15.6,10.79C16.57,10.11 17.25,9.02 17.25,8C17.25,5.74 15.5,4 13.25,4H7V18H14.04C16.14,18 17.75,16.3 17.75,14.21C17.75,12.69 16.89,11.39 15.6,10.79Z"
+            <!-- Simplified Font Dropdown for Slogan -->
+            <div class="custom-font-dropdown" *ngIf="showSloganCustomFontDropdown">
+              <!-- Available Fonts List -->
+              <div class="font-list">
+                <div class="font-item" *ngFor="let font of getDisplayFonts()" (click)="selectSloganFont(font.name)">
+                  <span class="font-name" [style.font-family]="font.family" [class.active]="sloganFont === font.name">
+                    {{ font.display }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Upload Font Section -->
+              <div class="upload-section">
+                <div class="section-divider"></div>
+                <div class="upload-zone">
+                  <input
+                    type="file"
+                    id="font-upload-slogan"
+                    (change)="onFileUpload($event)"
+                    accept=".ttf,.otf,.woff,.woff2"
+                    style="display: none"
                   />
-                </svg>
-              </button>
-              <button class="format-btn" [class.active]="sloganIsItalic" (click)="toggleSloganItalic()" title="Italic">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M10,4V7H12.21L8.79,15H6V18H14V15H11.79L15.21,7H18V4H10Z" />
-                </svg>
-              </button>
+                  <label for="font-upload-slogan" class="upload-label">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                    </svg>
+                    <span>Upload custom font</span>
+                  </label>
+                </div>
+
+                <!-- Uploaded Fonts -->
+                <div class="uploaded-fonts" *ngIf="uploadedFonts.length > 0">
+                  <div class="font-item" *ngFor="let font of uploadedFonts" (click)="selectSloganFont(font.name)">
+                    <span class="font-name" [style.font-family]="font.family" [class.active]="sloganFont === font.name">
+                      {{ font.name }}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="upload-loading" *ngIf="isUploadingFont">
+                  <div class="loading-spinner"></div>
+                  <span>Uploading font...</span>
+                </div>
+              </div>
             </div>
+          </div>
+
+          <!-- Font Style Controls - Outside Dropdown -->
+          <div class="font-style-controls">
+            <button 
+              class="style-btn" 
+              [class.active]="sloganIsBold" 
+              (click)="toggleSloganBold()"
+              title="Bold">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M13.5,15.5H10V12.5H13.5A1.5,1.5 0 0,1 15,14A1.5,1.5 0 0,1 13.5,15.5M10,6.5H13A1.5,1.5 0 0,1 14.5,8A1.5,1.5 0 0,1 13,9.5H10M15.6,10.79C16.57,10.11 17.25,9.02 17.25,8C17.25,5.74 15.5,4 13.25,4H7V18H14.04C16.14,18 17.75,16.3 17.75,14.21C17.75,12.69 16.89,11.39 15.6,10.79Z" />
+              </svg>
+            </button>
+            <button 
+              class="style-btn" 
+              [class.active]="sloganIsItalic" 
+              (click)="toggleSloganItalic()"
+              title="Italic">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M10,4V7H12.21L8.79,15H6V18H14V15H11.79L15.21,7H18V4H10Z" />
+              </svg>
+            </button>
           </div>
         </div>
       </div>

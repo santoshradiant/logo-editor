@@ -122,6 +122,8 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   uploadedFonts: Array<{ name: string; family: string; file?: File }> = [];
   showUploadDropdown: boolean = false;
   isUploadingFont: boolean = false;
+  showCustomFontDropdown: boolean = false;
+  showSloganCustomFontDropdown: boolean = false;
 
   // Slogan section
   sloganText: string = 'CUSTOM DESIGNER TOYS';
@@ -247,6 +249,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     this.loadCustomFonts();
     this.loadAdvancedFeatures();
     this.setupUndoRedo();
+    this.setupClickOutsideListener();
     
     const logoId = this.route.snapshot.paramMap.get('id');
     if (logoId && logoId !== 'new') {
@@ -254,6 +257,20 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     } else {
       this.createNewLogo();
     }
+  }
+
+  private setupClickOutsideListener(): void {
+    document.addEventListener('click', (event) => {
+      const target = event.target as HTMLElement;
+      
+      // Check if click is outside custom font dropdowns
+      const isInsideCustomFontDropdown = target.closest('.custom-font-dropdown-container');
+      
+      if (!isInsideCustomFontDropdown) {
+        this.showCustomFontDropdown = false;
+        this.showSloganCustomFontDropdown = false;
+      }
+    });
   }
 
   ngOnDestroy(): void {
@@ -267,10 +284,33 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     this.fetchLogos()
   }
 
+  /**
+   * Gets the appropriate icon path based on tab selection state
+   * @param tabName - The name of the tab ('brand', 'slogan', 'icons', 'shapes', 'colors')
+   * @returns The path to the selected or unselected SVG icon
+   */
+  getTabIconPath(tabName: string): string {
+    const isActive = this.activeTab === tabName;
+    const iconFolder = isActive ? 'selected-svg' : 'unselected-svg';
+    
+    // Map tab names to icon file names
+    const iconMap: { [key: string]: string } = {
+      'brand': 'name.svg',
+      'slogan': 'slogan.svg', 
+      'icons': 'icon.svg',
+      'shapes': 'shape.svg',
+      'colors': 'color.svg'
+    };
+    
+    const iconFileName = iconMap[tabName] || 'name.svg';
+    return `assets/icons/${iconFolder}/${iconFileName}`;
+  }
+
   // Brand section methods
   selectFont(font: string): void {
     const oldFont = this.selectedFont;
     this.selectedFont = font;
+    this.showCustomFontDropdown = false;
     
     // Force canvas update with a small delay to ensure font is applied
     setTimeout(() => {
@@ -317,6 +357,24 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   toggleUploadDropdown(): void {
     this.showUploadDropdown = !this.showUploadDropdown;
   }
+
+  toggleCustomFontDropdown(): void {
+    this.showCustomFontDropdown = !this.showCustomFontDropdown;
+    // Close the other dropdown if open
+    if (this.showCustomFontDropdown) {
+      this.showSloganCustomFontDropdown = false;
+    }
+  }
+
+  toggleSloganCustomFontDropdown(): void {
+    this.showSloganCustomFontDropdown = !this.showSloganCustomFontDropdown;
+    // Close the other dropdown if open
+    if (this.showSloganCustomFontDropdown) {
+      this.showCustomFontDropdown = false;
+    }
+  }
+
+
 
   onFileUpload(event: any): void {
     const file = event.target.files[0];
@@ -379,6 +437,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   selectSloganFont(font: string): void {
     const oldFont = this.sloganFont;
     this.sloganFont = font;
+    this.showSloganCustomFontDropdown = false;
     
     // Force canvas update with a small delay to ensure font is applied
     setTimeout(() => {

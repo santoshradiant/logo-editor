@@ -99,20 +99,19 @@
       }
 
       img {
-        width: 20px;
-        height: 20px;
+        width: 42px;
+        height: 42px;
         transition: all 0.2s ease;
 
         // Mobile responsive
         @media (max-width: 768px) {
-          width: 18px;
-          height: 18px;
+          width: 40px;
+          height: 40px;
         }
       }
 
       &:hover {
-        background: #f3f4f6;
-        color: #374151;
+        background: rgba(243, 244, 246, 0.5);
         transform: translateY(-1px);
 
         // Mobile responsive - remove transform on mobile
@@ -122,8 +121,9 @@
       }
 
       &.active {
-        background: var(--ns-primary-light);
-        color: var(--ns-primary);
+        // Remove background styling to let SVG handle selected state
+        background: transparent;
+        color: inherit;
 
         // Mobile responsive - bottom indicator instead of side arrow
         @media (max-width: 768px) {
@@ -536,6 +536,276 @@
         span {
           font-size: 14px;
           color: #6b7280;
+        }
+      }
+    }
+  }
+
+  // Font Selection Row Layout
+  .font-selection-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 24px;
+
+    .custom-font-dropdown-container {
+      flex: 1;
+      position: relative;
+    }
+
+    .font-style-controls {
+      display: flex;
+      gap: 8px;
+      margin-top: 2px; // Align with dropdown button
+
+      .style-btn {
+        width: 44px;
+        height: 44px;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        color: #6b7280;
+
+        &:hover {
+          border-color: var(--ns-primary);
+          background: var(--ns-primary-light);
+          color: var(--ns-primary);
+        }
+
+        &:focus {
+          outline: none;
+          border-color: var(--ns-primary);
+          box-shadow: 0 0 0 3px rgba(0, 184, 148, 0.1);
+        }
+
+        &.active {
+          background: var(--ns-primary);
+          border-color: var(--ns-primary);
+          color: white;
+        }
+
+        svg {
+          width: 16px;
+          height: 16px;
+        }
+      }
+    }
+
+    // Mobile responsive adjustments
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: 16px;
+
+      .font-style-controls {
+        margin-top: 0;
+        justify-content: flex-start;
+      }
+    }
+  }
+
+  // Enhanced Custom Font Dropdown Styles
+  .custom-font-dropdown-container {
+    position: relative;
+
+    .custom-font-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      background: #ffffff;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 14px;
+      color: #374151;
+
+      &:hover {
+        border-color: var(--ns-primary);
+        box-shadow: 0 0 0 3px rgba(0, 184, 148, 0.1);
+      }
+
+      .selected-font-display {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+        text-align: left;
+
+        .font-style-indicators {
+          display: flex;
+          gap: 4px;
+
+          .style-indicator {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            border-radius: 3px;
+            background: var(--ns-primary);
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+
+            &.bold {
+              font-weight: 900;
+            }
+
+            &.italic {
+              font-style: italic;
+            }
+          }
+        }
+      }
+
+      svg {
+        transition: transform 0.2s ease;
+        color: #6b7280;
+      }
+    }
+
+    .custom-font-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      margin-top: 4px;
+      max-height: 400px;
+      overflow-y: auto;
+
+      .font-list {
+        padding: 8px 0;
+        
+        .font-item {
+          padding: 12px 16px;
+          border-bottom: 1px solid #f3f4f6;
+          cursor: pointer;
+          transition: background-color 0.2s ease;
+
+          &:hover {
+            background: var(--ns-primary-light);
+          }
+
+          &:last-child {
+            border-bottom: none;
+          }
+
+          .font-name {
+            font-size: 16px;
+            font-weight: 500;
+            color: #374151;
+            display: block;
+
+            &.active {
+              color: var(--ns-primary);
+              font-weight: 600;
+            }
+          }
+        }
+      }
+
+      .upload-section {
+        border-top: 1px solid #f3f4f6;
+        padding: 16px;
+
+        .section-divider {
+          height: 1px;
+          background: #f3f4f6;
+          margin: -16px -16px 16px -16px;
+        }
+
+        .upload-zone {
+          margin-bottom: 16px;
+
+          .upload-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            background: #f9fafb;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #6b7280;
+            font-size: 14px;
+
+            &:hover {
+              border-color: var(--ns-primary);
+              background: var(--ns-primary-light);
+              color: var(--ns-primary);
+            }
+
+            svg {
+              width: 16px;
+              height: 16px;
+            }
+          }
+        }
+
+        .uploaded-fonts {
+          .font-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #f3f4f6;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+
+            &:hover {
+              background: var(--ns-primary-light);
+            }
+
+            &:last-child {
+              border-bottom: none;
+            }
+
+            .font-name {
+              font-size: 14px;
+              color: #374151;
+              display: block;
+
+              &.active {
+                color: var(--ns-primary);
+                font-weight: 600;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Mobile responsive for custom font dropdown
+  @media (max-width: 768px) {
+    .custom-font-dropdown-container {
+      .custom-font-dropdown {
+        .font-list .font-item {
+          padding: 16px;
+
+          .font-name {
+            text-align: center;
+          }
+        }
+
+        .upload-section {
+          .uploaded-fonts .font-item {
+            padding: 16px;
+
+            .font-name {
+              text-align: center;
+            }
+          }
         }
       }
     }

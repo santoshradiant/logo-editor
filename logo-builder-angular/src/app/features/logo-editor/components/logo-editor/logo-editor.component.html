@@ -535,7 +535,7 @@
     </div>
 
     <!-- Icons Section -->
-    <div class="editor-section" *ngIf="activeTab === 'icons'">
+    <div class="editor-section brand-section" *ngIf="activeTab === 'icons'">
       <div class="section-header">
         <h2>Make your mark</h2>
         <p class="section-description">Whether you want a bold symbol or a simple monogram, you're in control to make it your own.</p>
@@ -664,6 +664,7 @@
       </div>
 
       <!-- Size Control -->
+       <div class="controls-section">
       <div class="control-row" *ngIf="showLogoIcon && (selectedIcon || userInitials)">
         <div class="control-group">
           <label class="control-label">Size</label>
@@ -679,8 +680,10 @@
           </div>
         </div>
       </div>
+      </div>
 
       <!-- Margin Control -->
+       <div class="controls-section">
       <div class="control-row" *ngIf="showLogoIcon && (selectedIcon || userInitials)">
         <div class="control-group">
           <label class="control-label">Margin</label>
@@ -696,8 +699,10 @@
           </div>
         </div>
       </div>
+      </div>
 
       <!-- Background Toggle -->
+        <div class="controls-section">
       <div class="control-row" *ngIf="showLogoIcon && (selectedIcon || userInitials)">
         <div class="control-group">
           <label class="control-label">Background</label>
@@ -709,7 +714,7 @@
           </div>
         </div>
       </div>
-
+</div>
       <!-- Background Content Dropdown -->
       <div class="control-row" *ngIf="showLogoIcon && iconBackground && (selectedIcon || userInitials)">
         <div class="control-group">

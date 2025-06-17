@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/co
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import JSZip from 'jszip';
 
 import { LogoService } from '../../../../core/services/logo.service';
 import { LogoRendererService } from '../../../../core/services/logo-renderer.service';
@@ -122,8 +123,19 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   isUploadingFont: boolean = false;
 
   // Slogan section
-  sloganText: string = '';
+  sloganText: string = 'CUSTOM DESIGNER TOYS';
   textAlignment: 'left' | 'center' | 'right' = 'center';
+  
+  // Slogan-specific properties
+  enableSlogan: boolean = true; // Toggle for "Custom Designer Toys"
+  sloganFont: string = 'Arial';
+  sloganFontSize: number = 16;
+  sloganLetterSpacing: number = 0;
+  sloganLineHeight: number = 1.2;
+  sloganIsBold: boolean = false;
+  sloganIsItalic: boolean = false;
+  sloganIsMultiline: boolean = false;
+  sloganLineCount: number = 1;
 
   // Icons section
   availableIcons: Array<{ name: string; url: string }> = [
@@ -175,6 +187,12 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   // Export and Undo/Redo
   exportFormats = ['PNG', 'JPG', 'SVG', 'PDF'];
   exportPresets: string[] = [];
+  
+  // Download configuration
+  downloadFormats = {
+    enabled: ['PNG', 'SVG', 'JPG'], // Currently enabled formats
+    planned: ['WEBP', 'PDF'], // Planned future formats
+  };
 
   // UI State
   showFontPanel = false;
@@ -334,6 +352,69 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   onSloganChange(): void {
     this.updateLogoPreview();
   }
+  
+  // Slogan-specific methods
+  onSloganToggle(): void {
+    this.updateLogoPreview();
+  }
+
+  selectSloganFont(font: string): void {
+    const oldFont = this.sloganFont;
+    this.sloganFont = font;
+    
+    // Force canvas update with a small delay to ensure font is applied
+    setTimeout(() => {
+      this.updateLogoPreview();
+    }, 50);
+    
+    // Create undo/redo command for slogan font
+    const command = {
+      execute: () => {
+        this.sloganFont = font;
+        setTimeout(() => {
+          this.updateLogoPreview();
+        }, 10);
+      },
+      undo: () => {
+        this.sloganFont = oldFont;
+        setTimeout(() => {
+          this.updateLogoPreview();
+        }, 10);
+      },
+      description: 'Change slogan font'
+    };
+    this.undoRedoService.executeCommand(command);
+  }
+
+  onSloganFontSizeChange(): void {
+    this.updateLogoPreview();
+  }
+
+  onSloganLetterSpacingChange(): void {
+    this.updateLogoPreview();
+  }
+
+  onSloganLineHeightChange(): void {
+    this.updateLogoPreview();
+  }
+
+  toggleSloganBold(): void {
+    this.sloganIsBold = !this.sloganIsBold;
+    this.updateLogoPreview();
+  }
+
+  toggleSloganItalic(): void {
+    this.sloganIsItalic = !this.sloganIsItalic;
+    this.updateLogoPreview();
+  }
+
+  onSloganMultilineToggle(): void {
+    this.updateLogoPreview();
+  }
+
+  onSloganLineCountChange(): void {
+    this.updateLogoPreview();
+  }
 
   // Icons section methods
   selectIcon(icon: { name: string; url: string }): void {
@@ -387,15 +468,206 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Download functionality
-  downloadLogo(): void {
-    if (this.canvasRef) {
-      const canvas = this.canvasRef.nativeElement;
-      const link = document.createElement('a');
-      link.download = `${this.brandName || 'logo'}.png`;
-      link.href = canvas.toDataURL();
-      link.click();
+  // Enhanced download functionality with multiple formats
+  async downloadLogo(): Promise<void> {
+    if (!this.canvasRef) {
+      console.error('Canvas reference not available');
+      return;
     }
+
+    try {
+      const canvas = this.canvasRef.nativeElement;
+      const brandName = this.brandName || 'logo';
+      const sanitizedBrandName = brandName.replace(/[^a-zA-Z0-9]/g, '_');
+      
+      // Create ZIP file
+      const zip = new JSZip();
+      
+      // Generate PNG format
+      const pngDataUrl = canvas.toDataURL('image/png');
+      const pngBase64 = pngDataUrl.split(',')[1];
+      zip.file(`${sanitizedBrandName}.png`, pngBase64, { base64: true });
+      
+      // Generate SVG format
+      const svgContent = this.generateSVG();
+      zip.file(`${sanitizedBrandName}.svg`, svgContent);
+      
+      // Generate other formats (extensible for future formats)
+      const additionalFormats = await this.generateAdditionalFormats(canvas, sanitizedBrandName);
+      additionalFormats.forEach(format => {
+        zip.file(format.filename, format.content, format.options || {});
+      });
+      
+      // Generate ZIP file and download
+      const zipBlob = await zip.generateAsync({ type: 'blob' });
+      this.downloadBlob(zipBlob, `${sanitizedBrandName}_logo_pack.zip`);
+      
+      console.log('Logo pack downloaded successfully');
+    } catch (error) {
+      console.error('Error downloading logo pack:', error);
+    }
+  }
+
+  // Generate SVG content from current logo state
+  private generateSVG(): string {
+    const canvas = this.canvasRef.nativeElement;
+    const width = canvas.width;
+    const height = canvas.height;
+    
+    let svgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">`;
+    
+    // Background
+    svgContent += `<rect width="100%" height="100%" fill="white"/>`;
+    
+    // Brand name text
+    if (this.brandName) {
+      const fontSize = this.fontSize;
+      const fontFamily = this.getFontWithFallback(this.selectedFont);
+      const x = width / 2;
+      const y = height / 2;
+      const textColor = this.customColor;
+      
+      let textStyle = '';
+      if (this.isBold) textStyle += 'font-weight: bold; ';
+      if (this.isItalic) textStyle += 'font-style: italic; ';
+      if (this.letterSpacing !== 0) textStyle += `letter-spacing: ${this.letterSpacing}px; `;
+      
+      if (this.isMultiline) {
+        const lines = this.brandName.split('\n');
+        const lineHeight = fontSize * this.lineHeight;
+        const startY = y - ((lines.length - 1) * lineHeight) / 2;
+        
+        lines.forEach((line, index) => {
+          const lineY = startY + (index * lineHeight);
+          svgContent += `<text x="${x}" y="${lineY}" font-family="${fontFamily}" font-size="${fontSize}" fill="${textColor}" text-anchor="middle" dominant-baseline="middle" style="${textStyle}">${this.escapeXml(line)}</text>`;
+        });
+      } else {
+        svgContent += `<text x="${x}" y="${y}" font-family="${fontFamily}" font-size="${fontSize}" fill="${textColor}" text-anchor="middle" dominant-baseline="middle" style="${textStyle}">${this.escapeXml(this.brandName)}</text>`;
+      }
+    }
+    
+    // Slogan text
+    if (this.enableSlogan && this.sloganText) {
+      const sloganY = height / 2 + this.fontSize + 30;
+      const sloganFontFamily = this.getFontWithFallback(this.sloganFont);
+      
+      let sloganStyle = '';
+      if (this.sloganIsBold) sloganStyle += 'font-weight: bold; ';
+      if (this.sloganIsItalic) sloganStyle += 'font-style: italic; ';
+      if (this.sloganLetterSpacing !== 0) sloganStyle += `letter-spacing: ${this.sloganLetterSpacing}px; `;
+      
+      svgContent += `<text x="${width / 2}" y="${sloganY}" font-family="${sloganFontFamily}" font-size="${this.sloganFontSize}" fill="${this.customColor}" text-anchor="middle" dominant-baseline="middle" style="${sloganStyle}">${this.escapeXml(this.sloganText)}</text>`;
+    }
+    
+    svgContent += '</svg>';
+    return svgContent;
+  }
+
+  // Generate additional formats (extensible for future formats)
+  private async generateAdditionalFormats(canvas: HTMLCanvasElement, brandName: string): Promise<Array<{filename: string, content: any, options?: any}>> {
+    const formats: Array<{filename: string, content: any, options?: any}> = [];
+    
+    // Add JPEG format
+    if (this.downloadFormats.enabled.includes('JPG')) {
+      try {
+        const jpegDataUrl = canvas.toDataURL('image/jpeg', 0.9);
+        const jpegBase64 = jpegDataUrl.split(',')[1];
+        formats.push({
+          filename: `${brandName}.jpg`,
+          content: jpegBase64,
+          options: { base64: true }
+        });
+      } catch (error) {
+        console.warn('Could not generate JPEG format:', error);
+      }
+    }
+    
+    // Add WebP format (if supported by browser)
+    if (this.downloadFormats.enabled.includes('WEBP')) {
+      try {
+        const webpDataUrl = canvas.toDataURL('image/webp', 0.9);
+        if (webpDataUrl.startsWith('data:image/webp')) {
+          const webpBase64 = webpDataUrl.split(',')[1];
+          formats.push({
+            filename: `${brandName}.webp`,
+            content: webpBase64,
+            options: { base64: true }
+          });
+        }
+      } catch (error) {
+        console.warn('Could not generate WebP format:', error);
+      }
+    }
+    
+    // Add PDF format (placeholder for future implementation)
+    if (this.downloadFormats.enabled.includes('PDF')) {
+      try {
+        const pdfContent = await this.generatePDF(canvas, brandName);
+        if (pdfContent) {
+          formats.push({
+            filename: `${brandName}.pdf`,
+            content: pdfContent,
+            options: { base64: true }
+          });
+        }
+      } catch (error) {
+        console.warn('Could not generate PDF format:', error);
+      }
+    }
+    
+    return formats;
+  }
+
+  // Generate PDF format (placeholder for future implementation)
+  private async generatePDF(canvas: HTMLCanvasElement, brandName: string): Promise<string | null> {
+    // This is a placeholder for PDF generation
+    // In the future, you can implement PDF generation using libraries like jsPDF
+    console.log('PDF generation not yet implemented');
+    return null;
+  }
+
+  // Method to enable/disable download formats
+  enableDownloadFormat(format: string): void {
+    if (!this.downloadFormats.enabled.includes(format) && 
+        (this.downloadFormats.planned.includes(format) || ['PNG', 'SVG', 'JPG', 'WEBP', 'PDF'].includes(format))) {
+      this.downloadFormats.enabled.push(format);
+      console.log(`${format} format enabled for download`);
+    }
+  }
+
+  disableDownloadFormat(format: string): void {
+    const index = this.downloadFormats.enabled.indexOf(format);
+    if (index > -1) {
+      this.downloadFormats.enabled.splice(index, 1);
+      console.log(`${format} format disabled for download`);
+    }
+  }
+
+  // Get current download formats
+  getEnabledDownloadFormats(): string[] {
+    return [...this.downloadFormats.enabled];
+  }
+
+  // Utility method to escape XML characters
+  private escapeXml(text: string): string {
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  // Utility method to download blob
+  private downloadBlob(blob: Blob, filename: string): void {
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
   }
 
   publishLogo(): void {
@@ -667,13 +939,13 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     }
 
     // Draw slogan
-    if (this.sloganText) {
-      // Create font string with fallbacks
-      const fontFamily = this.getFontWithFallback(this.selectedFont);
-      const fontWeight = this.isBold ? 'bold' : 'normal';
-      const fontStyle = this.isItalic ? 'italic' : 'normal';
+    if (this.sloganText && this.enableSlogan) {
+      // Create font string with fallbacks for slogan
+      const fontFamily = this.getFontWithFallback(this.sloganFont);
+      const fontWeight = this.sloganIsBold ? 'bold' : 'normal';
+      const fontStyle = this.sloganIsItalic ? 'italic' : 'normal';
       
-      ctx.font = `${fontStyle} ${fontWeight} ${this.fontSize * 0.4}px ${fontFamily}`;
+      ctx.font = `${fontStyle} ${fontWeight} ${this.sloganFontSize}px ${fontFamily}`;
       ctx.fillStyle = this.customColor;
       ctx.textAlign = this.textAlignment;
       
@@ -681,13 +953,17 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
                 this.textAlignment === 'right' ? canvas.width - 50 : 
                 centerX;
       
-      if (this.isMultiline) {
+      if (this.sloganIsMultiline) {
         // Multiline ON: Display slogan with line breaks
-        this.drawMultilineText(ctx, this.sloganText, x, sloganY, this.fontSize * 0.4 * this.lineHeight);
+        this.drawMultilineText(ctx, this.sloganText, x, sloganY, this.sloganFontSize * this.sloganLineHeight);
       } else {
         // Multiline OFF: Display slogan as single line
         const singleLineSlogan = this.sloganText.replace(/\n/g, ' ');
-        ctx.fillText(singleLineSlogan, x, sloganY);
+        if (this.sloganLetterSpacing !== 0) {
+          this.drawTextWithSpacing(ctx, singleLineSlogan, x, sloganY, this.sloganLetterSpacing);
+        } else {
+          ctx.fillText(singleLineSlogan, x, sloganY);
+        }
       }
     }
   }

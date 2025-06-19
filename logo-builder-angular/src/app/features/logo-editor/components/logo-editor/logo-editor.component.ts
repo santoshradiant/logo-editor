@@ -213,13 +213,36 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   selectedShape: { name: string; icon: string } | null = null;
 
   // Colors section
-  colorPalettes: string[][] = [
-    // Network Solutions Brand Palette (top priority)
-    ['#00B894', '#00A085', '#10C9A5', '#2D3436', '#636E72'],
-    ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7'],
-    ['#6C5CE7', '#A29BFE', '#FD79A8', '#FDCB6E', '#E17055'],
-    ['#2D3436', '#636E72', '#B2BEC3', '#DDD', '#FFF'],
-    ['#E84393', '#FD79A8', '#FDCB6E', '#E17055', '#D63031']
+
+  // colorPalettes: string[][] = [
+  //   // Network Solutions Brand Palette (top priority)
+  //   ['#00B894', '#00A085', '#10C9A5', '#2D3436', '#636E72'],
+  //   ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7'],
+  //   ['#6C5CE7', '#A29BFE', '#FD79A8', '#FDCB6E', '#E17055'],
+  //   ['#2D3436', '#636E72', '#B2BEC3', '#DDD', '#FFF'],
+  //   ['#E84393', '#FD79A8', '#FDCB6E', '#E17055', '#D63031']
+
+  colorPalettes: { left: string; right: string }[] = [
+    { left: '#6ec0d6', right: '#06040e' },
+    { left: '#ffd700', right: '#d32f2f' },
+    { left: '#0047ab', right: '#ffdd87' },
+    { left: '#e6958b', right: '#990033' },
+    { left: '#4b0082', right: '#ff4500' },
+    { left: '#f5f5dc', right: '#002b36' },
+    { left: '#d4d95b', right: '#004d25' },
+    { left: '#eeff00', right: '#5c5c5c' },
+    { left: '#808080', right: '#000000' },
+    { left: '#90ee90', right: '#00008b' },
+    { left: '#d4af37', right: '#1e3a8a' },
+    { left: '#b0e0e6', right: '#0077be' },
+    { left: '#c5c58a', right: '#6a0dad' },
+    { left: '#ffff66', right: '#4b0082' },
+    { left: '#f4a460', right: '#3b0a45' },
+    { left: '#c0c0c0', right: '#000000' },
+    { left: '#9370db', right: '#8b008b' },
+    { left: '#00ffcc', right: '#003366' },
+    { left: '#ffdab9', right: '#800080' },
+    { left: '#7fffd4', right: '#2f4f4f' }
   ];
   customColor: string = '#00B894'; // Network Solutions green
 

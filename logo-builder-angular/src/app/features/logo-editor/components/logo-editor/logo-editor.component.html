@@ -809,7 +809,7 @@
         <p class="section-description">Choose colors that reflect your brand personality.</p>
       </div>
 
-      <div class="color-palettes">
+      <!-- <div class="color-palettes">
         <div class="palette-row" *ngFor="let palette of colorPalettes">
           <div
             *ngFor="let color of palette"
@@ -819,7 +819,17 @@
             (click)="selectColor(color)"
           ></div>
         </div>
-      </div>
+      </div> -->
+<div class="color-palatte-grid">
+  <div
+    class="capsule"
+    *ngFor="let palette of colorPalettes; let i = index"    
+  >
+    <div class="half left" [ngStyle]="{ 'background-color': palette.left }"></div>
+    <div class="half right" [ngStyle]="{ 'background-color': palette.right }"></div>
+  </div>
+</div>
+
 
       <div class="custom-color-section">
         <label class="form-label">Custom Color</label>

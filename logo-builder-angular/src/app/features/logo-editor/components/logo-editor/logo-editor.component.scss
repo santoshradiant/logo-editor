@@ -2261,3 +2261,30 @@
     box-sizing: border-box;
   }
 }
+
+.color-palatte-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 62px);
+  gap: 32px;
+}
+
+.capsule {
+  width: 58px;
+  height: 24px;
+  display: flex;
+  overflow: hidden;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+  cursor: pointer;
+
+  &.selected {
+    border: 2px solid lime;
+    box-shadow: 0 0 0 2px black;
+  }
+
+  .half {
+    flex: 1;
+    height: 100%;
+  }
+}

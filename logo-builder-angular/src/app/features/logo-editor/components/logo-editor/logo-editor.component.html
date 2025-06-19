@@ -803,37 +803,201 @@
     </div>
 
     <!-- Colors Section -->
-    <div class="editor-section" *ngIf="activeTab === 'colors'">
+    <div class="editor-section colors-section" *ngIf="activeTab === 'colors'">
       <div class="section-header">
         <h2>Define your brand's tone</h2>
-        <p class="section-description">Choose colors that reflect your brand personality.</p>
+        <p class="section-description">From vibrant to minimal, we've got ready-made palettes to get you started, or create your own if you have something specific in mind.</p>
       </div>
 
-      <!-- <div class="color-palettes">
-        <div class="palette-row" *ngFor="let palette of colorPalettes">
+      <!-- Recommended Colors -->
+      <div class="recommended-colors">
+        <h3 class="subsection-title">Recommended Colors</h3>
+        <div class="color-schemes-grid">
           <div
-            *ngFor="let color of palette"
-            class="color-swatch"
-            [style.backgroundColor]="color"
-            [class.active]="customColor === color"
-            (click)="selectColor(color)"
-          ></div>
+            *ngFor="let scheme of colorSchemes; let i = index"
+            class="color-scheme-pill"
+            [class.selected]="selectedColorScheme === i"
+            [class.hovered]="hoveredColorScheme === i"
+            (click)="selectColorScheme(i)"
+            (mouseenter)="hoveredColorScheme = i"
+            (mouseleave)="hoveredColorScheme = null"
+          >
+            <div
+              class="color-dot"
+              [style.backgroundColor]="scheme.primary"
+            ></div>
+            <div
+              class="color-dot"
+              [style.backgroundColor]="scheme.secondary"
+            ></div>
+          </div>
         </div>
-      </div> -->
-<div class="color-palatte-grid">
-  <div
-    class="capsule"
-    *ngFor="let palette of colorPalettes; let i = index"    
-  >
-    <div class="half left" [ngStyle]="{ 'background-color': palette.left }"></div>
-    <div class="half right" [ngStyle]="{ 'background-color': palette.right }"></div>
-  </div>
-</div>
+      </div>
 
-
+      <!-- Custom Color Section -->
       <div class="custom-color-section">
-        <label class="form-label">Custom Color</label>
-        <input type="color" class="color-input" [(ngModel)]="customColor" (ngModelChange)="onCustomColorChange()" />
+        <h3 class="subsection-title">Custom Color</h3>
+        
+        <!-- Custom Color Button -->
+        <div class="custom-color-toggle" *ngIf="!showCustomColorOptions">
+          <button 
+            class="custom-color-btn"
+            (click)="toggleCustomColorOptions()"
+            (mouseenter)="hoverCustomButton = true"
+            (mouseleave)="hoverCustomButton = false"
+            [class.hovered]="hoverCustomButton"
+          >
+            <svg class="custom-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10,-4.48 10,-10S17.52,2 12,2zM17,13h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
+            </svg>
+            <span>Custom</span>
+          </button>
+        </div>
+
+        <!-- Custom Color Options -->
+        <div class="custom-controls" *ngIf="showCustomColorOptions">
+          <div class="color-controls-grid">
+            <!-- Icon Color -->
+            <div class="color-control-item" [class.disabled]="!componentStates.icon">
+              <label class="color-control-label">Icon Color</label>
+              <div class="color-control-input">
+                <div 
+                  class="color-preview-swatch"
+                  [style.backgroundColor]="customColors.icon"
+                  [class.disabled]="!componentStates.icon"
+                  (click)="openColorPicker('icon')"
+                >
+                  <div class="color-preview-icon" [style.color]="getContrastColor(customColors.icon)">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="hex-value" [class.disabled]="!componentStates.icon">{{ customColors.icon }}</span>
+              </div>
+            </div>
+
+            <!-- Name Color -->
+            <div class="color-control-item" [class.disabled]="!componentStates.name">
+              <label class="color-control-label">Name Color</label>
+              <div class="color-control-input">
+                <div 
+                  class="color-preview-swatch"
+                  [style.backgroundColor]="customColors.name"
+                  [class.disabled]="!componentStates.name"
+                  (click)="openColorPicker('name')"
+                >
+                  <div class="color-preview-icon" [style.color]="getContrastColor(customColors.name)">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="hex-value" [class.disabled]="!componentStates.name">{{ customColors.name }}</span>
+              </div>
+            </div>
+
+            <!-- Slogan Color -->
+            <div class="color-control-item" [class.disabled]="!componentStates.slogan">
+              <label class="color-control-label">Slogan Color</label>
+              <div class="color-control-input">
+                <div 
+                  class="color-preview-swatch"
+                  [style.backgroundColor]="customColors.slogan"
+                  [class.disabled]="!componentStates.slogan"
+                  (click)="openColorPicker('slogan')"
+                >
+                  <div class="color-preview-icon" [style.color]="getContrastColor(customColors.slogan)">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="hex-value" [class.disabled]="!componentStates.slogan">{{ customColors.slogan }}</span>
+              </div>
+            </div>
+
+            <!-- Shape Color -->
+            <div class="color-control-item" [class.disabled]="!componentStates.shape">
+              <label class="color-control-label">Shape Color</label>
+              <div class="color-control-input">
+                <div 
+                  class="color-preview-swatch"
+                  [style.backgroundColor]="customColors.shape"
+                  [class.disabled]="!componentStates.shape"
+                  (click)="openColorPicker('shape')"
+                >
+                  <div class="color-preview-icon" [style.color]="getContrastColor(customColors.shape)">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/>
+                    </svg>
+                  </div>
+                </div>
+                <span class="hex-value" [class.disabled]="!componentStates.shape">{{ customColors.shape }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Color Picker Modal -->
+      <div class="color-picker-overlay" *ngIf="showColorPicker" (click)="closeColorPicker()">
+        <div class="color-picker-modal" (click)="$event.stopPropagation()">
+          <div class="color-picker-header">
+            <h4>Choose Color</h4>
+          </div>
+          <div class="color-picker-content">
+            <!-- Color Swatches -->
+            <div class="color-swatches-grid">
+              <div
+                *ngFor="let color of colorPickerSwatches"
+                class="color-swatch-option"
+                [style.backgroundColor]="color"
+                [class.selected]="selectedPickerColor === color"
+                [class.hovered]="hoveredPickerColor === color"
+                (click)="selectPickerColor(color)"
+                (mouseenter)="hoveredPickerColor = color"
+                (mouseleave)="hoveredPickerColor = null"
+              ></div>
+            </div>
+            
+            <!-- Hex Input -->
+            <div class="hex-input-section">
+              <label>Hex Color</label>
+              <input 
+                type="text" 
+                class="hex-input"
+                [(ngModel)]="tempHexValue"
+                (ngModelChange)="onHexInputChange()"
+                placeholder="#000000"
+                maxlength="7"
+              />
+            </div>
+          </div>
+          <div class="color-picker-actions">
+            <button 
+              class="picker-btn cancel-btn"
+              [class.enabled]="true"
+              [class.hovered]="hoverCancelBtn"
+              (click)="cancelColorPicker()"
+              (mouseenter)="hoverCancelBtn = true"
+              (mouseleave)="hoverCancelBtn = false"
+            >
+              Cancel
+            </button>
+            <button 
+              class="picker-btn apply-btn"
+              [class.enabled]="hasColorChanged"
+              [class.hovered]="hoverApplyBtn && hasColorChanged"
+              [disabled]="!hasColorChanged"
+              (click)="applyColorPicker()"
+              (mouseenter)="hoverApplyBtn = true"
+              (mouseleave)="hoverApplyBtn = false"
+            >
+              Apply
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

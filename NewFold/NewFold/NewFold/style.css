@@ -1,0 +1,1398 @@
+.logo-builder-color {
+  background-color: var(--am-base-dc-theme-grey-light4-f5f5f5);
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  position: relative;
+}
+
+.logo-builder-color .overlap {
+  height: 100vh;
+  position: relative;
+  width: 100%;
+}
+
+.logo-builder-color .logo-builder-desktop {
+  background-color: var(--am-base-dc-theme-grey-light4-f5f5f5);
+  height: 100vh;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+.logo-builder-color .overlap-group {
+  height: 100vh;
+  left: -1px;
+  position: relative;
+  top: -1px;
+  width: calc(100% + 2px);
+}
+
+.logo-builder-color .editor-pane {
+  align-items: center;
+  background-color: var(--am-base-dc-theme-white-fff);
+  display: flex;
+  flex-direction: column;
+  gap: 2vh;
+  height: 100vh;
+  left: 4.5%;
+  padding: 10vh 2vw 2vh;
+  position: absolute;
+  top: 1px;
+  width: 31.5%;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.logo-builder-color .color {
+  align-items: flex-start;
+  align-self: stretch;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 24px;
+  position: relative;
+  width: 100%;
+}
+
+.logo-builder-color .div {
+  align-items: flex-start;
+  align-self: stretch;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 1vh;
+  position: relative;
+  width: 100%;
+}
+
+.logo-builder-color .text-wrapper {
+  align-self: stretch;
+  color: var(--am-base-dc-theme-black-000);
+  font-family: "Inter-SemiBold", Helvetica;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+}
+
+.logo-builder-color .p {
+  align-self: stretch;
+  color: var(--am-base-dc-theme-grey-light1-7c7c7c);
+  font-family: "Inter-Medium", Helvetica;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 24px;
+  position: relative;
+}
+
+.logo-builder-color .color-selector {
+  align-items: flex-start;
+  align-self: stretch;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 2vh;
+  position: relative;
+  width: 100%;
+}
+
+.logo-builder-color .text-wrapper-2 {
+  align-self: stretch;
+  color: var(--am-base-dc-theme-black-000);
+  font-family: "Inter-SemiBold", Helvetica;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+}
+
+.logo-builder-color .element-color-palettes {
+  align-items: flex-start;
+  align-self: stretch;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 2vh;
+  position: relative;
+  width: 100%;
+}
+
+.logo-builder-color .row {
+  align-items: flex-start;
+  align-self: stretch;
+  display: flex;
+  flex: 0 0 auto;
+  gap: 2vw;
+  position: relative;
+  width: 100%;
+}
+
+/* Color swatch container for positioning */
+.logo-builder-color .color-swatch-container {
+  position: relative;
+  display: inline-block;
+}
+
+.logo-builder-color .color-swatch {
+  align-items: center;
+  background-color: var(--am-base-dc-theme-white-fff);
+  border: 1px solid;
+  border-color: #cccccc;
+  border-radius: 90px;
+  display: flex;
+  height: 26px;
+  margin-bottom: -1.00px;
+  margin-left: -1.00px;
+  margin-top: -1.00px;
+  overflow: hidden;
+  position: relative;
+  width: 60px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.logo-builder-color .color-swatch:hover,
+.logo-builder-color .color-swatch.hovered {
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Generic color classes for dynamic colors */
+.logo-builder-color .color-primary {
+  align-self: stretch;
+  flex: 1;
+  flex-grow: 1;
+  position: relative;
+}
+
+.logo-builder-color .color-secondary {
+  align-self: stretch;
+  flex: 1;
+  flex-grow: 1;
+  position: relative;
+}
+
+.logo-builder-color .color-swatch-2 {
+  align-items: center;
+  background-color: var(--am-base-dc-theme-white-fff);
+  border: 1px solid;
+  border-color: #cccccc;
+  border-radius: 90px;
+  display: flex;
+  height: 26px;
+  margin-bottom: -1.00px;
+  margin-top: -1.00px;
+  overflow: hidden;
+  position: relative;
+  transform: rotate(180deg);
+  width: 60px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.logo-builder-color .color-swatch-2:hover,
+.logo-builder-color .color-swatch-2.hovered {
+  transform: rotate(180deg) scale(1.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.logo-builder-color .color-6 {
+  align-self: stretch;
+  background-color: #fed662;
+  flex: 1;
+  flex-grow: 1;
+  position: relative;
+}
+
+.logo-builder-color .color-7 {
+  align-self: stretch;
+  background-color: #00539c;
+  flex: 1;
+  flex-grow: 1;
+  position: relative;
+}
+
+.logo-builder-color .color-8 {
+  align-self: stretch;
+  background-color: #9e0f30;
+  flex: 1;
+  flex-grow: 1;
+  position: relative;
+}
+
+.logo-builder-color .color-9 {
+  align-self: stretch;
+  background-color: #e9877e;
+  flex: 1;
+  flex-grow: 1;
+  position: relative;
+}
+
+.logo-builder-color .selected {
+  height: 26px;
+  left: -1px;
+  position: absolute;
+  top: -1px;
+  width: 60px;
+}
+
+.logo-builder-color .white-stroke-wrapper {
+  border: 2px solid;
+  border-color: #007a33;
+  border-radius: 50px;
+  height: 30px;
+  left: -2px;
+  position: relative;
+  top: -2px;
+  width: 64px;
+}
+
+.logo-builder-color .white-stroke {
+  border: 1px solid;
+  border-color: #ffffff;
+  border-radius: 50px;
+  height: 26px;
+  width: 60px;
+}
+
+.logo-builder-color .color-swatch-3 {
+  align-items: center;
+  background-color: var(--am-base-dc-theme-white-fff);
+  border: 1px solid;
+  border-color: #cccccc;
+  border-radius: 90px;
+  display: flex;
+  height: 26px;
+  margin-bottom: -1.00px;
+  margin-left: -1.00px;
+  margin-top: -1.00px;
+  overflow: hidden;
+  position: relative;
+  transform: rotate(180deg);
+  width: 60px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.logo-builder-color .color-swatch-3:hover,
+.logo-builder-color .color-swatch-3.hovered {
+  transform: rotate(180deg) scale(1.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.logo-builder-color .color-10 {
+  align-self: stretch;
+  background-color: #da5a2a;
+  flex: 1;
+  flex-grow: 1;
+  position: relative;
+}
+
+.logo-builder-color .color-11 {
+  align-self: stretch;
+  background-color: #3b1876;
+  flex: 1;
+  flex-grow: 1;
+  position: relative;
+}
+
+.logo-builder-color .color-12 {
+  align-self: stretch;
+  background-color: #02343f;
+  flex: 1;
+  flex-grow: 1;
+  position: relative;
+}
+
+.logo-builder-color .color-13 {
+  align-self: stretch;
+  background-color: #efedcb;
+  flex: 1;
+  flex-grow: 1;
+  position: relative;
+}
+
+.logo-builder-color .color-14 {
+  align-self: stretch;
+  background-color: #06553b;
+  flex: 1;
+  flex-grow: 1;
+  position: relative;
+}
+
+.logo-builder-color .color-15 {
+  align-self: stretch;
+  background-color: #ced469;
+  flex: 1;
+  flex-grow: 1;
+  position: relative;
+}
+
+.logo-builder-color .color-16 {
+  align-self: stretch;
+  background-color: #606060;
+  flex: 1;
+  flex-grow: 1;
+  position: relative;
+}
+
+.logo-builder-color .color-17 {
+  align-self: stretch;
+  background-color: #d5ec16;
+  flex: 1;
+  flex-grow: 1;
+  position: relative;
+}
+
+.logo-builder-color .color-18 {
+  align-self: stretch;
+  background-color: #18518f;
+  flex: 1;
+  flex-grow: 1;
+  position: relative;
+}
+
+.logo-builder-color .color-19 {
+  align-self: stretch;
+  background-color: #a2a2a1;
+  flex: 1;
+  flex-grow: 1;
+  position: relative;
+}
+
+.logo-builder-color .color-20 {
+  align-self: stretch;
+  background-color: #00203f;
+  flex: 1;
+  flex-grow: 1;
+  position: relative;
+}
+
+.logo-builder-color .color-21 {
+  align-self: stretch;
+  background-color: #adefd1;
+  flex: 1;
+  flex-grow: 1;
+  position: relative;
+}
+
+.logo-builder-color .color-22 {
+  align-self: stretch;
+  background-color: #1e4173;
+  flex: 1;
+  flex-grow: 1;
+  position: relative;
+}
+
+.logo-builder-color .color-23 {
+  align-self: stretch;
+  background-color: #dda94a;
+  flex: 1;
+  flex-grow: 1;
+  position: relative;
+}
+
+.logo-builder-color .color-24 {
+  align-self: stretch;
+  background-color: #0162b1;
+  flex: 1;
+  flex-grow: 1;
+  position: relative;
+}
+
+.logo-builder-color .color-25 {
+  align-self: stretch;
+  background-color: #9cc3d5;
+  flex: 1;
+  flex-grow: 1;
+  position: relative;
+}
+
+.logo-builder-color .color-26 {
+  align-self: stretch;
+  background-color: #76528a;
+  flex: 1;
+  flex-grow: 1;
+  position: relative;
+}
+
+.logo-builder-color .color-27 {
+  align-self: stretch;
+  background-color: #cbce91;
+  flex: 1;
+  flex-grow: 1;
+  position: relative;
+}
+
+.logo-builder-color .color-28 {
+  align-self: stretch;
+  background-color: #412057;
+  flex: 1;
+  flex-grow: 1;
+  position: relative;
+}
+
+.logo-builder-color .color-29 {
+  align-self: stretch;
+  background-color: #fbf950;
+  flex: 1;
+  flex-grow: 1;
+  position: relative;
+}
+
+.logo-builder-color .color-30 {
+  align-self: stretch;
+  background-color: #49274f;
+  flex: 1;
+  flex-grow: 1;
+  position: relative;
+}
+
+.logo-builder-color .color-31 {
+  align-self: stretch;
+  background-color: #efa07a;
+  flex: 1;
+  flex-grow: 1;
+  position: relative;
+}
+
+.logo-builder-color .custom-color {
+  align-items: flex-start;
+  align-self: stretch;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 1vh;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+}
+
+.logo-builder-color .custom-button {
+  height: 24px;
+  position: relative;
+  width: 87px;
+}
+
+.logo-builder-color .static {
+  align-items: flex-start;
+  display: flex;
+  gap: 4px;
+  height: 24px;
+  position: relative;
+  width: 87px;
+}
+
+.logo-builder-color .frame {
+  align-items: center;
+  align-self: stretch;
+  background-color: var(--am-base-dc-theme-grey-light4-f5f5f5);
+  border: 1px dashed;
+  border-color: #cccccc;
+  border-radius: 90px;
+  display: flex;
+  flex: 1;
+  flex-grow: 1;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: -1.00px;
+  margin-left: -1.00px;
+  margin-right: -1.00px;
+  margin-top: -1.00px;
+  padding: 12px 16px;
+  position: relative;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.logo-builder-color .frame:hover {
+  background-color: #e8e8e8;
+  border-color: #007a33;
+  transform: scale(1.02);
+}
+
+.logo-builder-color .fill {
+  height: 12px !important;
+  margin-bottom: -4.00px !important;
+  margin-left: -4.00px !important;
+  margin-top: -6.00px !important;
+  position: relative !important;
+  width: 12px !important;
+}
+
+.logo-builder-color .text-wrapper-3 {
+  color: var(--am-brand-amm-theme-primary);
+  font-family: "Inter-Medium", Helvetica;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 24px;
+  margin-bottom: -10.00px;
+  margin-right: -2.00px;
+  margin-top: -12.00px;
+  position: relative;
+  text-align: center;
+  text-decoration: underline;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+/* Custom color picker styles */
+.logo-builder-color .custom-color-picker {
+  display: flex;
+  align-items: center;
+  gap: 1vw;
+  margin-top: 1vh;
+  padding: 0.5vh 1vw;
+  background-color: #f9f9f9;
+  border-radius: 0.5vw;
+  border: 1px solid #e0e0e0;
+}
+
+.logo-builder-color .color-input {
+  width: 3vw;
+  height: 2.5vh;
+  min-width: 35px;
+  min-height: 25px;
+  border: none;
+  border-radius: 0.3vw;
+  cursor: pointer;
+}
+
+.logo-builder-color .color-value {
+  font-family: "Inter-Medium", Helvetica;
+  font-size: 0.8vw;
+  min-font-size: 10px;
+  color: #666;
+  text-transform: uppercase;
+}
+
+.logo-builder-color .center-preview {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+  height: 100vh;
+  left: 36%;
+  padding: 10vh 2vw 2vh 3vw;
+  position: absolute;
+  top: 1px;
+  width: 64%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.logo-builder-color .frame-wrapper {
+  align-items: flex-end;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+  height: 75vh;
+  justify-content: center;
+  padding: 0px 2vw 0px 0px;
+  position: relative;
+  width: 100%;
+}
+
+.logo-builder-color .frame-2 {
+  align-self: stretch;
+  background-color: var(--am-base-dc-theme-white-fff);
+  border-radius: 4px;
+  box-shadow: var(--shadow-2);
+  flex: 1;
+  flex-grow: 1;
+  position: relative;
+  width: 100%;
+}
+
+.logo-builder-color .publish-state {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 4px;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.logo-builder-color .first {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 9px;
+  position: relative;
+}
+
+.logo-builder-color .title-tags {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 8px;
+  height: 22px;
+  position: relative;
+}
+
+.logo-builder-color .builder-tag {
+  align-items: center;
+  background-color: var(--am-base-dc-theme-success-light-ebf9ed);
+  border-radius: 6px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  justify-content: center;
+  overflow: hidden;
+  padding: 5px 8px;
+  position: relative;
+}
+
+.logo-builder-color .text-wrapper-4 {
+  color: var(--am-base-dc-theme-success-dark-034a1d);
+  font-family: "Inter-Regular", Helvetica;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 12px;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: center;
+  width: 62px;
+}
+
+.logo-builder-color .text-wrapper-5 {
+  color: var(--am-base-dc-theme-grey-light1-7c7c7c);
+  font-family: "Inter-Medium", Helvetica;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 24px;
+  margin-top: -2.00px;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.logo-builder-color .publish-menu-instance {
+  background-image: url(./menu-dots-vertical.svg) !important;
+  background-size: 100% 100% !important;
+  height: 20px !important;
+  position: relative !important;
+  width: 20px !important;
+}
+
+.logo-builder-color .app-header {
+  align-items: flex-end;
+  display: flex;
+  height: 8vh;
+  min-height: 60px;
+  max-height: 80px;
+  justify-content: space-between;
+  left: 1px;
+  padding: 0px 6% 0px 7.2%;
+  position: absolute;
+  top: 1px;
+  width: calc(100% - 1px);
+  box-sizing: border-box;
+}
+
+.logo-builder-color .element-wrapper {
+  align-items: center;
+  display: flex;
+  gap: 25.36px;
+  position: relative;
+  width: 453px;
+}
+
+.logo-builder-color .element {
+  height: 49px !important;
+  position: relative !important;
+  width: 106px !important;
+}
+
+.logo-builder-color .frame-3 {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  position: relative;
+  width: 208px;
+}
+
+.logo-builder-color .frame-4 {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 24px;
+  position: relative;
+}
+
+.logo-builder-color .div-2 {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 8px;
+  padding: 8px;
+  position: relative;
+}
+
+.logo-builder-color .builder-topbar-undo-instance {
+  background-image: url(./undo.svg) !important;
+  background-size: 100% 100% !important;
+  height: 24px !important;
+  position: relative !important;
+  width: 24px !important;
+}
+
+.logo-builder-color .builder-topbar-redo-instance {
+  background-image: url(./redo.svg) !important;
+  background-size: 100% 100% !important;
+  height: 24px !important;
+  position: relative !important;
+  width: 24px !important;
+}
+
+.logo-builder-color .line {
+  height: 24px !important;
+  object-fit: cover !important;
+  position: relative !important;
+  width: 1px !important;
+}
+
+.logo-builder-color .icon-instance-node {
+  height: 24px;
+  position: relative;
+  width: 24px;
+}
+
+.logo-builder-color .idle {
+  height: 24px;
+  opacity: 0.79;
+  overflow: hidden;
+  position: relative;
+}
+
+.logo-builder-color .vector {
+  height: 24px;
+  left: 19197px;
+  position: absolute;
+  top: -2214px;
+  width: 24px;
+}
+
+.logo-builder-color .overlap-group-2 {
+  height: 14px;
+  left: 2px;
+  position: absolute;
+  top: 5px;
+  width: 20px;
+}
+
+.logo-builder-color .check-instance {
+  height: 6px !important;
+  left: 6px !important;
+  position: absolute !important;
+  top: 5px !important;
+  width: 8px !important;
+}
+
+.logo-builder-color .union-instance {
+  height: 14px !important;
+  left: 0 !important;
+  position: absolute !important;
+  top: 0 !important;
+  width: 20px !important;
+}
+
+.logo-builder-color .button-set {
+  align-items: center;
+  display: flex;
+  gap: 24px;
+  justify-content: flex-end;
+  margin-right: -8.00px;
+  position: relative;
+  width: 595px;
+}
+
+.logo-builder-color .download-button {
+  all: unset;
+  align-items: center;
+  border: 1px solid;
+  border-color: #007a33;
+  border-radius: 6px;
+  box-sizing: border-box;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 8px;
+  height: 40px;
+  justify-content: center;
+  padding: 10px 16px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logo-builder-color .download-button:hover {
+  background-color: #f0f0f0;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.logo-builder-color .next-social-links {
+  color: var(--am-brand-amm-theme-primary);
+  font-family: "Inter-Bold", Helvetica;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 24px;
+  margin-bottom: -1.00px;
+  margin-top: -3.00px;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.logo-builder-color .publish-button {
+  all: unset;
+  align-items: center;
+  background-color: var(--am-brand-amm-theme-primary);
+  border-radius: 6px;
+  box-sizing: border-box;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 8px;
+  height: 40px;
+  justify-content: center;
+  padding: 10px 16px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logo-builder-color .publish-button:hover {
+  background-color: #005a24;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.logo-builder-color .next-social-links-2 {
+  color: var(--am-base-dc-theme-white-fff);
+  font-family: "Inter-Bold", Helvetica;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 24px;
+  margin-bottom: -1.00px;
+  margin-top: -3.00px;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.logo-builder-color .close-instance {
+  height: 32px !important;
+  left: 1385px !important;
+  position: absolute !important;
+  top: 25px !important;
+  width: 32px !important;
+}
+
+.logo-builder-color .logo-builder {
+  align-items: flex-start;
+  background-color: #ffffff;
+  border-color: #d1d1d1;
+  border-right-style: solid;
+  border-right-width: 1px;
+  display: flex;
+  flex-direction: column;
+  gap: 15vh;
+  height: 100vh;
+  justify-content: space-around;
+  left: 0;
+  max-width: 4.5vw;
+  min-width: 60px;
+  padding: 10vh 0.8vw 3vh;
+  position: absolute;
+  top: 0;
+  width: 4.5vw;
+  box-sizing: border-box;
+}
+
+.logo-builder-color .top {
+  align-items: center;
+  display: inline-flex;
+  flex: 1;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 14px;
+  position: relative;
+}
+
+.logo-builder-color .hover-top {
+  background-color: #006229;
+  border-radius: 21px;
+  height: 42px;
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  width: 42px;
+}
+
+.logo-builder-color .hover-top-2 {
+  background-color: #006229;
+  border-radius: 21px;
+  height: 42px;
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  top: 56px;
+  width: 42px;
+}
+
+.logo-builder-color .hover-top-3 {
+  background-color: #006229;
+  border-radius: 21px;
+  height: 42px;
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  top: 112px;
+  width: 42px;
+}
+
+.logo-builder-color .hover-top-4 {
+  background-color: #006229;
+  border-radius: 21px;
+  height: 42px;
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  top: 168px;
+  width: 42px;
+}
+
+.logo-builder-color .hover-top-5 {
+  background-color: #006229;
+  border-radius: 21px;
+  height: 42px;
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  top: 224px;
+  width: 42px;
+}
+
+.logo-builder-color .stencil-top {
+  height: 610px !important;
+  left: -11px !important;
+  position: absolute !important;
+  top: -24px !important;
+  width: 64px !important;
+}
+
+.logo-builder-color .logo-builder-left {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 8px;
+  padding: 9px;
+  position: relative;
+}
+
+.logo-builder-color .slogan-instance {
+  flex: 0 0 auto !important;
+  position: relative !important;
+}
+
+.logo-builder-color .shape-instance {
+  height: 20px !important;
+  left: 2px !important;
+  position: absolute !important;
+  top: 2px !important;
+  width: 20px !important;
+}
+
+.logo-builder-color .icon-palette-wrapper {
+  align-items: center;
+  background-color: var(--am-brand-amm-theme-primary-light4);
+  border-radius: 50px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 8px;
+  padding: 9px;
+  position: relative;
+}
+
+.logo-builder-color .logo-preview-image {
+  align-items: center;
+  background-color: var(--am-base-dc-theme-white-fff);
+  border: 1vw solid;
+  border-color: #58bdd9;
+  border-radius: 2vw;
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+  height: 35vh;
+  justify-content: center;
+  left: 43vw;
+  position: absolute;
+  top: 40vh;
+  width: 48vw;
+  max-width: 700px;
+  max-height: 350px;
+  box-sizing: border-box;
+}
+
+.logo-builder-color .logo-preview-image-2 {
+  height: 80%;
+  position: relative;
+  width: 80%;
+  max-width: 540px;
+  max-height: 200px;
+}
+
+.logo-builder-color .frame-5 {
+  align-items: center;
+  border: 4.11px solid;
+  border-color: #58bdd9;
+  border-radius: 20.55px;
+  display: flex;
+  gap: 2.36px;
+  height: 193px;
+  justify-content: center;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 202px;
+}
+
+.logo-builder-color .screenshot {
+  height: 111px;
+  left: 44px;
+  object-fit: cover;
+  position: absolute;
+  top: 44px;
+  width: 105px;
+}
+
+.logo-builder-color .group {
+  height: 122px;
+  left: 223px;
+  position: absolute;
+  top: 39px;
+  width: 317px;
+}
+
+.logo-builder-color .overlap-group-3 {
+  height: 122px;
+  position: relative;
+}
+
+.logo-builder-color .URBAN-ART-FIGURES-wrapper {
+  align-items: flex-end;
+  display: flex;
+  gap: 5.03px;
+  height: 101px;
+  justify-content: center;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 317px;
+}
+
+.logo-builder-color .URBAN-ART-FIGURES {
+  color: #000000;
+  font-family: "Chango-Regular", Helvetica;
+  font-size: 65.6px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: normal;
+  margin-left: -0.14px;
+  margin-right: -0.14px;
+  margin-top: -18.05px;
+  position: relative;
+  text-align: center;
+  width: fit-content;
+}
+
+.logo-builder-color .span {
+  color: #000000;
+  font-family: "Chango-Regular", Helvetica;
+  font-size: 65.6px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.logo-builder-color .text-wrapper-6 {
+  font-size: 35.2px;
+}
+
+.logo-builder-color .frame-6 {
+  align-items: center;
+  display: flex;
+  gap: 4.59px;
+  height: 25px;
+  left: 0;
+  position: absolute;
+  top: 97px;
+  width: 315px;
+}
+
+.logo-builder-color .line-wrapper {
+  align-items: flex-start;
+  align-self: stretch;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 4.59px;
+  padding: 1.15px 0px 0px;
+  position: relative;
+}
+
+.logo-builder-color .line-6 {
+  align-self: stretch !important;
+  flex: 1 !important;
+  flex-grow: 1 !important;
+  margin-bottom: -0.65px !important;
+  margin-top: -2.37px !important;
+  position: relative !important;
+  width: 100% !important;
+}
+
+.logo-builder-color .text-wrapper-7 {
+  color: #58bdd9;
+  font-family: "Orelega One-Regular", Helvetica;
+  font-size: 22.4px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: normal;
+  margin-top: -0.30px;
+  position: relative;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+/* Ultra-wide screens optimization */
+@media (min-width: 2560px) {
+  .logo-builder-color .editor-pane {
+    max-width: 700px;
+    left: 5%;
+  }
+
+  .logo-builder-color .center-preview {
+    left: 32%;
+    width: 68%;
+  }
+
+  .logo-builder-color .logo-preview-image {
+    max-width: 900px;
+    max-height: 450px;
+  }
+}
+
+/* Large screens optimization */
+@media (min-width: 1920px) and (max-width: 2559px) {
+  .logo-builder-color .editor-pane {
+    max-width: 600px;
+  }
+
+  .logo-builder-color .center-preview {
+    left: 31.25%;
+    width: 68.75%;
+  }
+
+  .logo-builder-color .logo-preview-image {
+    max-width: 800px;
+    max-height: 400px;
+  }
+}
+
+/* Responsive Design - No Scrollbars */
+@media (max-width: 1200px) {
+  .logo-builder-color .editor-pane {
+    width: 35%;
+    gap: 1.5vh;
+    padding: 8vh 1.5vw 2vh;
+  }
+
+  .logo-builder-color .center-preview {
+    left: 35%;
+    width: 65%;
+    padding: 8vh 1.5vw 2vh 2.5vw;
+  }
+
+  .logo-builder-color .app-header {
+    padding: 0px 4% 0px 6%;
+    height: 7vh;
+  }
+
+  .logo-builder-color .logo-preview-image {
+    height: 30vh;
+    width: 45vw;
+    top: 35vh;
+  }
+}
+
+@media (max-width: 992px) {
+  .logo-builder-color .editor-pane {
+    width: 40%;
+    gap: 1vh;
+    padding: 7vh 1vw 1vh;
+  }
+
+  .logo-builder-color .center-preview {
+    left: 40%;
+    width: 60%;
+    padding: 7vh 1vw 1vh 2vw;
+  }
+
+  .logo-builder-color .logo-preview-image {
+    height: 28vh;
+    width: 42vw;
+    top: 32vh;
+    border-width: 0.8vw;
+  }
+
+  .logo-builder-color .app-header {
+    height: 6vh;
+    padding: 0px 3% 0px 5%;
+  }
+
+  .logo-builder-color .button-set {
+    gap: 1vw;
+  }
+
+  .logo-builder-color .text-wrapper {
+    font-size: 24px;
+  }
+
+  .logo-builder-color .p {
+    font-size: 13px;
+    line-height: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .logo-builder-color .editor-pane {
+    width: 45%;
+    gap: 0.8vh;
+    padding: 6vh 0.8vw 1vh;
+  }
+
+  .logo-builder-color .center-preview {
+    left: 45%;
+    width: 55%;
+    padding: 6vh 0.8vw 1vh 1.5vw;
+  }
+
+  .logo-builder-color .app-header {
+    height: 5vh;
+    padding: 0px 2% 0px 4.5%;
+  }
+
+  .logo-builder-color .logo-preview-image {
+    height: 25vh;
+    width: 40vw;
+    top: 30vh;
+    border-width: 0.6vw;
+  }
+
+  .logo-builder-color .row {
+    gap: 1.5vw;
+  }
+
+  .logo-builder-color .color-swatch,
+  .logo-builder-color .color-swatch-2,
+  .logo-builder-color .color-swatch-3 {
+    width: 3.5vw;
+    height: 2vh;
+    min-width: 40px;
+    min-height: 18px;
+  }
+
+  .logo-builder-color .text-wrapper {
+    font-size: 20px;
+  }
+
+  .logo-builder-color .p {
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  .logo-builder-color .text-wrapper-2 {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-builder-color .editor-pane {
+    width: 50%;
+    gap: 0.5vh;
+    padding: 5vh 0.5vw 1vh;
+  }
+
+  .logo-builder-color .center-preview {
+    left: 50%;
+    width: 50%;
+    padding: 5vh 0.5vw 1vh 1vw;
+  }
+
+  .logo-builder-color .app-header {
+    height: 4vh;
+    padding: 0px 1% 0px 4%;
+  }
+
+  .logo-builder-color .logo-preview-image {
+    height: 20vh;
+    width: 35vw;
+    top: 25vh;
+    border-width: 0.4vw;
+  }
+
+  .logo-builder-color .button-set {
+    gap: 0.8vw;
+  }
+
+  .logo-builder-color .download-button,
+  .logo-builder-color .publish-button {
+    height: 3vh;
+    min-height: 30px;
+    padding: 0.5vh 1vw;
+    font-size: 11px;
+  }
+
+  .logo-builder-color .text-wrapper {
+    font-size: 18px;
+  }
+
+  .logo-builder-color .p {
+    font-size: 11px;
+    line-height: 16px;
+  }
+
+  .logo-builder-color .color-swatch,
+  .logo-builder-color .color-swatch-2,
+  .logo-builder-color .color-swatch-3 {
+    width: 4vw;
+    height: 1.8vh;
+    min-width: 35px;
+    min-height: 16px;
+  }
+
+  .logo-builder-color .row {
+    gap: 1vw;
+  }
+
+  .logo-builder-color .element-color-palettes {
+    gap: 1.5vh;
+  }
+}

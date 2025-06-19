@@ -212,39 +212,66 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   ];
   selectedShape: { name: string; icon: string } | null = null;
 
-  // Colors section
-
-  // colorPalettes: string[][] = [
-  //   // Network Solutions Brand Palette (top priority)
-  //   ['#00B894', '#00A085', '#10C9A5', '#2D3436', '#636E72'],
-  //   ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7'],
-  //   ['#6C5CE7', '#A29BFE', '#FD79A8', '#FDCB6E', '#E17055'],
-  //   ['#2D3436', '#636E72', '#B2BEC3', '#DDD', '#FFF'],
-  //   ['#E84393', '#FD79A8', '#FDCB6E', '#E17055', '#D63031']
-
-  colorPalettes: { left: string; right: string }[] = [
-    { left: '#6ec0d6', right: '#06040e' },
-    { left: '#ffd700', right: '#d32f2f' },
-    { left: '#0047ab', right: '#ffdd87' },
-    { left: '#e6958b', right: '#990033' },
-    { left: '#4b0082', right: '#ff4500' },
-    { left: '#f5f5dc', right: '#002b36' },
-    { left: '#d4d95b', right: '#004d25' },
-    { left: '#eeff00', right: '#5c5c5c' },
-    { left: '#808080', right: '#000000' },
-    { left: '#90ee90', right: '#00008b' },
-    { left: '#d4af37', right: '#1e3a8a' },
-    { left: '#b0e0e6', right: '#0077be' },
-    { left: '#c5c58a', right: '#6a0dad' },
-    { left: '#ffff66', right: '#4b0082' },
-    { left: '#f4a460', right: '#3b0a45' },
-    { left: '#c0c0c0', right: '#000000' },
-    { left: '#9370db', right: '#8b008b' },
-    { left: '#00ffcc', right: '#003366' },
-    { left: '#ffdab9', right: '#800080' },
-    { left: '#7fffd4', right: '#2f4f4f' }
+  // Colors section - Enhanced implementation based on figma designs
+  colorSchemes: Array<{ primary: string; secondary: string }> = [
+    { primary: '#58bdd9', secondary: '#000000' },
+    { primary: '#c72c1a', secondary: '#fdd20a' },
+    { primary: '#fed662', secondary: '#00539c' },
+    { primary: '#9e0f30', secondary: '#e9877e' },
+    { primary: '#da5a2a', secondary: '#3b1876' },
+    { primary: '#02343f', secondary: '#efedcb' },
+    { primary: '#06553b', secondary: '#ced469' },
+    { primary: '#606060', secondary: '#d5ec16' },
+    { primary: '#18518f', secondary: '#a2a2a1' },
+    { primary: '#00203f', secondary: '#adefd1' },
+    { primary: '#1e4173', secondary: '#dda94a' },
+    { primary: '#0162b1', secondary: '#9cc3d5' },
+    { primary: '#76528a', secondary: '#cbce91' },
+    { primary: '#412057', secondary: '#fbf950' },
+    { primary: '#49274f', secondary: '#efa07a' },
+    { primary: '#000000', secondary: '#a2a2a1' }
   ];
-  customColor: string = '#00B894'; // Network Solutions green
+  
+  selectedColorScheme: number = 0;
+  hoveredColorScheme: number | null = null;
+  
+  // Custom color controls
+  showCustomColorOptions: boolean = false;
+  hoverCustomButton: boolean = false;
+  
+  customColors = {
+    icon: '#58bdd9',
+    name: '#000000',
+    slogan: '#58bdd9',
+    shape: '#58bdd9'
+  };
+  
+  componentStates = {
+    icon: true,
+    name: true,
+    slogan: true,
+    shape: false
+  };
+  
+  // Color picker properties
+  showColorPicker: boolean = false;
+  currentColorType: 'icon' | 'name' | 'slogan' | 'shape' | null = null;
+  selectedPickerColor: string = '';
+  hoveredPickerColor: string | null = null;
+  tempHexValue: string = '';
+  originalColorValue: string = '';
+  hoverCancelBtn: boolean = false;
+  hoverApplyBtn: boolean = false;
+  
+  colorPickerSwatches: string[] = [
+    '#FF0000', '#FF8000', '#FFFF00', '#80FF00', '#00FF00', '#00FF80',
+    '#00FFFF', '#0080FF', '#0000FF', '#8000FF', '#FF00FF', '#FF0080',
+    '#800000', '#804000', '#808000', '#408000', '#008000', '#008040',
+    '#008080', '#004080', '#000080', '#400080', '#800080', '#800040',
+    '#000000', '#404040', '#808080', '#C0C0C0', '#FFFFFF'
+  ];
+  
+  customColor: string = '#58bdd9'; // Default primary color from first scheme
 
   // Undo/Redo functionality
   canUndo: boolean = false;
@@ -629,7 +656,112 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     this.updateLogoPreview();
   }
 
-  // Colors section methods
+  // Colors section methods - Enhanced implementation
+  selectColorScheme(index: number): void {
+    this.selectedColorScheme = index;
+    const scheme = this.colorSchemes[index];
+    
+    // Apply the selected scheme to custom colors
+    this.customColors.icon = scheme.primary;
+    this.customColors.name = scheme.secondary;
+    this.customColors.slogan = scheme.primary;
+    this.customColors.shape = scheme.primary;
+    
+    // Update main color for backward compatibility
+    this.customColor = scheme.primary;
+    
+    this.updateLogoPreview();
+  }
+
+  toggleCustomColorOptions(): void {
+    this.showCustomColorOptions = !this.showCustomColorOptions;
+    
+    // Initialize component states based on current settings
+    this.componentStates = {
+      icon: this.showLogoIcon && (this.selectedIcon !== null || this.userInitials !== ''),
+      name: this.brandName.trim() !== '',
+      slogan: this.enableSlogan && this.sloganText.trim() !== '',
+      shape: this.selectedShape !== null
+    };
+  }
+
+  openColorPicker(colorType: 'icon' | 'name' | 'slogan' | 'shape'): void {
+    if (!this.componentStates[colorType]) {
+      return; // Don't open picker for disabled components
+    }
+    
+    this.currentColorType = colorType;
+    this.originalColorValue = this.customColors[colorType];
+    this.selectedPickerColor = this.customColors[colorType];
+    this.tempHexValue = this.customColors[colorType];
+    this.showColorPicker = true;
+  }
+
+  closeColorPicker(): void {
+    this.showColorPicker = false;
+    this.currentColorType = null;
+    this.selectedPickerColor = '';
+    this.hoveredPickerColor = null;
+    this.tempHexValue = '';
+    this.originalColorValue = '';
+  }
+
+  selectPickerColor(color: string): void {
+    this.selectedPickerColor = color;
+    this.tempHexValue = color;
+  }
+
+  onHexInputChange(): void {
+    // Validate hex color format
+    const hexRegex = /^#[0-9A-F]{6}$/i;
+    if (hexRegex.test(this.tempHexValue)) {
+      this.selectedPickerColor = this.tempHexValue;
+    }
+  }
+
+  get hasColorChanged(): boolean {
+    return this.selectedPickerColor !== this.originalColorValue;
+  }
+
+  cancelColorPicker(): void {
+    this.closeColorPicker();
+  }
+
+  applyColorPicker(): void {
+    if (this.currentColorType && this.selectedPickerColor) {
+      const oldColor = this.customColors[this.currentColorType];
+      this.customColors[this.currentColorType] = this.selectedPickerColor;
+      
+      // Update main color if it's the primary color being changed
+      if (this.currentColorType === 'icon' || this.currentColorType === 'slogan') {
+        this.customColor = this.selectedPickerColor;
+      }
+      
+      this.updateLogoPreview();
+      
+      // Create undo/redo command
+      const command = new ColorChangeCommand(this, this.selectedPickerColor, oldColor);
+      this.undoRedoService.executeCommand(command);
+    }
+    
+    this.closeColorPicker();
+  }
+
+  getContrastColor(backgroundColor: string): string {
+    // Convert hex to RGB
+    const hex = backgroundColor.replace('#', '');
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    
+    // Calculate luminance
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    
+    // Return black for light backgrounds, white for dark backgrounds
+    return luminance > 0.5 ? '#000000' : '#FFFFFF';
+  }
+
+  // Legacy methods for backwards compatibility
   selectColor(color: string): void {
     const oldColor = this.customColor;
     const command = new ColorChangeCommand(this, color, oldColor);
@@ -1059,7 +1191,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
 
     // Draw selected shape background (if any)
     if (this.selectedShape) {
-      ctx.strokeStyle = this.customColor;
+      ctx.strokeStyle = this.customColors.shape;
       ctx.lineWidth = 3;
       
       switch (this.selectedShape.name) {
@@ -1103,7 +1235,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       if (this.selectedIcon && this.activeIconType === 'symbol') {
         // Draw icon background if enabled
         if (this.iconBackground) {
-          ctx.fillStyle = this.customColor + '20'; // Add transparency
+          ctx.fillStyle = this.customColors.icon + '20'; // Add transparency
           const bgSize = this.iconSize + this.iconMargin;
           
           if (this.backgroundCorners === 'circle') {
@@ -1128,7 +1260,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       } else if (this.userInitials && this.activeIconType === 'initials') {
         // Draw initials background if enabled
         if (this.iconBackground) {
-          ctx.fillStyle = this.customColor + '20';
+          ctx.fillStyle = this.customColors.icon + '20';
           const bgSize = this.iconSize + this.iconMargin;
           
           if (this.backgroundCorners === 'circle') {
@@ -1143,7 +1275,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
         }
         
         // Draw initials text
-        ctx.fillStyle = this.customColor;
+        ctx.fillStyle = this.customColors.icon;
         ctx.font = `bold ${this.iconSize * 0.6}px ${this.getFontWithFallback(this.selectedFont)}`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -1165,7 +1297,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       const fontStyle = this.isItalic ? 'italic' : 'normal';
       
       ctx.font = `${fontStyle} ${fontWeight} ${this.fontSize}px ${fontFamily}`;
-      ctx.fillStyle = this.customColor;
+      ctx.fillStyle = this.customColors.name;
       ctx.textAlign = this.getCanvasAlignment(this.textAlignment);
       
       const x = this.getTextX(this.textAlignment, canvas.width, centerX);
@@ -1192,7 +1324,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       const fontStyle = this.sloganIsItalic ? 'italic' : 'normal';
       
       ctx.font = `${fontStyle} ${fontWeight} ${this.sloganFontSize}px ${fontFamily}`;
-      ctx.fillStyle = this.customColor;
+      ctx.fillStyle = this.customColors.slogan;
       ctx.textAlign = this.getCanvasAlignment(this.textAlignment);
       
       const x = this.getTextX(this.textAlignment, canvas.width, centerX);
@@ -1260,7 +1392,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       // Fallback: draw a placeholder circle
       ctx.beginPath();
       ctx.arc(x, y, this.iconSize / 2, 0, 2 * Math.PI);
-      ctx.fillStyle = this.customColor;
+      ctx.fillStyle = this.customColors.icon;
       ctx.fill();
       return;
     }
@@ -1342,18 +1474,18 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       // Draw background circle
       ctx.beginPath();
       ctx.arc(x, y, radius, 0, 2 * Math.PI);
-      ctx.fillStyle = this.customColor + '20'; // Semi-transparent background
+      ctx.fillStyle = this.customColors.icon + '20'; // Semi-transparent background
       ctx.fill();
       
       // Draw icon border
       ctx.beginPath();
       ctx.arc(x, y, radius - 2, 0, 2 * Math.PI);
-      ctx.strokeStyle = this.customColor;
+      ctx.strokeStyle = this.customColors.icon;
       ctx.lineWidth = 2;
       ctx.stroke();
       
       // Draw a simple icon symbol (generic icon placeholder)
-      ctx.fillStyle = this.customColor;
+      ctx.fillStyle = this.customColors.icon;
       ctx.font = `${size * 0.4}px Arial`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';

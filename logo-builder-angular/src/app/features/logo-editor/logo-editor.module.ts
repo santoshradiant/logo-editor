@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { LogoEditorComponent } from './components/logo-editor/logo-editor.component';
+import { ColorPickerComponent } from './components/color-picker/color-picker.component';
 import { FontResourcesService } from '../../core/services/font-resources.service';
 import { SymbolResourcesService } from '../../core/services/symbol-resources.service';
 import { ExportService } from '../../core/services/export.service';
@@ -24,7 +25,8 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    ColorPickerComponent
   ],
   providers: [
     FontResourcesService,
@@ -33,4 +35,4 @@ const routes: Routes = [
     UndoRedoService
   ]
 })
-export class LogoEditorModule { } 
+export class LogoEditorModule { }

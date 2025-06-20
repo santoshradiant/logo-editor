@@ -1738,7 +1738,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    // background: rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1747,9 +1747,8 @@
     .color-picker-modal {
       background: #ffffff;
       border-radius: 12px;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-      max-width: 400px;
-      width: 90%;
+      // box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      max-width: 339px;
       max-height: 90vh;
       overflow: hidden;
 
@@ -2526,3 +2525,32 @@
     box-sizing: border-box;
   }
 }
+
+
+////
+
+:host {
+  display: block;
+}
+
+:root {
+  --primary--light1: #80d0ff;
+}
+
+.preset-colors button.selected {
+  border-color: var(--primary--light1);
+}
+
+.actions button {
+  opacity: 0.5;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.actions button.active {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+
+///

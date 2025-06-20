@@ -655,7 +655,7 @@
             [(ngModel)]="userInitials" 
             (ngModelChange)="onInitialsChange()"
             placeholder="AB"
-            maxlength="3"
+            maxlength="20"
           >
         </div>
       </div>
@@ -941,62 +941,9 @@
       </div>
 
       <!-- Color Picker Modal -->
-      <div class="color-picker-overlay" *ngIf="showColorPicker" (click)="closeColorPicker()">
+      <div class="color-picker-overlay" *ngIf="showColorPicker">
         <div class="color-picker-modal" (click)="$event.stopPropagation()">
-          <div class="color-picker-header">
-            <h4>Choose Color</h4>
-          </div>
-          <div class="color-picker-content">
-            <!-- Color Swatches -->
-            <div class="color-swatches-grid">
-              <div
-                *ngFor="let color of colorPickerSwatches"
-                class="color-swatch-option"
-                [style.backgroundColor]="color"
-                [class.selected]="selectedPickerColor === color"
-                [class.hovered]="hoveredPickerColor === color"
-                (click)="selectPickerColor(color)"
-                (mouseenter)="hoveredPickerColor = color"
-                (mouseleave)="hoveredPickerColor = null"
-              ></div>
-            </div>
-            
-            <!-- Hex Input -->
-            <div class="hex-input-section">
-              <label>Hex Color</label>
-              <input 
-                type="text" 
-                class="hex-input"
-                [(ngModel)]="tempHexValue"
-                (ngModelChange)="onHexInputChange()"
-                placeholder="#000000"
-                maxlength="7"
-              />
-            </div>
-          </div>
-          <div class="color-picker-actions">
-            <button 
-              class="picker-btn cancel-btn"
-              [class.enabled]="true"
-              [class.hovered]="hoverCancelBtn"
-              (click)="cancelColorPicker()"
-              (mouseenter)="hoverCancelBtn = true"
-              (mouseleave)="hoverCancelBtn = false"
-            >
-              Cancel
-            </button>
-            <button 
-              class="picker-btn apply-btn"
-              [class.enabled]="hasColorChanged"
-              [class.hovered]="hoverApplyBtn && hasColorChanged"
-              [disabled]="!hasColorChanged"
-              (click)="applyColorPicker()"
-              (mouseenter)="hoverApplyBtn = true"
-              (mouseleave)="hoverApplyBtn = false"
-            >
-              Apply
-            </button>
-          </div>
+          <app-color-picker (closed)="showColorPicker = false"></app-color-picker>
         </div>
       </div>
     </div>

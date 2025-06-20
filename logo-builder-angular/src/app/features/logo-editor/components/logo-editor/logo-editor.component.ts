@@ -171,7 +171,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   iconsPerPage: number = 12;
   totalPages: number = 1;
 
- fetchLogos(searchTerm: string = 'cat') {
+ fetchLogos(searchTerm: string = '') {
     this.loading = true;
     this.logoService.getLogos(searchTerm, 60).subscribe({
       next: (data: any) => {
@@ -247,7 +247,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   };
   
   componentStates = {
-    icon: true,
+    icon: false,
     name: true,
     slogan: true,
     shape: false
@@ -578,6 +578,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   // Icons section methods
   selectIcon(icon: NounIconItem): void {
     this.selectedIcon = icon;
+    this.componentStates.icon = true;
     this.updateLogoPreview();
   }
 
@@ -622,7 +623,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   }
 
   onInitialsChange(): void {
-    this.userInitials = this.userInitials.toUpperCase().slice(0, 3);
+    this.userInitials = this.userInitials.toUpperCase().slice(0, 20);
     this.updateLogoPreview();
   }
 
@@ -653,6 +654,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   // Shapes section methods
   selectShape(shape: { name: string; icon: string }): void {
     this.selectedShape = shape;
+    this.componentStates.shape = true;
     this.updateLogoPreview();
   }
 
@@ -1179,8 +1181,8 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     if (!ctx) return;
 
     // Set canvas size
-    canvas.width = 560;
-    canvas.height = 410;
+    canvas.width = 859;
+    canvas.height = 790;
 
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);

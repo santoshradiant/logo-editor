@@ -1,0 +1,33 @@
+<div class="color-picker-grid">
+  <div class="left-panel">
+    <div class="canvas-wrapper">
+      <canvas #saturationCanvas></canvas>
+      <div class="picker-circle" #pickerCircle></div>
+    </div>
+
+    <div class="hex-input">
+      <label>HEX</label>
+      <input type="text" [value]="hexValue" (input)="onHexInputChange($event)" />
+    </div>
+  </div>
+
+  <div class="right-panel">
+    <div class="preset-colors">
+      <button
+        *ngFor="let color of presetColors"
+        [ngStyle]="{ background: color }"
+        [class.selected]="selectedColor === color"
+        (click)="selectPresetColor(color)"
+      ></button>
+    </div>
+
+    <div class="hue-slider">
+      <input type="range" min="0" max="360" [value]="hue" (input)="onInputChange($event)" />
+    </div>
+
+    <div class="actions">
+      <button class="cancel" [class.active]="actionsEnabled" (click)="onCancel()">Cancel</button>
+      <button class="apply" [class.active]="actionsEnabled">Apply</button>
+    </div>
+  </div>
+</div>

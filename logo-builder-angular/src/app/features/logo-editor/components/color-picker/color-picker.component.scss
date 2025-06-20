@@ -1,0 +1,158 @@
+:root {
+  --primary--light1: #409B66;
+  --theme-grey--light3: #CCCCCC
+}
+
+.preset-colors button.selected {
+  border-color: var(--primary--light1);
+}
+
+.actions button.active {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+.color-picker-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  background: #333;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  width: fit-content;
+}
+
+.left-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  border: 2px solid #aaa;
+  border-radius: 4px;
+
+  canvas {
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    cursor: crosshair;
+  }
+
+  .picker-circle {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: var(--theme-grey--light3);    
+    pointer-events: none;
+    top: 5px;
+    left: 5px;
+  }
+}
+
+.hex-input {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  font-size: 14px;
+
+  label {
+    margin-right: 6px;
+  }
+
+  input {
+    background: #222;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    padding: 4px;
+    width: 80px;
+  }
+}
+
+.right-panel {
+  display: grid;
+  grid-template-rows: auto auto auto;
+  align-items: start;
+}
+
+.preset-colors {
+  display: grid;
+  grid-template-columns: repeat(5, 30px);
+  grid-gap: 6px;
+  justify-content: start;
+  margin-bottom: 10px;
+
+  button {
+    width: 30px;
+    height: 30px;
+    // border: 2px solid var(--theme-grey--light3);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+  }
+
+  button:hover {
+    border-color: var(--primary--light1);
+  }
+
+  .eyedropper {
+    background: transparent;
+    border: 1px solid #ccc;
+    font-size: 18px;
+    color: yellow;
+  }
+}
+
+.hue-slider {
+  margin-bottom: 12px;
+  input[type='range'] {
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    background: linear-gradient(to right, red, yellow, lime, cyan, blue, magenta, red);
+    outline: none;
+    appearance: none;
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+
+  button {
+    flex: 1;
+    padding: 6px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .cancel {
+    background: #555;
+    color: #ccc;
+  }
+
+  .apply {
+    background: #aaa;
+    color: black;
+  }
+}
+.actions .cancel {
+  background: #555;
+  color: #ccc;
+  transition: background 0.2s, color 0.2s;
+}
+
+.actions .cancel:hover {
+  background: #777;
+  color: #eee;
+}

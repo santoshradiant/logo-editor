@@ -658,6 +658,22 @@
             maxlength="20"
           >
         </div>
+
+        <!-- Font selection for initials -->
+        <div class="fonts-section">
+          <h3 class="subsection-title">Initials Font</h3>
+          <div class="fonts-grid">
+            <button
+              *ngFor="let font of getDisplayFonts()"
+              class="font-tile"
+              [class.active]="initialsFont === font.name"
+              (click)="selectInitialsFont(font.name)"
+              [style.font-family]="font.family"
+            >
+              {{ font.display }}
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Size Control -->

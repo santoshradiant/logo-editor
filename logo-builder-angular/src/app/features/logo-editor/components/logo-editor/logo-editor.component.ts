@@ -298,6 +298,9 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   showSymbolPanel = false;
   showExportPanel = false;
 
+  // Add this property
+  initialsFont: string = 'Arial';
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -602,9 +605,12 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   setActiveIconType(type: 'symbol' | 'initials'): void {
     this.activeIconType = type;
     if (type === 'symbol') {
-      this.userInitials = '';
-    } else {
-      this.selectedIcon = null;
+      // Restore previous symbol state (already handled by your stateful properties)
+    } else if (type === 'initials') {
+      // Optionally, set initials to brandName initials if empty
+      if (!this.userInitials) {
+        this.userInitials = this.brandName.split(' ').map(w => w[0]).join('').toUpperCase();
+      }
     }
     this.updateLogoPreview();
   }
@@ -1297,7 +1303,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
         
         // Draw initials text
         ctx.fillStyle = this.customColors.icon;
-        ctx.font = `bold ${this.iconSize * 0.6}px ${this.getFontWithFallback(this.selectedFont)}`;
+        ctx.font = `bold ${this.iconSize * 0.6}px ${this.getFontWithFallback(this.initialsFont)}`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(this.userInitials, iconX, iconY);
@@ -1890,5 +1896,10 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       link.href = font.url;
       document.head.appendChild(link);
     });
+  }
+
+  selectInitialsFont(font: string): void {
+    this.initialsFont = font;
+    this.updateLogoPreview();
   }
 }

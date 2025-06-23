@@ -666,7 +666,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     // Apply the selected scheme to custom colors
     this.customColors.icon = scheme.primary;
     this.customColors.name = scheme.secondary;
-    this.customColors.slogan = scheme.primary;
+    this.customColors.slogan = scheme.secondary;
     this.customColors.shape = scheme.primary;
     
     // Update main color for backward compatibility
@@ -746,6 +746,25 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       this.undoRedoService.executeCommand(command);
     }
     
+    this.closeColorPicker();
+  }
+
+  onColorPickerApply(color: string) {
+    if (this.currentColorType) {
+      const oldColor = this.customColors[this.currentColorType];
+      this.customColors[this.currentColorType] = color;
+
+      // Optionally update main color for backward compatibility
+      if (this.currentColorType === 'icon' || this.currentColorType === 'slogan') {
+        this.customColor = color;
+      }
+
+      this.updateLogoPreview();
+
+      // Undo/redo support
+      const command = new ColorChangeCommand(this, color, oldColor);
+      this.undoRedoService.executeCommand(command);
+    }
     this.closeColorPicker();
   }
 
@@ -1872,4 +1891,4 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       document.head.appendChild(link);
     });
   }
-} 
+}

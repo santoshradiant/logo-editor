@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, AfterViewInit, Output, EventEmitter } from '@angular/core'
+import { Component, ViewChild, ElementRef, AfterViewInit, Output, EventEmitter, Input } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { CommonModule } from '@angular/common'
 
@@ -163,6 +163,7 @@ export class ColorPickerComponent implements AfterViewInit {
   }
   
   @Output() closed = new EventEmitter<void>();
+  @Output() colorSelected = new EventEmitter<string>();
 
 closePicker() {
   this.closed.emit();
@@ -177,4 +178,8 @@ closePicker() {
   this.closePicker(); // Optional: logic to close the picker
 }
 
+  onApply() {
+    this.colorSelected.emit(this.hexValue);
+    this.closePicker();
+  }
 }

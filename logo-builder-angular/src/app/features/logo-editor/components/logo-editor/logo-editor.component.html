@@ -853,6 +853,27 @@
       <!-- Custom Color Section -->
       <div class="custom-color-section">
         <h3 class="subsection-title">Custom Color</h3>
+
+        <div class="color-scheme-pill">
+             
+            <div
+              class="color-dot cicon"
+              [style.backgroundColor]="customColors.icon"
+            ></div>
+            <div
+              class="color-dot cname"
+              [style.backgroundColor]="customColors.name"
+            ></div>
+            <div
+              class="color-dot cslogan"
+              [style.backgroundColor]="customColors.slogan"
+            ></div>
+            <div
+              class="color-dot cshape"
+              [style.backgroundColor]="customColors.shape"
+            ></div>
+          </div>
+        
         
         <!-- Custom Color Button -->
         <div class="custom-color-toggle" *ngIf="!showCustomColorOptions">

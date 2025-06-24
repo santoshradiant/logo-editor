@@ -670,7 +670,7 @@
               (keydown.enter)="onIconSearch()"
               placeholder="Search icons..."
             >
-            <button 
+            <!-- <button 
               class="add-icon-btn" 
               (click)="triggerIconSearch()"
               title="Search for icons"
@@ -678,7 +678,7 @@
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" />
               </svg>
-            </button>
+            </button> -->
           </div>
 
           <!-- Search Suggestions Dropdown -->
@@ -705,7 +705,7 @@
             >
               ←
             </button>
-            <span class="page-info-inline">{{ currentPage }} of {{ totalPages }}</span>
+            
             <button 
               class="page-btn-inline" 
               [disabled]="currentPage === totalPages"
@@ -735,6 +735,9 @@
                 <img [src]="icon.thumbnailUrl" [alt]="icon.name || 'icon'" />
               </div>
             </button>
+          </div>
+          <div class="page-info-count">
+          <span class="page-info-inline">{{ currentPage }} of {{ totalPages }}</span>
           </div>
         </div>
 

@@ -1870,12 +1870,23 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
 
   getDisplayFonts(): Array<{ name: string; family: string; display: string }> {
     return [
-      { name: 'Ostelika One', family: 'serif', display: 'Ostelika One' },
-      { name: 'Venova Oder', family: 'serif', display: 'Venova Oder' },
-      { name: 'Hollendai', family: 'script', display: 'Hollendai' },
-      { name: 'Bodoni', family: 'serif', display: 'Bodoni' },
-      { name: 'Giaomene', family: 'sans-serif', display: 'Giaomene' },
-      { name: 'Chamge', family: 'display', display: 'Chamge' }
+      
+      { name: 'DM Serif Display', family: 'DM Serif Display', display: 'DM Serif Display' },
+      { name: 'Poppins', family: 'Poppins', display: 'Poppins' },
+      { name: 'Playfair Display', family: 'Playfair Display', display: 'Playfair Display' },
+      { name: 'Space Grotesk', family: 'Space Grotesk', display: 'Space Grotesk' },
+      { name: 'Raleway', family: 'Raleway', display: 'Raleway' },
+      { name: 'Libre Baskerville', family: 'Libre Baskerville', display: 'Libre Baskerville' },
+      { name: 'Quicksand', family: 'Quicksand', display: 'Quicksand' },
+      { name: 'Syne', family: 'Syne', display: 'Syne' },
+      { name: 'Pacifico', family: 'Pacifico', display: 'Pacifico' }, 
+
+      // { name: 'Ostelika One', family: 'Ostelika-One', display: 'Ostelika One' },
+      // { name: 'Venova Oder', family: 'Venova-Oder', display: 'Venova Oder' },
+      // { name: 'Hollendai', family: 'Hollendai', display: 'Hollendai' },
+      // { name: 'Bodoni', family: 'Bodoni', display: 'Bodoni' },
+      // { name: 'Giaomene', family: 'Giaomene', display: 'Giaomene' },
+      // { name: 'Chamge', family: 'Chamge', display: 'Chamge' }
     ];
   }
 

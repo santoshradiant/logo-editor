@@ -3,10 +3,10 @@
 /* Network Solutions Brand Colors */
 :root {
   /* Primary Brand Colors */
-  --ns-green-primary: #00B894;
+  --ns-green-primary: #007A33;
   --ns-green-dark: #00A085;
   --ns-green-light: #10C9A5;
-  --ns-green-lighter: #E6F7F4;
+  --ns-green-lighter: #F5F5F5;
   
   /* Secondary Brand Colors */
   --ns-grey-dark: #2D3436;
@@ -26,19 +26,46 @@
   --ns-background-light: var(--ns-grey-lightest);
   --ns-border: var(--ns-grey-light);
   --ns-border-light: var(--ns-grey-lighter);
-  
+   --ns-primary-track: #CCE4D6;
   /* Status Colors */
   --ns-success: var(--ns-green-primary);
   --ns-warning: #FDCB6E;
   --ns-error: #E84393;
   --ns-info: #0984E3;
 }
-
+// Import Inter font from Google Fonts
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Pacifico&family=Playfair:ital,opsz,wght@0,5..1200,300..900;1,5..1200,300..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Quicksand:wght@300..700&family=Raleway:ital,wght@0,100..900;1,100..900&family=Space+Grotesk:wght@300..700&family=Syne:wght@400..800&display=swap');
 /* Global Network Solutions Theme Styles */
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family:  'Inter', sans-serif;
   color: var(--ns-text-primary);
   background-color: var(--ns-background-light);
+  font-size:14px;
+}
+
+
+@mixin heading($size, $weight: 600) {
+  font-size: $size;
+  font-weight: $weight; 
+}
+h1 { @include heading(2.5rem);}    // 35px
+h2 { @include heading(2rem); }     // 28px
+h3 { @include heading(1.75rem); }  // 24.5px
+h4 { @include heading(1.5rem); }   // 21px
+h5 { @include heading(1.25rem); }  // 17.5px
+h6 { @include heading(1rem); }     //14px 
+
+.subsection-title{
+  @include heading(1rem, 600);
+}
+
+.form-label{
+  @include heading(1rem, 500);
+}
+
+.form-input,.selected-font-display{
+ padding: 10px 12px;
+ @include heading(1rem, 400);
 }
 
 /* Brand-themed buttons */

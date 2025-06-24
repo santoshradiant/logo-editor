@@ -92,22 +92,32 @@
       </div>
 
       <div class="custom-font-section">
-        <h3 class="subsection-title">Select your own fonts</h3>
+        <h3 class="subsection-title">Custom Font2</h3>
+
+
+<div class="custom-font-button">
+                <div class="upload-zone">                  
+                  <label for="font-upload-brand" class="upload-label">
+                    <svg width="18" height="19" viewBox="0 0 18 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 7.0083C12 7.42305 11.6648 7.7583 11.25 7.7583H9.75V12.2583C9.75 12.6731 9.41475 13.0083 9 13.0083C8.58525 13.0083 8.25 12.6731 8.25 12.2583V7.7583H6.75C6.33525 7.7583 6 7.42305 6 7.0083C6 6.59355 6.33525 6.2583 6.75 6.2583H11.25C11.6648 6.2583 12 6.59355 12 7.0083ZM15 13.0353V5.4813C13.8525 5.3163 12.942 4.4058 12.777 3.2583H5.223C5.058 4.4058 4.1475 5.3163 3 5.4813V13.0353C4.1475 13.2003 5.058 14.1108 5.223 15.2583H12.777C12.942 14.1108 13.8525 13.2003 15 13.0353ZM18 15.6333C18 17.0808 16.8225 18.2583 15.375 18.2583C14.3303 18.2583 13.4258 17.6441 13.0035 16.7583H4.9965C4.57425 17.6441 3.66975 18.2583 2.625 18.2583C1.1775 18.2583 0 17.0808 0 15.6333C0 14.5886 0.61425 13.6841 1.5 13.2618V5.2548C0.61425 4.83255 0 3.92805 0 2.8833C0 1.4358 1.1775 0.258301 2.625 0.258301C3.66975 0.258301 4.57425 0.872551 4.9965 1.7583H13.0043C13.4265 0.872551 14.331 0.258301 15.3758 0.258301C16.8233 0.258301 18.0008 1.4358 18.0008 2.8833C18.0008 3.92805 17.3865 4.83255 16.5008 5.2548V13.2626C17.3865 13.6848 18.0008 14.5893 18.0008 15.6341L18 15.6333Z" fill="#007A33"/>
+</svg>
+                    <span>Select your own fonts</span>
+                  </label>
+                </div>
+                </div>
+
         <div class="font-selection-row">
           <div class="custom-font-dropdown-container">
             <button class="custom-font-btn" (click)="toggleCustomFontDropdown()">
               <span class="selected-font-display" [style.font-family]="selectedFont">
                 {{ selectedFont }}
               </span>
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                [style.transform]="showCustomFontDropdown ? 'rotate(180deg)' : 'rotate(0deg)'"
-              >
-                <path d="M7,10L12,15L17,10H7Z" />
-              </svg>
+              
+
+              <svg width="12" height="13" viewBox="0 0 12 13"  fill="currentColor"
+                [style.transform]="showCustomFontDropdown ? 'rotate(180deg)' : 'rotate(0deg)'">
+<path d="M6.35491 7.50134C6.30843 7.5482 6.25313 7.5854 6.1922 7.61079C6.13127 7.63617 6.06591 7.64924 5.99991 7.64924C5.9339 7.64924 5.86855 7.63617 5.80762 7.61079C5.74669 7.5854 5.69139 7.5482 5.64491 7.50134L3.35491 5.20634C3.30843 5.15948 3.25313 5.12228 3.1922 5.09689C3.13127 5.07151 3.06591 5.05844 2.99991 5.05844C2.9339 5.05844 2.86855 5.07151 2.80762 5.09689C2.74669 5.12228 2.69139 5.15948 2.64491 5.20634C2.55178 5.30002 2.49951 5.42675 2.49951 5.55884C2.49951 5.69093 2.55178 5.81766 2.64491 5.91134L4.93991 8.20634C5.22116 8.48724 5.60241 8.64502 5.99991 8.64502C6.39741 8.64502 6.77866 8.48724 7.05991 8.20634L9.35491 5.91134C9.44728 5.81821 9.49936 5.69251 9.49991 5.56134C9.50029 5.49554 9.48768 5.4303 9.46279 5.36939C9.43791 5.30847 9.40125 5.25306 9.35491 5.20634C9.30843 5.15948 9.25313 5.12228 9.1922 5.09689C9.13127 5.07151 9.06591 5.05844 8.99991 5.05844C8.9339 5.05844 8.86855 5.07151 8.80762 5.09689C8.74669 5.12228 8.69139 5.15948 8.64491 5.20634L6.35491 7.50134Z" fill="black"/>
+</svg>
             </button>
 
             <!-- Simplified Font Dropdown -->
@@ -121,39 +131,6 @@
                 </div>
               </div>
 
-              <!-- Upload Font Section -->
-              <div class="upload-section">
-                <div class="section-divider"></div>
-                <div class="upload-zone">
-                  <input
-                    type="file"
-                    id="font-upload-brand"
-                    (change)="onFileUpload($event)"
-                    accept=".ttf,.otf,.woff,.woff2"
-                    style="display: none"
-                  />
-                  <label for="font-upload-brand" class="upload-label">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
-                    </svg>
-                    <span>Upload custom font</span>
-                  </label>
-                </div>
-
-                <!-- Uploaded Fonts -->
-                <div class="uploaded-fonts" *ngIf="uploadedFonts.length > 0">
-                  <div class="font-item" *ngFor="let font of uploadedFonts" (click)="selectUploadedFont(font)">
-                    <span class="font-name" [style.font-family]="font.family" [class.active]="selectedFont === font.name">
-                      {{ font.name }}
-                    </span>
-                  </div>
-                </div>
-
-                <div class="upload-loading" *ngIf="isUploadingFont">
-                  <div class="loading-spinner"></div>
-                  <span>Uploading font...</span>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -208,6 +185,9 @@
                 (ngModelChange)="onFontSizeChange()"
                 min="12"
                 max="72"
+                [style.--val]="fontSize"
+                [style.--min]="12"
+                [style.--max]="72"
               />
             </div>
           </div>
@@ -224,6 +204,9 @@
                 (ngModelChange)="onLetterSpacingChange()"
                 min="-2"
                 max="10"
+                [style.--val]="letterSpacing"
+                [style.--min]="-2 "
+                [style.--max]="10"
               />
             </div>
           </div>
@@ -241,6 +224,10 @@
                 min="0.8"
                 max="2"
                 step="0.1"
+                [style.--val]="lineHeight"
+                [style.--min]="0.8"
+                [style.--max]="2"
+                
               />
             </div>
           </div>
@@ -303,8 +290,8 @@
       </div>
 
       <!-- Custom Font Selection for Slogan -->
-      <div class="custom-font-section" *ngIf="enableSlogan">
-        <h3 class="subsection-title">Select your own fonts</h3>
+      <!-- <div class="custom-font-section" *ngIf="enableSlogan">
+        <h3 class="subsection-title">Custom Font1</h3>
         <div class="font-selection-row">
           <div class="custom-font-dropdown-container">
             <button class="custom-font-btn" (click)="toggleSloganCustomFontDropdown()">
@@ -322,9 +309,9 @@
               </svg>
             </button>
 
-            <!-- Simplified Font Dropdown for Slogan -->
+           
             <div class="custom-font-dropdown" *ngIf="showSloganCustomFontDropdown">
-              <!-- Available Fonts List -->
+              
               <div class="font-list">
                 <div class="font-item" *ngFor="let font of getDisplayFonts()" (click)="selectSloganFont(font.name)">
                   <span class="font-name" [style.font-family]="font.family" [class.active]="sloganFont === font.name">
@@ -333,7 +320,7 @@
                 </div>
               </div>
 
-              <!-- Upload Font Section -->
+             
               <div class="upload-section">
                 <div class="section-divider"></div>
                 <div class="upload-zone">
@@ -352,7 +339,7 @@
                   </label>
                 </div>
 
-                <!-- Uploaded Fonts -->
+                
                 <div class="uploaded-fonts" *ngIf="uploadedFonts.length > 0">
                   <div class="font-item" *ngFor="let font of uploadedFonts" (click)="selectSloganFont(font.name)">
                     <span class="font-name" [style.font-family]="font.family" [class.active]="sloganFont === font.name">
@@ -369,8 +356,77 @@
             </div>
           </div>
 
-          <!-- Font Style Controls - Outside Dropdown -->
+         
           <div class="font-style-controls">
+            <button 
+              class="style-btn" 
+              [class.active]="sloganIsBold" 
+              (click)="toggleSloganBold()"
+              title="Bold">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M13.5,15.5H10V12.5H13.5A1.5,1.5 0 0,1 15,14A1.5,1.5 0 0,1 13.5,15.5M10,6.5H13A1.5,1.5 0 0,1 14.5,8A1.5,1.5 0 0,1 13,9.5H10M15.6,10.79C16.57,10.11 17.25,9.02 17.25,8C17.25,5.74 15.5,4 13.25,4H7V18H14.04C16.14,18 17.75,16.3 17.75,14.21C17.75,12.69 16.89,11.39 15.6,10.79Z" />
+              </svg>
+            </button>
+            <button 
+              class="style-btn" 
+              [class.active]="sloganIsItalic" 
+              (click)="toggleSloganItalic()"
+              title="Italic">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M10,4V7H12.21L8.79,15H6V18H14V15H11.79L15.21,7H18V4H10Z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div> -->
+
+
+  <div class="custom-font-section">
+        <h3 class="subsection-title">Custom Font1</h3>
+
+
+<div class="custom-font-button">
+                <div class="upload-zone">                  
+                  <label for="font-upload-brand" class="upload-label">
+                    <svg width="18" height="19" viewBox="0 0 18 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 7.0083C12 7.42305 11.6648 7.7583 11.25 7.7583H9.75V12.2583C9.75 12.6731 9.41475 13.0083 9 13.0083C8.58525 13.0083 8.25 12.6731 8.25 12.2583V7.7583H6.75C6.33525 7.7583 6 7.42305 6 7.0083C6 6.59355 6.33525 6.2583 6.75 6.2583H11.25C11.6648 6.2583 12 6.59355 12 7.0083ZM15 13.0353V5.4813C13.8525 5.3163 12.942 4.4058 12.777 3.2583H5.223C5.058 4.4058 4.1475 5.3163 3 5.4813V13.0353C4.1475 13.2003 5.058 14.1108 5.223 15.2583H12.777C12.942 14.1108 13.8525 13.2003 15 13.0353ZM18 15.6333C18 17.0808 16.8225 18.2583 15.375 18.2583C14.3303 18.2583 13.4258 17.6441 13.0035 16.7583H4.9965C4.57425 17.6441 3.66975 18.2583 2.625 18.2583C1.1775 18.2583 0 17.0808 0 15.6333C0 14.5886 0.61425 13.6841 1.5 13.2618V5.2548C0.61425 4.83255 0 3.92805 0 2.8833C0 1.4358 1.1775 0.258301 2.625 0.258301C3.66975 0.258301 4.57425 0.872551 4.9965 1.7583H13.0043C13.4265 0.872551 14.331 0.258301 15.3758 0.258301C16.8233 0.258301 18.0008 1.4358 18.0008 2.8833C18.0008 3.92805 17.3865 4.83255 16.5008 5.2548V13.2626C17.3865 13.6848 18.0008 14.5893 18.0008 15.6341L18 15.6333Z" fill="#007A33"/>
+</svg>
+                    <span>Select your own fonts</span>
+                  </label>
+                </div>
+                </div>
+
+        <div class="font-selection-row">
+          <div class="custom-font-dropdown-container">
+
+<button class="custom-font-btn" (click)="toggleSloganCustomFontDropdown()">
+              <span class="selected-font-display" [style.font-family]="sloganFont">
+                {{ sloganFont }}
+              </span>                   
+
+              <svg width="12" height="13" viewBox="0 0 12 13"  fill="currentColor"
+                [style.transform]="showCustomFontDropdown ? 'rotate(180deg)' : 'rotate(0deg)'">
+<path d="M6.35491 7.50134C6.30843 7.5482 6.25313 7.5854 6.1922 7.61079C6.13127 7.63617 6.06591 7.64924 5.99991 7.64924C5.9339 7.64924 5.86855 7.63617 5.80762 7.61079C5.74669 7.5854 5.69139 7.5482 5.64491 7.50134L3.35491 5.20634C3.30843 5.15948 3.25313 5.12228 3.1922 5.09689C3.13127 5.07151 3.06591 5.05844 2.99991 5.05844C2.9339 5.05844 2.86855 5.07151 2.80762 5.09689C2.74669 5.12228 2.69139 5.15948 2.64491 5.20634C2.55178 5.30002 2.49951 5.42675 2.49951 5.55884C2.49951 5.69093 2.55178 5.81766 2.64491 5.91134L4.93991 8.20634C5.22116 8.48724 5.60241 8.64502 5.99991 8.64502C6.39741 8.64502 6.77866 8.48724 7.05991 8.20634L9.35491 5.91134C9.44728 5.81821 9.49936 5.69251 9.49991 5.56134C9.50029 5.49554 9.48768 5.4303 9.46279 5.36939C9.43791 5.30847 9.40125 5.25306 9.35491 5.20634C9.30843 5.15948 9.25313 5.12228 9.1922 5.09689C9.13127 5.07151 9.06591 5.05844 8.99991 5.05844C8.9339 5.05844 8.86855 5.07151 8.80762 5.09689C8.74669 5.12228 8.69139 5.15948 8.64491 5.20634L6.35491 7.50134Z" fill="black"/>
+</svg>
+            </button>
+
+            <!-- Simplified Font Dropdown -->
+
+            <div class="custom-font-dropdown" *ngIf="showSloganCustomFontDropdown">
+              <!-- Available Fonts List -->
+             <div class="font-list">
+                <div class="font-item" *ngFor="let font of getDisplayFonts()" (click)="selectSloganFont(font.name)">
+                  <span class="font-name" [style.font-family]="font.family" [class.active]="sloganFont === font.name">
+                    {{ font.display }}
+                  </span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+<!-- Font Style Controls - Outside Dropdown -->
+<div class="font-style-controls">
             <button 
               class="style-btn" 
               [class.active]="sloganIsBold" 
@@ -403,9 +459,10 @@
             (click)="setAlignment('left')"
             title="Left Align"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M3,3H21V5H3V3M3,7H15V9H3V7M3,11H21V13H3V11M3,15H15V17H3V15M3,19H21V21H3V19Z" />
-            </svg>
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
+<path d="M11.9629 11.6646H0.462891V13.5812H11.9629V11.6646ZM11.9629 3.99788H0.462891V5.91455H11.9629V3.99788ZM0.462891 9.74788H17.7129V7.83122H0.462891V9.74788ZM0.462891 17.4146H17.7129V15.4979H0.462891V17.4146ZM0.462891 0.164551V2.08122H17.7129V0.164551H0.462891Z" fill="black"/>
+</svg>
+
           </button>
           <button
             class="align-btn"
@@ -413,9 +470,10 @@
             (click)="setAlignment('center')"
             title="Center Align"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M3,3H21V5H3V3M7,7H17V9H7V7M3,11H21V13H3V11M7,15H17V17H7V15M3,19H21V21H3V19Z" />
-            </svg>
+<svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
+<path d="M4.56771 11.6646V13.5812H14.151V11.6646H4.56771ZM0.734375 17.4146H17.9844V15.4979H0.734375V17.4146ZM0.734375 9.74788H17.9844V7.83122H0.734375V9.74788ZM4.56771 3.99788V5.91455H14.151V3.99788H4.56771ZM0.734375 0.164551V2.08122H17.9844V0.164551H0.734375Z" fill="black"/>
+</svg>
+
           </button>
           <button
             class="align-btn"
@@ -423,9 +481,10 @@
             (click)="setAlignment('right')"
             title="Right Align"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M3,3H21V5H3V3M9,7H21V9H9V7M3,11H21V13H3V11M9,15H21V17H9V15M3,19H21V21H3V19Z" />
-            </svg>
+<svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
+<path d="M0.00390625 17.4146H17.2539V15.4979H0.00390625V17.4146ZM5.75391 13.5812H17.2539V11.6646H5.75391V13.5812ZM0.00390625 9.74788H17.2539V7.83122H0.00390625V9.74788ZM5.75391 5.91455H17.2539V3.99788H5.75391V5.91455ZM0.00390625 0.164551V2.08122H17.2539V0.164551H0.00390625Z" fill="black"/>
+</svg>
+
           </button>
           <button
             class="align-btn"
@@ -433,9 +492,13 @@
             (click)="setAlignment('left-fill')"
             title="Left Align with Fill"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M3,3H15V5H3V3M3,7H21V9H3V7M3,11H15V13H3V11M3,15H21V17H3V15M3,19H15V21H3V19Z" />
-            </svg>
+            
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
+<path d="M11.9629 11.6646H0.462891V13.5812H11.9629V11.6646ZM11.9629 3.99788H0.462891V5.91455H11.9629V3.99788ZM0.462891 9.74788H17.7129V7.83122H0.462891V9.74788ZM0.462891 17.4146H17.7129V15.4979H0.462891V17.4146ZM0.462891 0.164551V2.08122H17.7129V0.164551H0.462891Z" fill="black"/>
+</svg>
+            <svg width="13" height="3" viewBox="0 0 13 3" fill="currentColor">
+<path d="M12.0879 3.0083H0.587891V0.133301H12.0879V3.0083Z" fill="black"/>
+</svg>
           </button>
           <button
             class="align-btn"
@@ -443,9 +506,17 @@
             (click)="setAlignment('center-fill')"
             title="Center Align with Fill"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M3,3H21V5H3V3M3,7H21V9H3V7M7,11H17V13H7V11M3,15H21V17H3V15M3,19H21V21H3V19Z" />
-            </svg>
+            
+<svg width="13" height="3" viewBox="0 0 13 3" fill="currentColor">
+<path d="M12.0879 3.0083H0.587891V0.133301H12.0879V3.0083Z" fill="black"/>
+</svg>
+<svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
+<path d="M4.56771 11.6646V13.5812H14.151V11.6646H4.56771ZM0.734375 17.4146H17.9844V15.4979H0.734375V17.4146ZM0.734375 9.74788H17.9844V7.83122H0.734375V9.74788ZM4.56771 3.99788V5.91455H14.151V3.99788H4.56771ZM0.734375 0.164551V2.08122H17.9844V0.164551H0.734375Z" fill="black"/>
+</svg>
+<svg width="13" height="3" viewBox="0 0 13 3" fill="currentColor">
+<path d="M12.0879 3.0083H0.587891V0.133301H12.0879V3.0083Z" fill="black"/>
+</svg>
+
           </button>
           <button
             class="align-btn"
@@ -453,9 +524,15 @@
             (click)="setAlignment('right-fill')"
             title="Right Align with Fill"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M3,3H21V5H3V3M3,7H21V9H3V7M9,11H21V13H9V11M3,15H21V17H3V15M9,19H21V21H9V19Z" />
-            </svg>
+           
+
+<svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
+<path d="M0.00390625 17.4146H17.2539V15.4979H0.00390625V17.4146ZM5.75391 13.5812H17.2539V11.6646H5.75391V13.5812ZM0.00390625 9.74788H17.2539V7.83122H0.00390625V9.74788ZM5.75391 5.91455H17.2539V3.99788H5.75391V5.91455ZM0.00390625 0.164551V2.08122H17.2539V0.164551H0.00390625Z" fill="black"/>
+</svg>
+<svg width="13" height="3" viewBox="0 0 13 3" fill="currentColor" >
+<path d="M12.0879 3.0083H0.587891V0.133301H12.0879V3.0083Z" fill="black"/>
+</svg>
+
           </button>
         </div>
       </div>
@@ -474,8 +551,11 @@
                 min="1"
                 max="4"
                 step="1"
+                [style.--val]="sloganLineCount"
+                [style.--min]="1"
+                [style.--max]="4"
               />
-              <div class="slider-value">{{ sloganLineCount }}</div>
+              <!-- <div class="slider-value">{{ sloganLineCount }}</div> -->
             </div>
           </div>
         </div>
@@ -494,6 +574,9 @@
                 (ngModelChange)="onSloganFontSizeChange()"
                 min="10"
                 max="48"
+                [style.--val]="sloganFontSize"
+                [style.--min]="10"
+                [style.--max]="48"
               />
             </div>
           </div>
@@ -510,6 +593,9 @@
                 (ngModelChange)="onSloganLetterSpacingChange()"
                 min="-2"
                 max="10"
+                [style.--val]="sloganLetterSpacing"
+                [style.--min]="-2"
+                [style.--max]="10"
               />
             </div>
           </div>
@@ -527,6 +613,9 @@
                 min="0.8"
                 max="2"
                 step="0.1"
+                [style.--val]="sloganLineHeight"
+                [style.--min]="0.8"
+                [style.--max]="2"
               />
             </div>
           </div>
@@ -661,7 +750,7 @@
 
         <!-- Font selection for initials -->
         <div class="fonts-section">
-          <h3 class="subsection-title">Initials Font</h3>
+          <h3 class="subsection-title">Recommended Fonts</h3>
           <div class="fonts-grid">
             <button
               *ngFor="let font of getDisplayFonts()"

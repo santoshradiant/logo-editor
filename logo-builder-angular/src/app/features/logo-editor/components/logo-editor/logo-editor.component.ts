@@ -145,6 +145,8 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   sloganLetterSpacing: number = 0;
   sloganLineHeight: number = 1.2;
   sloganIsBold: boolean = false;
+  initialsIsBold: boolean = false;
+  initialsIsItalic: boolean= false;
   sloganIsItalic: boolean = false;
   sloganIsMultiline: boolean = false;
   sloganLineCount: number = 1;
@@ -190,7 +192,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   // Pagination properties
   currentPage: number = 1;
   iconsPerPage: number = 12;
-  totalPages: number = 1;
+  totalPages: number = 1; 
 
  fetchLogos(searchTerm: string = '') {
     this.loading = true;
@@ -584,7 +586,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   toggleSloganBold(): void {
     this.sloganIsBold = !this.sloganIsBold;
     this.updateLogoPreview();
-  }
+  } 
 
   toggleSloganItalic(): void {
     this.sloganIsItalic = !this.sloganIsItalic;
@@ -600,6 +602,15 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   }
 
   // Icons section methods
+
+    toggInitialsBold(): void {
+    this.initialsIsBold = !this.initialsIsBold;
+    this.updateLogoPreview();
+    }
+    toggleInitialsItalic(): void {
+    this.initialsIsItalic = !this.initialsIsItalic;
+    this.updateLogoPreview();
+    }
   selectIcon(icon: NounIconItem): void {
     this.selectedIcon = icon;
     this.updateComponentStates(); // Update component states for color picker
@@ -1560,8 +1571,16 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
         }
         
         // Draw initials text
+
+
+      
+let initalsStyle = '';
+      if (this.initialsIsBold) initalsStyle += 'font-weight: bold; ';
+      if (this.initialsIsItalic) initalsStyle += 'font-style: italic; ';
+      
+
         ctx.fillStyle = this.customColors.icon;
-        ctx.font = `bold ${this.iconSize * 0.6}px ${this.getFontWithFallback(this.initialsFont)}`;
+        ctx.font = initalsStyle+= ` ${this.iconSize }px ${this.getFontWithFallback(this.initialsFont)}`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(this.userInitials, iconX, iconY);
@@ -2200,5 +2219,20 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   selectInitialsFont(font: string): void {
     this.initialsFont = font;
     this.updateLogoPreview();
+  }
+  showSloganFontSelection = false;
+
+  toggleSloganFontSelection() {
+    this.showSloganFontSelection = !this.showSloganFontSelection;
+  }
+  showBrandFontSelection = false;
+
+  toggleBrandFontSelection() {
+    this.showBrandFontSelection = !this.showBrandFontSelection;
+  }
+   showInitialsFontSelection = false;
+
+  toggleInitialsFontSelection() {
+    this.showInitialsFontSelection = !this.showInitialsFontSelection;
   }
 }

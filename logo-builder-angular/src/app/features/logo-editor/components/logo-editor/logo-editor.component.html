@@ -453,63 +453,76 @@
       </div>
 
       <!-- Alignment -->
-      <div class="text-alignment" *ngIf="enableSlogan">
+     <div class="text-alignment" *ngIf="enableSlogan">
         <label class="form-label">Alignment</label>
         <div class="alignment-buttons">
-          <button
-            class="align-btn"
-            [class.active]="textAlignment === 'left'"
-            (click)="setAlignment('left')"
-            title="Left Align"
-          >
-            <img [src]="textAlignment === 'left' ? 'assets/icons/selected-svg/alignment-left.svg' : 'assets/icons/unselected-svg/alignment-left.svg'" alt="Left align" width="20" height="15" />
-          </button>
-          <button
-            class="align-btn"
-            [class.active]="textAlignment === 'center'"
-            (click)="setAlignment('center')"
-            title="Center Align"
-          >
-            <img [src]="textAlignment === 'center' ? 'assets/icons/selected-svg/alignment-center.svg' : 'assets/icons/unselected-svg/alignment-center.svg'" alt="Center align" width="20" height="15" />
-          </button>
-          <button
-            class="align-btn"
-            [class.active]="textAlignment === 'right'"
-            (click)="setAlignment('right')"
-            title="Right Align"
-          >
-            <img [src]="textAlignment === 'right' ? 'assets/icons/selected-svg/alignment-right.svg' : 'assets/icons/unselected-svg/alignment-right.svg'" alt="Right align" width="20" height="15" />
-          </button>
-          <button
-            class="align-btn"
-            [class.active]="textAlignment === 'left-fill'"
-            (click)="setAlignment('left-fill')"
-            title="Left Align with Fill"
-          >
-            
-            <img [src]="textAlignment === 'left-fill' ? 'assets/icons/selected-svg/alignment-left-fill.svg' : 'assets/icons/unselected-svg/alignment-left-fill.svg'" alt="Left align with fill" width="20" height="15" />
-            <img [src]="'assets/icons/unselected-svg/alignment-left-fill-arrow.svg'" alt="Left align with fill arrow" width="10" height="15" />
-          </button>
-          <button
-            class="align-btn"
-            [class.active]="textAlignment === 'center-fill'"
-            (click)="setAlignment('center-fill')"
-            title="Center Align with Fill"
-          >
-            
-            <img [src]="textAlignment === 'center-fill' ? 'assets/icons/selected-svg/alignment-center-fill.svg' : 'assets/icons/unselected-svg/alignment-center-fill.svg'" alt="Center align with fill" width="20" height="15" />
-            <img [src]="'assets/icons/unselected-svg/alignment-center-fill-arrow.svg'" alt="Center align with fill arrow" width="10" height="15" />
+          <button class="align-btn" [class.active]="textAlignment === 'left'" (click)="setAlignment('left')"
+            title="Left Align">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
+              <path
+                d="M11.9629 11.6646H0.462891V13.5812H11.9629V11.6646ZM11.9629 3.99788H0.462891V5.91455H11.9629V3.99788ZM0.462891 9.74788H17.7129V7.83122H0.462891V9.74788ZM0.462891 17.4146H17.7129V15.4979H0.462891V17.4146ZM0.462891 0.164551V2.08122H17.7129V0.164551H0.462891Z"
+                fill="black" />
+            </svg>
 
           </button>
-          <button
-            class="align-btn"
-            [class.active]="textAlignment === 'right-fill'"
-            (click)="setAlignment('right-fill')"
-            title="Right Align with Fill"
-          >
-           
-            <img [src]="textAlignment === 'right-fill' ? 'assets/icons/selected-svg/alignment-right-fill.svg' : 'assets/icons/unselected-svg/alignment-right-fill.svg'" alt="Right align with fill" width="20" height="15" />
-            <img [src]="'assets/icons/unselected-svg/alignment-right-fill-arrow.svg'" alt="Right align with fill arrow" width="10" height="15" />
+          <button class="align-btn" [class.active]="textAlignment === 'center'" (click)="setAlignment('center')"
+            title="Center Align">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
+              <path
+                d="M4.56771 11.6646V13.5812H14.151V11.6646H4.56771ZM0.734375 17.4146H17.9844V15.4979H0.734375V17.4146ZM0.734375 9.74788H17.9844V7.83122H0.734375V9.74788ZM4.56771 3.99788V5.91455H14.151V3.99788H4.56771ZM0.734375 0.164551V2.08122H17.9844V0.164551H0.734375Z"
+                fill="black" />
+            </svg>
+
+          </button>
+          <button class="align-btn" [class.active]="textAlignment === 'right'" (click)="setAlignment('right')"
+            title="Right Align">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
+              <path
+                d="M0.00390625 17.4146H17.2539V15.4979H0.00390625V17.4146ZM5.75391 13.5812H17.2539V11.6646H5.75391V13.5812ZM0.00390625 9.74788H17.2539V7.83122H0.00390625V9.74788ZM5.75391 5.91455H17.2539V3.99788H5.75391V5.91455ZM0.00390625 0.164551V2.08122H17.2539V0.164551H0.00390625Z"
+                fill="black" />
+            </svg>
+
+          </button>
+          <button class="align-btn" [class.active]="textAlignment === 'left-fill'" (click)="setAlignment('left-fill')"
+            title="Left Align with Fill">
+
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
+              <path
+                d="M11.9629 11.6646H0.462891V13.5812H11.9629V11.6646ZM11.9629 3.99788H0.462891V5.91455H11.9629V3.99788ZM0.462891 9.74788H17.7129V7.83122H0.462891V9.74788ZM0.462891 17.4146H17.7129V15.4979H0.462891V17.4146ZM0.462891 0.164551V2.08122H17.7129V0.164551H0.462891Z"
+                fill="black" />
+            </svg>
+            <svg width="13" height="3" viewBox="0 0 13 3" fill="currentColor">
+              <path d="M12.0879 3.0083H0.587891V0.133301H12.0879V3.0083Z" fill="black" />
+            </svg>
+          </button>
+          <button class="align-btn" [class.active]="textAlignment === 'center-fill'"
+            (click)="setAlignment('center-fill')" title="Center Align with Fill">
+
+            <svg width="13" height="3" viewBox="0 0 13 3" fill="currentColor">
+              <path d="M12.0879 3.0083H0.587891V0.133301H12.0879V3.0083Z" fill="black" />
+            </svg>
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
+              <path
+                d="M4.56771 11.6646V13.5812H14.151V11.6646H4.56771ZM0.734375 17.4146H17.9844V15.4979H0.734375V17.4146ZM0.734375 9.74788H17.9844V7.83122H0.734375V9.74788ZM4.56771 3.99788V5.91455H14.151V3.99788H4.56771ZM0.734375 0.164551V2.08122H17.9844V0.164551H0.734375Z"
+                fill="black" />
+            </svg>
+            <svg width="13" height="3" viewBox="0 0 13 3" fill="currentColor">
+              <path d="M12.0879 3.0083H0.587891V0.133301H12.0879V3.0083Z" fill="black" />
+            </svg>
+
+          </button>
+          <button class="align-btn" [class.active]="textAlignment === 'right-fill'" (click)="setAlignment('right-fill')"
+            title="Right Align with Fill">
+
+
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
+              <path
+                d="M0.00390625 17.4146H17.2539V15.4979H0.00390625V17.4146ZM5.75391 13.5812H17.2539V11.6646H5.75391V13.5812ZM0.00390625 9.74788H17.2539V7.83122H0.00390625V9.74788ZM5.75391 5.91455H17.2539V3.99788H5.75391V5.91455ZM0.00390625 0.164551V2.08122H17.2539V0.164551H0.00390625Z"
+                fill="black" />
+            </svg>
+            <svg width="13" height="3" viewBox="0 0 13 3" fill="currentColor">
+              <path d="M12.0879 3.0083H0.587891V0.133301H12.0879V3.0083Z" fill="black" />
+            </svg>
 
           </button>
         </div>

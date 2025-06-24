@@ -1241,24 +1241,114 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       }
     }
 
-    // Calculate text positions
+    // Calculate text dimensions first to determine overall layout
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
+    
+    // Measure text dimensions
+    let brandTextWidth = 0;
+    let sloganTextWidth = 0;
+    let maxTextWidth = 0;
+    
+    if (this.brandName) {
+      const fontFamily = this.getFontWithFallback(this.selectedFont);
+      const fontWeight = this.isBold ? 'bold' : 'normal';
+      const fontStyle = this.isItalic ? 'italic' : 'normal';
+      ctx.font = `${fontStyle} ${fontWeight} ${this.fontSize}px ${fontFamily}`;
+      brandTextWidth = ctx.measureText(this.brandName.replace(/\n/g, ' ')).width;
+      maxTextWidth = Math.max(maxTextWidth, brandTextWidth);
+    }
+    
+    if (this.sloganText && this.enableSlogan) {
+      const fontFamily = this.getFontWithFallback(this.sloganFont);
+      const fontWeight = this.sloganIsBold ? 'bold' : 'normal';
+      const fontStyle = this.sloganIsItalic ? 'italic' : 'normal';
+      ctx.font = `${fontStyle} ${fontWeight} ${this.sloganFontSize}px ${fontFamily}`;
+      sloganTextWidth = ctx.measureText(this.sloganText.replace(/\n/g, ' ')).width;
+      maxTextWidth = Math.max(maxTextWidth, sloganTextWidth);
+    }
+
+    // Calculate text positions
     let brandY = centerY;
     let sloganY = centerY + 40;
+    let iconX = centerX;
+    let iconY = centerY - 80;
+
+    // Calculate icon position first, then adjust text accordingly
+    if (this.showLogoIcon && (this.selectedIcon || this.userInitials)) {
+      // Calculate icon bounds for collision detection
+      const iconRadius = this.iconSize / 2;
+      
+      if (this.iconAlignment === 'left') {
+        // Position icon to the left with safe margins
+        const textStartX = this.getTextX(this.textAlignment, canvas.width, centerX);
+        let textLeftEdge: number;
+        
+        if (this.textAlignment === 'center') {
+          textLeftEdge = textStartX - maxTextWidth / 2;
+        } else if (this.textAlignment === 'right') {
+          textLeftEdge = textStartX - maxTextWidth;
+        } else {
+          textLeftEdge = textStartX;
+        }
+        
+        // Position icon with enough space to avoid text overlap
+        iconX = Math.max(iconRadius + 30, textLeftEdge - iconRadius - 60);
+        iconY = centerY;
+        
+        // Keep text in original center position
+        brandY = centerY;
+        sloganY = centerY + 40;
+        
+      } else if (this.iconAlignment === 'right') {
+        // Position icon to the right with safe margins
+        const textStartX = this.getTextX(this.textAlignment, canvas.width, centerX);
+        let textRightEdge: number;
+        
+        if (this.textAlignment === 'center') {
+          textRightEdge = textStartX + maxTextWidth / 2;
+        } else if (this.textAlignment === 'left') {
+          textRightEdge = textStartX + maxTextWidth;
+        } else {
+          textRightEdge = textStartX;
+        }
+        
+        // Position icon with enough space to avoid text overlap
+        iconX = Math.min(canvas.width - iconRadius - 30, textRightEdge + iconRadius + 60);
+        iconY = centerY;
+        
+        // Keep text in original center position
+        brandY = centerY;
+        sloganY = centerY + 40;
+        
+      } else {
+        // Center alignment - icon above text
+        iconX = centerX;
+        
+        // Calculate how much space the icon needs above center
+        const iconTopY = centerY - iconRadius - 60; // 60px spacing above center
+        iconY = Math.max(iconRadius + 30, iconTopY); // Ensure icon doesn't go off canvas
+        
+        // Position text below the icon with adequate spacing
+        const iconBottom = iconY + iconRadius;
+        brandY = iconBottom + 60; // 60px spacing below icon
+        sloganY = brandY + 50;
+        
+        // If text would go off canvas, compress spacing but maintain visibility
+        if (sloganY + 30 > canvas.height) {
+          const availableHeight = canvas.height - 60; // 60px bottom margin
+          const textHeight = 90; // Approximate height for brand + slogan
+          brandY = availableHeight - textHeight + 20;
+          sloganY = brandY + 40;
+          
+          // Adjust icon position accordingly
+          iconY = brandY - 80;
+        }
+      }
+    }
 
     // Draw selected icon or initials (if enabled)
     if (this.showLogoIcon) {
-      const iconY = centerY - 80;
-      let iconX = centerX;
-      
-      // Adjust icon position based on alignment
-      if (this.iconAlignment === 'left') {
-        iconX = centerX - 100;
-      } else if (this.iconAlignment === 'right') {
-        iconX = centerX + 100;
-      }
-      
       if (this.selectedIcon && this.activeIconType === 'symbol') {
         // Draw icon background if enabled
         if (this.iconBackground) {
@@ -1278,12 +1368,6 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
         
         // Draw the actual icon image
         await this.drawIconImage(ctx, iconX, iconY, this.selectedIcon);
-        
-        // Adjust text positions when icon is present
-        if (this.iconAlignment === 'center') {
-          brandY = iconY + this.iconSize / 2 + 30;
-          sloganY = brandY + 40;
-        }
       } else if (this.userInitials && this.activeIconType === 'initials') {
         // Draw initials background if enabled
         if (this.iconBackground) {
@@ -1307,12 +1391,6 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(this.userInitials, iconX, iconY);
-        
-        // Adjust text positions when initials are present
-        if (this.iconAlignment === 'center') {
-          brandY = iconY + this.iconSize / 2 + 30;
-          sloganY = brandY + 40;
-        }
       }
     }
 
@@ -1327,7 +1405,14 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       ctx.fillStyle = this.customColors.name;
       ctx.textAlign = this.getCanvasAlignment(this.textAlignment);
       
-      const x = this.getTextX(this.textAlignment, canvas.width, centerX);
+      let x = this.getTextX(this.textAlignment, canvas.width, centerX);
+      
+      // Adjust text position when icon is on left or right to maintain visual balance
+      if (this.showLogoIcon && (this.iconAlignment === 'left' || this.iconAlignment === 'right')) {
+        // Keep text centered regardless of icon position for better composition
+        x = centerX;
+        ctx.textAlign = 'center';
+      }
       
       if (this.isMultiline) {
         // Multiline ON: Display text with line breaks
@@ -1354,7 +1439,14 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       ctx.fillStyle = this.customColors.slogan;
       ctx.textAlign = this.getCanvasAlignment(this.textAlignment);
       
-      const x = this.getTextX(this.textAlignment, canvas.width, centerX);
+      let x = this.getTextX(this.textAlignment, canvas.width, centerX);
+      
+      // Adjust text position when icon is on left or right to maintain visual balance
+      if (this.showLogoIcon && (this.iconAlignment === 'left' || this.iconAlignment === 'right')) {
+        // Keep text centered regardless of icon position for better composition
+        x = centerX;
+        ctx.textAlign = 'center';
+      }
       
       if (this.sloganIsMultiline) {
         // Multiline ON: Display slogan with line breaks
@@ -1372,9 +1464,11 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
 
         }
         
-        // Draw fill lines for slogan if needed
-        const textWidth = ctx.measureText(singleLineSlogan).width;
-        this.drawAlignmentFill(ctx, this.textAlignment, x, sloganY, textWidth, canvas.width);
+        // Only draw fill lines when icon is not on left/right (to avoid conflicts)
+        if (!this.showLogoIcon || this.iconAlignment === 'center') {
+          const textWidth = ctx.measureText(singleLineSlogan).width;
+          this.drawAlignmentFill(ctx, this.textAlignment, x, sloganY, textWidth, canvas.width);
+        }
       }
     }
   }

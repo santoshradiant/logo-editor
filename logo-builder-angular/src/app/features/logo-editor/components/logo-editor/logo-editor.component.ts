@@ -65,16 +65,25 @@ class ColorChangeCommand implements UndoRedoCommand {
   constructor(
     private component: LogoEditorComponent,
     private newColor: string,
-    private oldColor: string
+    private oldColor: string,
+    private colorType?: 'icon' | 'name' | 'slogan' | 'shape'
   ) {}
 
   execute(): void {
-    this.component.customColor = this.newColor;
+    if (this.colorType) {
+      this.component.customColors[this.colorType] = this.newColor;
+    } else {
+      this.component.customColor = this.newColor;
+    }
     this.component.updateLogoPreview();
   }
 
   undo(): void {
-    this.component.customColor = this.oldColor;
+    if (this.colorType) {
+      this.component.customColors[this.colorType] = this.oldColor;
+    } else {
+      this.component.customColor = this.oldColor;
+    }
     this.component.updateLogoPreview();
   }
 
@@ -163,8 +172,20 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   userInitials: string = '';
   iconMargin: number = 20;
   iconBackground: boolean = false;
+  backgroundType: 'fill' | 'border' = 'fill';
   backgroundCorners: 'none' | 'rounded' | 'circle' = 'none';
   iconAlignment: 'left' | 'center' | 'right' = 'center';
+  
+  // Enhanced search functionality
+  searchSuggestions: string[] = [];
+  showSearchSuggestions: boolean = false;
+  isSearchFocused: boolean = false;
+  previousSearchState: {
+    searchTerm: string;
+    currentPage: number;
+    selectedIcon: NounIconItem | null;
+    galleryState: NounIconItem[];
+  } | null = null;
   
   // Pagination properties
   currentPage: number = 1;
@@ -581,7 +602,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   // Icons section methods
   selectIcon(icon: NounIconItem): void {
     this.selectedIcon = icon;
-    this.componentStates.icon = true;
+    this.updateComponentStates(); // Update component states for color picker
     this.updateLogoPreview();
   }
 
@@ -603,23 +624,111 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   }
 
   setActiveIconType(type: 'symbol' | 'initials'): void {
+    // Save current state when switching
+    if (this.activeIconType === 'symbol' && type === 'initials') {
+      this.saveSymbolState();
+    } else if (this.activeIconType === 'initials' && type === 'symbol') {
+      this.restoreSymbolState();
+    }
+
     this.activeIconType = type;
     if (type === 'symbol') {
-      // Restore previous symbol state (already handled by your stateful properties)
+      // Symbol mode - restore previous state if available
     } else if (type === 'initials') {
-      // Optionally, set initials to brandName initials if empty
+      // Initials mode - set initials to brandName initials if empty
       if (!this.userInitials) {
-        this.userInitials = this.brandName.split(' ').map(w => w[0]).join('').toUpperCase();
+        this.userInitials = this.brandName.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 3);
       }
     }
     this.updateLogoPreview();
+  }
+
+  private saveSymbolState(): void {
+    this.previousSearchState = {
+      searchTerm: this.iconSearchTerm,
+      currentPage: this.currentPage,
+      selectedIcon: this.selectedIcon,
+      galleryState: [...this.availableNounIcons]
+    };
+  }
+
+  private restoreSymbolState(): void {
+    if (this.previousSearchState) {
+      this.iconSearchTerm = this.previousSearchState.searchTerm;
+      this.currentPage = this.previousSearchState.currentPage;
+      this.selectedIcon = this.previousSearchState.selectedIcon;
+      this.availableNounIcons = [...this.previousSearchState.galleryState];
+      this.updatePagination();
+    }
   }
 
   onIconSearch(): void {
     if (this.iconSearchTerm.trim()) {
       this.currentPage = 1;
       this.fetchLogos(this.iconSearchTerm.trim());
+      this.hideSearchSuggestions();
+    } else {
+      this.fetchLogos(''); // Load default icons
     }
+  }
+
+  onSearchInputFocus(): void {
+    this.isSearchFocused = true;
+    if (this.iconSearchTerm.trim()) {
+      this.generateSearchSuggestions();
+    }
+  }
+
+  onSearchInputBlur(): void {
+    // Delay hiding suggestions to allow for clicks
+    setTimeout(() => {
+      this.isSearchFocused = false;
+      this.hideSearchSuggestions();
+    }, 200);
+  }
+
+  onSearchInputChange(): void {
+    if (this.iconSearchTerm.trim().length >= 2) {
+      this.generateSearchSuggestions();
+    } else {
+      this.hideSearchSuggestions();
+    }
+  }
+
+  selectSearchSuggestion(suggestion: string): void {
+    this.iconSearchTerm = suggestion;
+    this.onIconSearch();
+  }
+
+  private generateSearchSuggestions(): void {
+    const searchTerm = this.iconSearchTerm.toLowerCase().trim();
+    if (searchTerm.length < 2) {
+      this.hideSearchSuggestions();
+      return;
+    }
+
+    // Generate suggestions based on common icon categories
+    const commonCategories = [
+      'business', 'technology', 'nature', 'food', 'transport', 'sports',
+      'medical', 'education', 'communication', 'security', 'finance',
+      'shopping', 'home', 'travel', 'music', 'social', 'weather'
+    ];
+
+    this.searchSuggestions = commonCategories
+      .filter(category => category.includes(searchTerm))
+      .map(category => category.charAt(0).toUpperCase() + category.slice(1))
+      .slice(0, 5);
+
+    // Add typed text as first suggestion
+    if (!this.searchSuggestions.includes(this.iconSearchTerm)) {
+      this.searchSuggestions.unshift(this.iconSearchTerm);
+    }
+
+    this.showSearchSuggestions = this.searchSuggestions.length > 0;
+  }
+
+  private hideSearchSuggestions(): void {
+    this.showSearchSuggestions = false;
   }
 
   triggerIconSearch(): void {
@@ -630,6 +739,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
 
   onInitialsChange(): void {
     this.userInitials = this.userInitials.toUpperCase().slice(0, 20);
+    this.updateComponentStates(); // Update component states for color picker
     this.updateLogoPreview();
   }
 
@@ -638,10 +748,25 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   }
 
   onIconBackgroundToggle(): void {
+    if (!this.iconBackground) {
+      // Reset background options when turning off background
+      this.backgroundType = 'fill';
+      this.backgroundCorners = 'none';
+    }
+    this.updateLogoPreview();
+  }
+
+  setBackgroundType(type: 'fill' | 'border'): void {
+    this.backgroundType = type;
     this.updateLogoPreview();
   }
 
   onBackgroundCornersChange(): void {
+    this.updateLogoPreview();
+  }
+
+  toggleRoundedCorners(): void {
+    this.backgroundCorners = this.backgroundCorners === 'none' ? 'rounded' : 'none';
     this.updateLogoPreview();
   }
 
@@ -685,6 +810,11 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     this.showCustomColorOptions = !this.showCustomColorOptions;
     
     // Initialize component states based on current settings
+    this.updateComponentStates();
+  }
+
+  // Helper method to update component states
+  private updateComponentStates(): void {
     this.componentStates = {
       icon: this.showLogoIcon && (this.selectedIcon !== null || this.userInitials !== ''),
       name: this.brandName.trim() !== '',
@@ -745,10 +875,11 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
         this.customColor = this.selectedPickerColor;
       }
       
+      // Force immediate re-render with proper color
       this.updateLogoPreview();
       
-      // Create undo/redo command
-      const command = new ColorChangeCommand(this, this.selectedPickerColor, oldColor);
+      // Create undo/redo command with specific color type
+      const command = new ColorChangeCommand(this, this.selectedPickerColor, oldColor, this.currentColorType);
       this.undoRedoService.executeCommand(command);
     }
     
@@ -765,10 +896,11 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
         this.customColor = color;
       }
 
+      // Force immediate re-render with proper color
       this.updateLogoPreview();
 
-      // Undo/redo support
-      const command = new ColorChangeCommand(this, color, oldColor);
+      // Undo/redo support with specific color type
+      const command = new ColorChangeCommand(this, color, oldColor, this.currentColorType);
       this.undoRedoService.executeCommand(command);
     }
     this.closeColorPicker();
@@ -799,6 +931,24 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     this.updateLogoPreview();
   }
 
+  // Enhanced color change handler for immediate visual feedback
+  onColorChange(colorType: 'icon' | 'name' | 'slogan' | 'shape', newColor: string): void {
+    const oldColor = this.customColors[colorType];
+    this.customColors[colorType] = newColor;
+    
+    // Update backward compatibility color
+    if (colorType === 'icon' || colorType === 'slogan') {
+      this.customColor = newColor;
+    }
+    
+    // Immediate re-render
+    this.updateLogoPreview();
+    
+    // Create undo command
+    const command = new ColorChangeCommand(this, newColor, oldColor, colorType);
+    this.undoRedoService.executeCommand(command);
+  }
+
   // Undo/Redo methods
   undo(): void {
     this.undoRedoService.undo();
@@ -813,10 +963,12 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     // This method will be called whenever any property changes
     // It should update the canvas or preview area
     if (this.canvasRef) {
-      // Add a small delay to ensure DOM updates are complete
-      requestAnimationFrame(async () => {
-        await this.renderLogo();
-      });
+      // Force immediate canvas re-render for color changes
+      setTimeout(() => {
+        this.renderLogo().catch(error => {
+          console.error('Error rendering logo:', error);
+        });
+      }, 0);
     }
   }
 
@@ -877,7 +1029,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       const fontFamily = this.getFontWithFallback(this.selectedFont);
       const x = width / 2;
       const y = height / 2;
-      const textColor = this.customColor;
+      const textColor = this.customColors.name; // Use specific name color
       
       let textStyle = '';
       if (this.isBold) textStyle += 'font-weight: bold; ';
@@ -908,7 +1060,21 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       if (this.sloganIsItalic) sloganStyle += 'font-style: italic; ';
       if (this.sloganLetterSpacing !== 0) sloganStyle += `letter-spacing: ${this.sloganLetterSpacing}px; `;
       
-      svgContent += `<text x="${width / 2}" y="${sloganY}" font-family="${sloganFontFamily}" font-size="${this.sloganFontSize}" fill="${this.customColor}" text-anchor="middle" dominant-baseline="middle" style="${sloganStyle}">${this.escapeXml(this.sloganText)}</text>`;
+      svgContent += `<text x="${width / 2}" y="${sloganY}" font-family="${sloganFontFamily}" font-size="${this.sloganFontSize}" fill="${this.customColors.slogan}" text-anchor="middle" dominant-baseline="middle" style="${sloganStyle}">${this.escapeXml(this.sloganText)}</text>`;
+    }
+    
+    // Add icon/initials to SVG
+    if (this.showLogoIcon && (this.selectedIcon || this.userInitials)) {
+      const iconX = width / 2;
+      const iconY = height / 2 - 80;
+      
+      if (this.activeIconType === 'initials' && this.userInitials) {
+        // Add initials as text element
+        const initialsSize = this.iconSize * 0.6;
+        svgContent += `<text x="${iconX}" y="${iconY}" font-family="${this.getFontWithFallback(this.initialsFont)}" font-size="${initialsSize}" fill="${this.customColors.icon}" text-anchor="middle" dominant-baseline="middle" font-weight="bold">${this.escapeXml(this.userInitials)}</text>`;
+      }
+      // Note: For symbol icons, we would need to convert the image to SVG path data
+      // which is more complex and might require server-side conversion
     }
     
     svgContent += '</svg>';
@@ -1268,82 +1434,90 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       maxTextWidth = Math.max(maxTextWidth, sloganTextWidth);
     }
 
-    // Calculate text positions
-    let brandY = centerY;
-    let sloganY = centerY + 40;
+    // Calculate element dimensions and layout
+    const iconRadius = this.iconSize / 2;
+    const iconSpacing = 60; // Spacing between icon and text
+    const textSpacing = 50; // Spacing between brand name and slogan
+    
+    // Calculate text heights (approximated)
+    const brandHeight = this.isMultiline ? this.fontSize * 1.5 : this.fontSize;
+    const sloganHeight = this.sloganIsMultiline ? this.sloganFontSize * 1.5 : this.sloganFontSize;
+    
+    // Initialize positions
     let iconX = centerX;
-    let iconY = centerY - 80;
+    let iconY = centerY;
+    let brandY = centerY;
+    let sloganY = centerY + textSpacing;
 
-    // Calculate icon position first, then adjust text accordingly
+    // Calculate layout based on icon alignment
     if (this.showLogoIcon && (this.selectedIcon || this.userInitials)) {
-      // Calculate icon bounds for collision detection
-      const iconRadius = this.iconSize / 2;
       
       if (this.iconAlignment === 'left') {
-        // Position icon to the left with safe margins
-        const textStartX = this.getTextX(this.textAlignment, canvas.width, centerX);
-        let textLeftEdge: number;
-        
-        if (this.textAlignment === 'center') {
-          textLeftEdge = textStartX - maxTextWidth / 2;
-        } else if (this.textAlignment === 'right') {
-          textLeftEdge = textStartX - maxTextWidth;
-        } else {
-          textLeftEdge = textStartX;
-        }
-        
-        // Position icon with enough space to avoid text overlap
-        iconX = Math.max(iconRadius + 30, textLeftEdge - iconRadius - 60);
+        // Icon on the left side
+        iconX = iconRadius + 60; // 60px margin from left edge
         iconY = centerY;
         
-        // Keep text in original center position
-        brandY = centerY;
-        sloganY = centerY + 40;
+        // Position text to the right of icon
+        const textStartX = iconX + iconRadius + iconSpacing;
+        brandY = centerY - (textSpacing / 2);
+        sloganY = brandY + textSpacing;
+        
+        // Ensure text doesn't go off canvas
+        if (textStartX + maxTextWidth > canvas.width - 30) {
+          iconX = Math.max(iconRadius + 30, canvas.width - maxTextWidth - iconRadius - iconSpacing - 60);
+        }
         
       } else if (this.iconAlignment === 'right') {
-        // Position icon to the right with safe margins
-        const textStartX = this.getTextX(this.textAlignment, canvas.width, centerX);
-        let textRightEdge: number;
-        
-        if (this.textAlignment === 'center') {
-          textRightEdge = textStartX + maxTextWidth / 2;
-        } else if (this.textAlignment === 'left') {
-          textRightEdge = textStartX + maxTextWidth;
-        } else {
-          textRightEdge = textStartX;
-        }
-        
-        // Position icon with enough space to avoid text overlap
-        iconX = Math.min(canvas.width - iconRadius - 30, textRightEdge + iconRadius + 60);
+        // Icon on the right side
+        iconX = canvas.width - iconRadius - 60; // 60px margin from right edge
         iconY = centerY;
         
-        // Keep text in original center position
-        brandY = centerY;
-        sloganY = centerY + 40;
+        // Position text to the left of icon
+        const textEndX = iconX - iconRadius - iconSpacing;
+        brandY = centerY - (textSpacing / 2);
+        sloganY = brandY + textSpacing;
+        
+        // Ensure text doesn't go off canvas
+        if (textEndX - maxTextWidth < 30) {
+          iconX = Math.min(canvas.width - iconRadius - 30, maxTextWidth + iconRadius + iconSpacing + 60);
+        }
         
       } else {
         // Center alignment - icon above text
         iconX = centerX;
         
-        // Calculate how much space the icon needs above center
-        const iconTopY = centerY - iconRadius - 60; // 60px spacing above center
-        iconY = Math.max(iconRadius + 30, iconTopY); // Ensure icon doesn't go off canvas
+        // Calculate total height needed
+        const totalHeight = (iconRadius * 2) + iconSpacing + brandHeight + textSpacing + sloganHeight;
         
-        // Position text below the icon with adequate spacing
-        const iconBottom = iconY + iconRadius;
-        brandY = iconBottom + 60; // 60px spacing below icon
-        sloganY = brandY + 50;
+        // Position icon and text to fit within canvas
+        const startY = Math.max(iconRadius + 40, centerY - totalHeight / 2);
         
-        // If text would go off canvas, compress spacing but maintain visibility
-        if (sloganY + 30 > canvas.height) {
-          const availableHeight = canvas.height - 60; // 60px bottom margin
-          const textHeight = 90; // Approximate height for brand + slogan
-          brandY = availableHeight - textHeight + 20;
-          sloganY = brandY + 40;
+        iconY = startY + iconRadius;
+        brandY = iconY + iconRadius + iconSpacing;
+        sloganY = brandY + textSpacing;
+        
+        // Ensure everything fits within canvas bounds
+        if (sloganY + sloganHeight > canvas.height - 40) {
+          // Compress spacing if needed
+          const availableHeight = canvas.height - 80;
+          const compressedSpacing = Math.max(30, iconSpacing * 0.7);
+          const compressedTextSpacing = Math.max(35, textSpacing * 0.7);
           
-          // Adjust icon position accordingly
-          iconY = brandY - 80;
+          iconY = 40 + iconRadius;
+          brandY = iconY + iconRadius + compressedSpacing;
+          sloganY = brandY + compressedTextSpacing;
         }
+      }
+    } else {
+      // No icon - center the text
+      if (this.enableSlogan && this.sloganText) {
+        // Both brand name and slogan
+        const totalTextHeight = brandHeight + textSpacing + sloganHeight;
+        brandY = centerY - (totalTextHeight / 2) + (brandHeight / 2);
+        sloganY = brandY + textSpacing;
+      } else {
+        // Only brand name
+        brandY = centerY;
       }
     }
 
@@ -1407,11 +1581,21 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       
       let x = this.getTextX(this.textAlignment, canvas.width, centerX);
       
-      // Adjust text position when icon is on left or right to maintain visual balance
-      if (this.showLogoIcon && (this.iconAlignment === 'left' || this.iconAlignment === 'right')) {
-        // Keep text centered regardless of icon position for better composition
-        x = centerX;
-        ctx.textAlign = 'center';
+      // Adjust text position based on icon alignment to prevent overlapping
+      if (this.showLogoIcon && (this.selectedIcon || this.userInitials)) {
+        if (this.iconAlignment === 'left') {
+          // Text positioned to the right of icon - force left alignment
+          x = iconX + iconRadius + iconSpacing;
+          ctx.textAlign = 'left';
+        } else if (this.iconAlignment === 'right') {
+          // Text positioned to the left of icon - force right alignment
+          x = iconX - iconRadius - iconSpacing;
+          ctx.textAlign = 'right';
+        } else {
+          // Center alignment - keep text centered below icon
+          x = centerX;
+          ctx.textAlign = 'center';
+        }
       }
       
       if (this.isMultiline) {
@@ -1441,11 +1625,21 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       
       let x = this.getTextX(this.textAlignment, canvas.width, centerX);
       
-      // Adjust text position when icon is on left or right to maintain visual balance
-      if (this.showLogoIcon && (this.iconAlignment === 'left' || this.iconAlignment === 'right')) {
-        // Keep text centered regardless of icon position for better composition
-        x = centerX;
-        ctx.textAlign = 'center';
+      // Adjust text position based on icon alignment to prevent overlapping
+      if (this.showLogoIcon && (this.selectedIcon || this.userInitials)) {
+        if (this.iconAlignment === 'left') {
+          // Text positioned to the right of icon - force left alignment
+          x = iconX + iconRadius + iconSpacing;
+          ctx.textAlign = 'left';
+        } else if (this.iconAlignment === 'right') {
+          // Text positioned to the left of icon - force right alignment
+          x = iconX - iconRadius - iconSpacing;
+          ctx.textAlign = 'right';
+        } else {
+          // Center alignment - keep text centered below icon
+          x = centerX;
+          ctx.textAlign = 'center';
+        }
       }
       
       if (this.sloganIsMultiline) {

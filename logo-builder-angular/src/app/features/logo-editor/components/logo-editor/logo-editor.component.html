@@ -646,8 +646,12 @@
             <input 
               type="text" 
               class="search-input" 
+              [class.focused]="isSearchFocused"
               [(ngModel)]="iconSearchTerm" 
-              (ngModelChange)="onIconSearch()"
+              (ngModelChange)="onSearchInputChange()"
+              (focus)="onSearchInputFocus()"
+              (blur)="onSearchInputBlur()"
+              (keydown.enter)="onIconSearch()"
               placeholder="Search icons..."
             >
             <button 
@@ -659,6 +663,21 @@
                 <path d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" />
               </svg>
             </button>
+          </div>
+
+          <!-- Search Suggestions Dropdown -->
+          <div 
+            class="search-suggestions-dropdown" 
+            *ngIf="showSearchSuggestions && searchSuggestions.length > 0"
+          >
+            <div 
+              class="suggestion-item"
+              *ngFor="let suggestion of searchSuggestions"
+              (click)="selectSearchSuggestion(suggestion)"
+            >
+              <span class="suggestion-match">{{ iconSearchTerm }}</span>
+              <span class="suggestion-completion">{{ suggestion.slice(iconSearchTerm.length) }}</span>
+            </div>
           </div>
           
           <!-- Pagination Controls beside search -->
@@ -799,24 +818,61 @@
       </div>
 </div>
       <!-- Background Content Dropdown -->
-      <div class="control-row" *ngIf="showLogoIcon && iconBackground && (selectedIcon || userInitials)">
-        <div class="control-group">
-          <label class="control-label">Rounded Corners</label>
-          <div class="radio-group">
-            <label class="radio-option">
-              <input type="radio" name="corners" value="none" [(ngModel)]="backgroundCorners" (ngModelChange)="onBackgroundCornersChange()">
-              <span class="radio-custom"></span>
-            </label>
-            <label class="radio-option">
-              <input type="radio" name="corners" value="rounded" [(ngModel)]="backgroundCorners" (ngModelChange)="onBackgroundCornersChange()">
-              <span class="radio-custom"></span>
-            </label>
-            <label class="radio-option">
-              <input type="radio" name="corners" value="circle" [(ngModel)]="backgroundCorners" (ngModelChange)="onBackgroundCornersChange()">
-              <span class="radio-custom"></span>
-            </label>
+      <div class="background-controls" *ngIf="showLogoIcon && iconBackground && (selectedIcon || userInitials)">
+        
+        <!-- Background Type Selection -->
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Background Type</label>
+            <div class="background-type-selection">
+              <label class="radio-option">
+                <input 
+                  type="radio" 
+                  name="backgroundType" 
+                  value="fill" 
+                  [(ngModel)]="backgroundType" 
+                  (ngModelChange)="setBackgroundType('fill')"
+                >
+                <span class="radio-custom"></span>
+                <span class="radio-label">Color Fill</span>
+              </label>
+              <label class="radio-option">
+                <input 
+                  type="radio" 
+                  name="backgroundType" 
+                  value="border" 
+                  [(ngModel)]="backgroundType" 
+                  (ngModelChange)="setBackgroundType('border')"
+                >
+                <span class="radio-custom"></span>
+                <span class="radio-label">Border</span>
+              </label>
+            </div>
           </div>
         </div>
+
+        <!-- Rounded Corners Toggle -->
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Rounded Corners</label>
+            <div class="checkbox-wrapper">
+              <label class="checkbox-option">
+                <input 
+                  type="checkbox" 
+                  [checked]="backgroundCorners === 'rounded'"
+                  (change)="toggleRoundedCorners()"
+                >
+                <span class="checkbox-custom">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" *ngIf="backgroundCorners === 'rounded'">
+                    <path d="M2 6L5 9L10 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+                <span class="checkbox-label">Enable rounded corners</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <!-- Alignment Control -->

@@ -183,11 +183,11 @@
                 class="range-slider"
                 [(ngModel)]="fontSize"
                 (ngModelChange)="onFontSizeChange()"
-                min="12"
-                max="72"
+                min="24"
+                max="120"
                 [style.--val]="fontSize"
-                [style.--min]="12"
-                [style.--max]="72"
+                [style.--min]="24"
+                [style.--max]="120"
               />
             </div>
           </div>
@@ -572,11 +572,11 @@
                 class="range-slider"
                 [(ngModel)]="sloganFontSize"
                 (ngModelChange)="onSloganFontSizeChange()"
-                min="10"
-                max="48"
+                min="12"
+                max="80"
                 [style.--val]="sloganFontSize"
-                [style.--min]="10"
-                [style.--max]="48"
+                [style.--min]="12"
+                [style.--max]="80"
               />
             </div>
           </div>
@@ -776,8 +776,11 @@
               class="range-slider"
               [(ngModel)]="iconSize"
               (ngModelChange)="onIconSizeChange()"
-              min="16"
-              max="128"
+              min="200"
+              max="520"
+              [style.--val]="iconSize"
+              [style.--min]="200"
+              [style.--max]="520"
             />
           </div>
         </div>
@@ -797,6 +800,9 @@
               (ngModelChange)="onIconMarginChange()"
               min="0"
               max="50"
+              [style.--val]="iconMargin"
+              [style.--min]="0"
+              [style.--max]="50"
             />
           </div>
         </div>

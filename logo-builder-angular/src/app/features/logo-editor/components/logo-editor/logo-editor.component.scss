@@ -132,8 +132,8 @@
       &:hover::after {
         content: attr(title);
         position: absolute;
-        top: -35px;
-        left: 50%;
+        top: 0px;
+        left: 165%;
         transform: translateX(-50%);
         background: rgba(0, 0, 0, 0.8);
         color: white;
@@ -909,9 +909,10 @@
 
       .control-group {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         gap: 8px;
         flex: 1;
+        justify-content: space-between;
 
         &.multiline-control {
           flex-direction: row;
@@ -939,6 +940,7 @@
 
     .slider-wrapper {
       position: relative;
+      width: 60%;
 
       .range-slider {
         width: 100%;
@@ -1056,6 +1058,15 @@
   }
 }
 
+.d-flex{
+  display: flex;
+} 
+.align-center{
+  align-items: center;
+} 
+.justify-space-between{
+  justify-content: space-between;
+}
 // Slogan Section Specific Styles
 .text-alignment {
   margin-bottom: 24px;
@@ -1077,13 +1088,26 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 38px;
+      height: 33px;
       border: 1px solid #e5e7eb;
-      border-radius: 6px;
+      border-radius: 0px;
       background: #ffffff;
       cursor: pointer;
       transition: all 0.2s ease;
       color: #6b7280;
+      // /* 1 & 3: top-left & bottom-left */
+      //   &:nth-child(1),
+      //   &:nth-child(3) {
+      //     border-top-left-radius: 8px;
+      //     border-bottom-left-radius: 8px;
+      //   }
+
+      //   /* 4 & 6: top-right & bottom-right */
+      //   &:nth-child(4),
+      //   &:nth-child(6) {
+      //     border-top-right-radius: 8px;
+      //     border-bottom-right-radius: 8px;
+      //   }
 
       svg {
         width: 14px;
@@ -2490,19 +2514,34 @@
   .alignment-buttons {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
+    gap: 0px;
 
     .align-btn {
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 12px;
+      padding: 9px;
       border: 1px solid var(--ns-border-light);
-      border-radius: 6px;
+      border-radius: 0px;
       background: var(--ns-background);
       color: var(--ns-text-secondary);
       cursor: pointer;
       transition: all 0.2s ease;
+ /* 1 & 3: top-left & bottom-left */
+        &:nth-child(1)  {
+          border-top-left-radius: 8px; 
+        } 
+        &:nth-child(4) { 
+          border-bottom-left-radius: 8px;
+        }
+
+        /* 4 & 6: top-right & bottom-right */
+        &:nth-child(3)  {
+          border-top-right-radius: 8px; 
+        }
+           &:nth-child(6){
+            border-bottom-right-radius: 8px;
+           }
 
       svg {
         width: 14px;
@@ -2516,7 +2555,7 @@
       }
 
       &.active {
-        background: var(--ns-primary);
+        background:#cccccc;
         border-color: var(--ns-primary);
         color: white;
       }

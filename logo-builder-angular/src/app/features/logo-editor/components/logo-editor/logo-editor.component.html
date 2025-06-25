@@ -453,7 +453,7 @@
       </div>
 
       <!-- Alignment -->
-     <div class="text-alignment" *ngIf="enableSlogan">
+     <div class="text-alignment d-flex align-center justify-space-between" *ngIf="enableSlogan">
         <label class="form-label">Alignment</label>
         <div class="alignment-buttons">
           <button class="align-btn" [class.active]="textAlignment === 'left'" (click)="setAlignment('left')"

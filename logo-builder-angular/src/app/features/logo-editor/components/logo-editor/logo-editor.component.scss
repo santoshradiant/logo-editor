@@ -2,7 +2,14 @@
 :root {
   --ns-primary: #00B894;
   --ns-primary-light: #e6fffa;
+  --ns-primary-light-4: #f0fdfa;
   --ns-primary-dark: #00a085;
+  --ns-primary-dark-1: #009688;
+  --ns-secondary-light-4: #f3f4f6;
+  --ns-grey-light-3: #d1d5db;
+  --ns-theme-grey: #6b7280;
+  --ns-off-white: #f9fafb;
+  --ns-grey-light-4: #f3f4f6;
 }
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
@@ -3026,3 +3033,225 @@
 // <input ... [style.--val]="value" [style.--min]="12" [style.--max]="72">
 
 ///
+
+// Brand Name Field Styles - per figma.md requirements
+.form-input {
+  border: 1px solid var(--ns-grey-light-3);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  
+  // Hover state: stroke changes to darker color (grey-light-3 to theme-grey)
+  &.hovered {
+    border-color: var(--ns-theme-grey);
+  }
+  
+  // Focus state: 2px primary colored border
+  &.focused {
+    border: 2px solid var(--ns-primary);
+    outline: none;
+  }
+  
+  // Character limit exceeded state
+  &.character-limit-exceeded {
+    border-color: #ef4444;
+  }
+}
+
+// Character Counter - show at 30 characters as per figma.md
+.character-counter {
+  margin-top: 4px;
+  text-align: right;
+  font-size: 12px;
+  color: var(--ns-theme-grey);
+  
+  .character-limit-exceeded {
+    color: #ef4444;
+  }
+}
+
+// Recommended Fonts - per figma.md requirements
+.font-tile {
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 12px 16px;
+  background: var(--ns-off-white);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  
+  // Hover state: 2px primary-dark colored border
+  &:hover {
+    border-color: var(--ns-primary-dark);
+  }
+  
+  // Selected state: 2px primary colored border and off-white fill
+  &.active {
+    border-color: var(--ns-primary);
+    background: var(--ns-off-white);
+  }
+}
+
+// Custom Font Tile - per figma.md requirements
+.custom-font-button {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  .upload-zone {
+    border: 2px dotted var(--ns-primary);
+    border-radius: 8px;
+    padding: 16px;
+    background: var(--ns-grey-light-4);
+    transition: all 0.2s ease;
+    
+    .upload-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--ns-primary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      svg {
+        transition: all 0.2s ease;
+      }
+      
+      span {
+        transition: all 0.2s ease;
+      }
+    }
+  }
+  
+  // Hover effect as per figma.md requirements
+  &:hover {
+    .upload-zone {
+      border: 2px solid var(--ns-primary-dark);
+      background: var(--ns-primary-light-4);
+      
+      .upload-label {
+        color: var(--ns-primary-dark);
+        text-decoration: underline;
+        
+        svg path {
+          fill: var(--ns-primary-dark);
+        }
+      }
+    }
+  }
+}
+
+// Custom Font Dropdown - scrollable with scrollbar as per figma.md
+.custom-font-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid var(--ns-grey-light-3);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  max-height: 200px;
+  overflow: hidden;
+  
+  .scrollable-list {
+    max-height: 200px;
+    overflow-y: auto;
+    
+    // Custom scrollbar styling
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: var(--ns-grey-light-4);
+      border-radius: 4px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: var(--ns-theme-grey);
+      border-radius: 4px;
+      
+      &:hover {
+        background: var(--ns-primary-dark);
+      }
+    }
+  }
+  
+  .font-item {
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    
+    // Currently selected font highlighted in secondary-light4
+    &:hover {
+      background: var(--ns-secondary-light-4);
+    }
+    
+    .font-name.active {
+      background: var(--ns-secondary-light-4);
+      font-weight: 600;
+    }
+  }
+}
+
+// Navigation tiles hover states - per figma.md requirements
+.nav-icon-btn {
+  position: relative;
+  
+  // Hover state: primary-dark-1 coloring with tooltip
+  &:hover {
+    background: rgba(var(--ns-primary-dark-1), 0.1);
+    
+    img {
+      filter: brightness(0.8);
+    }
+    
+    // Tooltip as per figma.md requirements
+    &::after {
+      content: attr(title);
+      position: absolute;
+      top: 50%;
+      left: calc(100% + 8px);
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      white-space: nowrap;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      animation: fadeInTooltip 0.3s ease-in-out 0.5s forwards;
+    }
+  }
+}
+
+@keyframes fadeInTooltip {
+  from { 
+    opacity: 0; 
+    transform: translateY(-50%) translateX(-4px);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(-50%) translateX(0);
+  }
+}
+
+// Controls hover states - slightly darken from primary to primary-dark-1
+.control-group, .style-btn, .toggle-switch {
+  transition: all 0.2s ease;
+  
+  &:hover {
+    filter: brightness(0.9);
+  }
+}
+
+// Range sliders hover effect
+.range-slider {
+  &:hover {
+    --thumb-color: var(--ns-primary-dark-1);
+  }
+}

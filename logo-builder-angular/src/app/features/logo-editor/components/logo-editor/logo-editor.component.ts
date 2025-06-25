@@ -123,36 +123,56 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   editorForm: FormGroup;
   private subscription = new Subscription();
 
-
-  // Tab management
+  // Tab management - default to 'brand' as per figma.md requirement
   activeTab: string = 'brand';
- loading = false;
+  loading = false;
+  
   // UI State for collapsible sections
   showSloganSection: boolean = false;
   showIconSection: boolean = false;
   showColorSection: boolean = false;
 
-  // Brand section
-  brandName: string = 'URBAN ART FIGURES';
-  recommendedFonts: string[] = [
-    'Arial', 'Helvetica', 'Times New Roman', 'Georgia', 'Verdana',
-    'Trebuchet MS', 'Impact', 'Comic Sans MS', 'Courier New', 'Lucida Console'
+  // Brand section - updated per figma.md requirements
+  brandName: string = ''; // Will be auto-filled from previous step
+  
+  // Recommended fonts - exactly 6 fonts as per figma.md, first one selected by default
+  recommendedFonts: Array<{ name: string; family: string; display: string }> = [
+    { name: 'DM Serif Display', family: 'DM Serif Display', display: 'DM Serif Display' },
+    { name: 'Poppins', family: 'Poppins', display: 'Poppins' },
+    { name: 'Playfair Display', family: 'Playfair Display', display: 'Playfair Display' },
+    { name: 'Space Grotesk', family: 'Space Grotesk', display: 'Space Grotesk' },
+    { name: 'Raleway', family: 'Raleway', display: 'Raleway' },
+    { name: 'Libre Baskerville', family: 'Libre Baskerville', display: 'Libre Baskerville' }
   ];
-  selectedFont: string = 'Arial';
+  
+  // First font selected by default as per figma.md
+  selectedFont: string = 'DM Serif Display';
   fontSize: number = 48;
   letterSpacing: number = 0;
   lineHeight: number = 1.2;
   isMultiline: boolean = false;
   
+  // Character counter functionality - show counter at 30 characters as per figma.md
+  showCharacterCounter: boolean = false;
+  maxCharacters: number = 40;
+  characterCountThreshold: number = 30;
+  
+  // Brand name field interaction states
+  brandNameFieldHovered: boolean = false;
+  brandNameFieldFocused: boolean = false;
+  
   // Font formatting options
   isBold: boolean = false;
   isItalic: boolean = false;
+  
+  // Custom font dropdown states
+  showCustomFontDropdown: boolean = false;
+  customFontTileClicked: boolean = false; // Track if custom font tile was clicked
   
   // Uploaded fonts
   uploadedFonts: Array<{ name: string; family: string; file?: File }> = [];
   showUploadDropdown: boolean = false;
   isUploadingFont: boolean = false;
-  showCustomFontDropdown: boolean = false;
   showSloganCustomFontDropdown: boolean = false;
 
   // Slogan section
@@ -367,31 +387,45 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    console.log('Logo Editor ngOnInit - Services check:', {
-      fontService: !!this.fontService,
-      symbolService: !!this.symbolService,
-      exportService: !!this.exportService,
-      undoRedoService: !!this.undoRedoService
-    });
+    // Initialize the form
+    this.editorForm = this.createForm();
     
-    this.loadCustomFonts();
+    // Load advanced features
     this.loadAdvancedFeatures();
+    
+    // Set up undo/redo system
     this.setupUndoRedo();
+    
+    // Load custom fonts
+    this.loadCustomFonts();
+    
+    // Set up click outside listener for dropdowns
     this.setupClickOutsideListener();
     
+    // Auto-fill brand name from previous step as per figma.md requirement
+    this.autoFillBrandNameFromPreviousStep();
+    
+    // Adopt font choices from other apps as per figma.md requirement
+    this.adoptFontChoicesFromOtherApps();
+    
+    // Get AI-recommended fonts (would be implemented with actual AI service)
+    this.recommendedFonts = this.getRecommendedFontsFromAI();
+
+    // Check if we have a logo ID from the route
+    this.route.params.subscribe(params => {
+      if (params['id']) {
+        this.loadLogo(params['id']);
+      } else {
+        this.createNewLogo();
+      }
+    });
+
     // Initialize previous values for undo/redo
     this.brandNamePreviousValue = this.brandName;
     this.sloganPreviousValue = this.sloganText;
     
-    // Initialize autosave service with unsaved changes
-    this.autosaveService.markHasUnsavedChanges();
-    
-    const logoId = this.route.snapshot.paramMap.get('id');
-    if (logoId && logoId !== 'new') {
-      this.loadLogo(logoId);
-    } else {
-      this.createNewLogo();
-    }
+    // Fetch icons for the icons section
+    this.fetchLogos();
   }
 
   private setupClickOutsideListener(): void {
@@ -484,22 +518,92 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   private brandNamePreviousValue: string = '';
 
   onBrandNameChange(): void {
-    // Clear existing timer
+    // Update character counter visibility
+    this.showCharacterCounter = this.brandName.length >= this.characterCountThreshold;
+    
+    // Clear previous timer
     if (this.brandNameTimer) {
       clearTimeout(this.brandNameTimer);
     }
 
-    // Update preview immediately for real-time feedback
-    this.updateLogoPreview();
-
-    // Set timer to create undo checkpoint after 1 second of no typing
+    // Debounce logo updates
     this.brandNameTimer = setTimeout(() => {
-      if (this.brandName !== this.brandNamePreviousValue) {
+      if (this.brandNamePreviousValue !== this.brandName) {
         const command = new BrandNameChangeCommand(this, this.brandName, this.brandNamePreviousValue);
         this.undoRedoService.executeCommand(command);
         this.brandNamePreviousValue = this.brandName;
+        this.updateLogoPreview();
+        this.triggerAutosave();
       }
-    }, 1000);
+    }, 300);
+  }
+
+  // Brand name field interaction methods as per figma.md requirements
+  onBrandNameFieldHover(isHovered: boolean): void {
+    this.brandNameFieldHovered = isHovered;
+  }
+
+  onBrandNameFieldFocus(): void {
+    this.brandNameFieldFocused = true;
+  }
+
+  onBrandNameFieldBlur(): void {
+    this.brandNameFieldFocused = false;
+  }
+
+  onBrandNameFieldDoubleClick(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input) {
+      input.select(); // Highlight all text as per figma.md requirement
+    }
+  }
+
+  // Custom font tile behavior as per figma.md requirements
+  onCustomFontTileClick(): void {
+    this.customFontTileClicked = true;
+    this.showCustomFontDropdown = true;
+  }
+
+  // Auto-fill brand name from previous step (Domain onboarding)
+  private autoFillBrandNameFromPreviousStep(): void {
+    // This would typically come from a service or route parameter
+    // For now, we'll check route parameters or local storage
+    const routeBrandName = this.route.snapshot.queryParams['brandName'];
+    const storedBrandName = localStorage.getItem('domainBrandName');
+    
+    if (routeBrandName) {
+      this.brandName = routeBrandName;
+    } else if (storedBrandName) {
+      this.brandName = storedBrandName;
+    }
+    
+    // Update character counter if brand name is pre-filled
+    this.showCharacterCounter = this.brandName.length >= this.characterCountThreshold;
+  }
+
+  // Get recommended fonts based on domain onboarding (AI)
+  private getRecommendedFontsFromAI(): Array<{ name: string; family: string; display: string }> {
+    // This would typically call an AI service based on domain onboarding
+    // For now, return the default 6 fonts as per figma.md
+    return this.recommendedFonts;
+  }
+
+  // Check if user has used other apps and adopt font choices
+  private adoptFontChoicesFromOtherApps(): void {
+    const websiteFont = localStorage.getItem('websiteOnboardingFont');
+    if (websiteFont && this.recommendedFonts.some(font => font.name === websiteFont)) {
+      this.selectedFont = websiteFont;
+    }
+  }
+
+  // Get character count helper text
+  getCharacterCountText(): string {
+    return `${this.brandName.length}/${this.maxCharacters}`;
+  }
+
+  // Check if character limit is exceeded
+  isCharacterLimitExceeded(): boolean {
+    return this.brandName.length > this.maxCharacters;
   }
 
   // Font formatting methods
@@ -1380,10 +1484,10 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   }
 
   private createNewLogo(): void {
-    // Initialize with default values for new design
-    this.brandName = 'URBAN ART FIGURES';
+    // Initialize with default values for new design - brand name comes from previous step
+    // brandName is auto-filled from previous step, don't set default value here
     this.sloganText = 'CUSTOM DESIGNER TOYS';
-    this.selectedFont = 'Arial';
+    this.selectedFont = 'DM Serif Display'; // First recommended font as per figma.md
     this.fontSize = 48;
     this.customColor = '#2196F3';
     this.textAlignment = 'center';
@@ -1393,7 +1497,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     this.iconRotation = 0;
     this.selectedIcon = null;
     this.selectedShape = null;
-    this.iconSearchTerm = 'Urban Art Figures';
+    this.iconSearchTerm = this.brandName || 'Logo'; // Use brand name if available
     
     // Initialize canvas after view is ready with proper timing
     setTimeout(() => {
@@ -2294,25 +2398,8 @@ let initalsStyle = '';
   }
 
   getDisplayFonts(): Array<{ name: string; family: string; display: string }> {
-    return [
-      
-      { name: 'DM Serif Display', family: 'DM Serif Display', display: 'DM Serif Display' },
-      { name: 'Poppins', family: 'Poppins', display: 'Poppins' },
-      { name: 'Playfair Display', family: 'Playfair Display', display: 'Playfair Display' },
-      { name: 'Space Grotesk', family: 'Space Grotesk', display: 'Space Grotesk' },
-      { name: 'Raleway', family: 'Raleway', display: 'Raleway' },
-      { name: 'Libre Baskerville', family: 'Libre Baskerville', display: 'Libre Baskerville' },
-      { name: 'Quicksand', family: 'Quicksand', display: 'Quicksand' },
-      { name: 'Syne', family: 'Syne', display: 'Syne' },
-      { name: 'Pacifico', family: 'Pacifico', display: 'Pacifico' }, 
-
-      // { name: 'Ostelika One', family: 'Ostelika-One', display: 'Ostelika One' },
-      // { name: 'Venova Oder', family: 'Venova-Oder', display: 'Venova Oder' },
-      // { name: 'Hollendai', family: 'Hollendai', display: 'Hollendai' },
-      // { name: 'Bodoni', family: 'Bodoni', display: 'Bodoni' },
-      // { name: 'Giaomene', family: 'Giaomene', display: 'Giaomene' },
-      // { name: 'Chamge', family: 'Chamge', display: 'Chamge' }
-    ];
+    // Return the 6 recommended fonts as per figma.md requirements
+    return this.recommendedFonts;
   }
 
   private loadCustomFonts(): void {

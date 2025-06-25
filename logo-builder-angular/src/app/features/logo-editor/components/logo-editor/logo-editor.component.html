@@ -62,26 +62,49 @@
           *ngIf="!isMultiline"
           type="text"
           class="form-input"
+          [class.hovered]="brandNameFieldHovered"
+          [class.focused]="brandNameFieldFocused"
+          [class.character-limit-exceeded]="isCharacterLimitExceeded()"
           [(ngModel)]="brandName"
           (ngModelChange)="onBrandNameChange()"
+          (mouseenter)="onBrandNameFieldHover(true)"
+          (mouseleave)="onBrandNameFieldHover(false)"
+          (focus)="onBrandNameFieldFocus()"
+          (blur)="onBrandNameFieldBlur()"
+          (dblclick)="onBrandNameFieldDoubleClick($event)"
           placeholder="Enter your brand name"
           maxlength="40"
         />
         <textarea
           *ngIf="isMultiline"
           class="form-input multiline-input"
+          [class.hovered]="brandNameFieldHovered"
+          [class.focused]="brandNameFieldFocused"
+          [class.character-limit-exceeded]="isCharacterLimitExceeded()"
           [(ngModel)]="brandName"
           (ngModelChange)="onBrandNameChange()"
+          (mouseenter)="onBrandNameFieldHover(true)"
+          (mouseleave)="onBrandNameFieldHover(false)"
+          (focus)="onBrandNameFieldFocus()"
+          (blur)="onBrandNameFieldBlur()"
+          (dblclick)="onBrandNameFieldDoubleClick($event)"
           placeholder="Enter your brand name (use Enter for new lines)"
           rows="3"
         ></textarea>
+        
+        <!-- Character counter - show at 30 characters as per figma.md -->
+        <div class="character-counter" *ngIf="showCharacterCounter">
+          <span [class.character-limit-exceeded]="isCharacterLimitExceeded()">
+            {{ getCharacterCountText() }}
+          </span>
+        </div>
       </div>
 
       <div class="fonts-section">
         <h3 class="subsection-title">Recommended Fonts</h3>
         <div class="fonts-grid">
           <button
-            *ngFor="let font of getDisplayFonts()"
+            *ngFor="let font of recommendedFonts"
             class="font-tile"
             [class.active]="selectedFont === font.name"
             (click)="selectFont(font.name)"
@@ -95,43 +118,50 @@
       <div class="custom-font-section">
         <h3 class="subsection-title">Custom Font</h3>
 
+        <!-- Custom Font Tile - Show "Select your own font" when not clicked -->
+        <div 
+          class="custom-font-button" 
+          (click)="onCustomFontTileClick()" 
+          *ngIf="!customFontTileClicked"
+        >
+          <div class="upload-zone">                  
+            <label class="upload-label">
+              <svg width="18" height="19" viewBox="0 0 18 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 7.0083C12 7.42305 11.6648 7.7583 11.25 7.7583H9.75V12.2583C9.75 12.6731 9.41475 13.0083 9 13.0083C8.58525 13.0083 8.25 12.6731 8.25 12.2583V7.7583H6.75C6.33525 7.7583 6 7.42305 6 7.0083C6 6.59355 6.33525 6.2583 6.75 6.2583H11.25C11.6648 6.2583 12 6.59355 12 7.0083ZM15 13.0353V5.4813C13.8525 5.3163 12.942 4.4058 12.777 3.2583H5.223C5.058 4.4058 4.1475 5.3163 3 5.4813V13.0353C4.1475 13.2003 5.058 14.1108 5.223 15.2583H12.777C12.942 14.1108 13.8525 13.2003 15 13.0353ZM18 15.6333C18 17.0808 16.8225 18.2583 15.375 18.2583C14.3303 18.2583 13.4258 17.6441 13.0035 16.7583H4.9965C4.57425 17.6441 3.66975 18.2583 2.625 18.2583C1.1775 18.2583 0 17.0808 0 15.6333C0 14.5886 0.61425 13.6841 1.5 13.2618V5.2548C0.61425 4.83255 0 3.92805 0 2.8833C0 1.4358 1.1775 0.258301 2.625 0.258301C3.66975 0.258301 4.57425 0.872551 4.9965 1.7583H13.0043C13.4265 0.872551 14.331 0.258301 15.3758 0.258301C16.8233 0.258301 18.0008 1.4358 18.0008 2.8833C18.0008 3.92805 17.3865 4.83255 16.5008 5.2548V13.2626C17.3865 13.6848 18.0008 14.5893 18.0008 15.6341L18 15.6333Z" fill="#007A33"/>
+              </svg>
+              <span>Select your own font</span>
+            </label>
+          </div>
+        </div>
 
-<div class="custom-font-button" (click)="toggleBrandFontSelection()" *ngIf="!showBrandFontSelection">
-                <div class="upload-zone">                  
-                  <label for="font-upload-brand" class="upload-label">
-                    <svg width="18" height="19" viewBox="0 0 18 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M12 7.0083C12 7.42305 11.6648 7.7583 11.25 7.7583H9.75V12.2583C9.75 12.6731 9.41475 13.0083 9 13.0083C8.58525 13.0083 8.25 12.6731 8.25 12.2583V7.7583H6.75C6.33525 7.7583 6 7.42305 6 7.0083C6 6.59355 6.33525 6.2583 6.75 6.2583H11.25C11.6648 6.2583 12 6.59355 12 7.0083ZM15 13.0353V5.4813C13.8525 5.3163 12.942 4.4058 12.777 3.2583H5.223C5.058 4.4058 4.1475 5.3163 3 5.4813V13.0353C4.1475 13.2003 5.058 14.1108 5.223 15.2583H12.777C12.942 14.1108 13.8525 13.2003 15 13.0353ZM18 15.6333C18 17.0808 16.8225 18.2583 15.375 18.2583C14.3303 18.2583 13.4258 17.6441 13.0035 16.7583H4.9965C4.57425 17.6441 3.66975 18.2583 2.625 18.2583C1.1775 18.2583 0 17.0808 0 15.6333C0 14.5886 0.61425 13.6841 1.5 13.2618V5.2548C0.61425 4.83255 0 3.92805 0 2.8833C0 1.4358 1.1775 0.258301 2.625 0.258301C3.66975 0.258301 4.57425 0.872551 4.9965 1.7583H13.0043C13.4265 0.872551 14.331 0.258301 15.3758 0.258301C16.8233 0.258301 18.0008 1.4358 18.0008 2.8833C18.0008 3.92805 17.3865 4.83255 16.5008 5.2548V13.2626C17.3865 13.6848 18.0008 14.5893 18.0008 15.6341L18 15.6333Z" fill="#007A33"/>
-</svg>
-                    <span>Select your own fonts</span>
-                  </label>
-                </div>
-                </div>
-
-        <div class="font-selection-row" *ngIf="showBrandFontSelection">
+        <!-- Custom Font Dropdown - Show after tile is clicked -->
+        <div class="font-selection-row" *ngIf="customFontTileClicked">
           <div class="custom-font-dropdown-container">
             <button class="custom-font-btn" (click)="toggleCustomFontDropdown()">
               <span class="selected-font-display" [style.font-family]="selectedFont">
                 {{ selectedFont }}
               </span>
               
-
               <svg width="12" height="13" viewBox="0 0 12 13"  fill="currentColor"
                 [style.transform]="showCustomFontDropdown ? 'rotate(180deg)' : 'rotate(0deg)'">
-<path d="M6.35491 7.50134C6.30843 7.5482 6.25313 7.5854 6.1922 7.61079C6.13127 7.63617 6.06591 7.64924 5.99991 7.64924C5.9339 7.64924 5.86855 7.63617 5.80762 7.61079C5.74669 7.5854 5.69139 7.5482 5.64491 7.50134L3.35491 5.20634C3.30843 5.15948 3.25313 5.12228 3.1922 5.09689C3.13127 5.07151 3.06591 5.05844 2.99991 5.05844C2.9339 5.05844 2.86855 5.07151 2.80762 5.09689C2.74669 5.12228 2.69139 5.15948 2.64491 5.20634C2.55178 5.30002 2.49951 5.42675 2.49951 5.55884C2.49951 5.69093 2.55178 5.81766 2.64491 5.91134L4.93991 8.20634C5.22116 8.48724 5.60241 8.64502 5.99991 8.64502C6.39741 8.64502 6.77866 8.48724 7.05991 8.20634L9.35491 5.91134C9.44728 5.81821 9.49936 5.69251 9.49991 5.56134C9.50029 5.49554 9.48768 5.4303 9.46279 5.36939C9.43791 5.30847 9.40125 5.25306 9.35491 5.20634C9.30843 5.15948 9.25313 5.12228 9.1922 5.09689C9.13127 5.07151 9.06591 5.05844 8.99991 5.05844C8.9339 5.05844 8.86855 5.07151 8.80762 5.09689C8.74669 5.12228 8.69139 5.15948 8.64491 5.20634L6.35491 7.50134Z" fill="black"/>
-</svg>
+                <path d="M6.35491 7.50134C6.30843 7.5482 6.25313 7.5854 6.1922 7.61079C6.13127 7.63617 6.06591 7.64924 5.99991 7.64924C5.9339 7.64924 5.86855 7.63617 5.80762 7.61079C5.74669 7.5854 5.69139 7.5482 5.64491 7.50134L3.35491 5.20634C3.30843 5.15948 3.25313 5.12228 3.1922 5.09689C3.13127 5.07151 3.06591 5.05844 2.99991 5.05844C2.9339 5.05844 2.86855 5.07151 2.80762 5.09689C2.74669 5.12228 2.69139 5.15948 2.64491 5.20634C2.55178 5.30002 2.49951 5.42675 2.49951 5.55884C2.49951 5.69093 2.55178 5.81766 2.64491 5.91134L4.93991 8.20634C5.22116 8.48724 5.60241 8.64502 5.99991 8.64502C6.39741 8.64502 6.77866 8.48724 7.05991 8.20634L9.35491 5.91134C9.44728 5.81821 9.49936 5.69251 9.49991 5.56134C9.50029 5.49554 9.48768 5.4303 9.46279 5.36939C9.43791 5.30847 9.40125 5.25306 9.35491 5.20634C9.30843 5.15948 9.25313 5.12228 9.1922 5.09689C9.13127 5.07151 9.06591 5.05844 8.99991 5.05844C8.9339 5.05844 8.86855 5.07151 8.80762 5.09689C8.74669 5.12228 8.69139 5.15948 8.64491 5.20634L6.35491 7.50134Z" fill="black"/>
+              </svg>
             </button>
 
-            <!-- Simplified Font Dropdown -->
+            <!-- Scrollable Font Dropdown as per figma.md -->
             <div class="custom-font-dropdown" *ngIf="showCustomFontDropdown">
-              <!-- Available Fonts List -->
-              <div class="font-list">
-                <div class="font-item" *ngFor="let font of getDisplayFonts()" (click)="selectFont(font.name)">
-                  <span class="font-name" [style.font-family]="font.family" [class.active]="selectedFont === font.name">
+              <div class="font-list scrollable-list">
+                <div 
+                  class="font-item" 
+                  *ngFor="let font of recommendedFonts" 
+                  (click)="selectFont(font.name)"
+                  [style.font-family]="font.family"
+                >
+                  <span class="font-name" [class.active]="selectedFont === font.name">
                     {{ font.display }}
                   </span>
                 </div>
               </div>
-
             </div>
           </div>
 

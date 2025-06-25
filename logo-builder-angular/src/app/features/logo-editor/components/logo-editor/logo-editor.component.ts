@@ -36,6 +36,26 @@ class BrandNameChangeCommand implements UndoRedoCommand {
   description = 'Change brand name';
 }
 
+class SloganChangeCommand implements UndoRedoCommand {
+  constructor(
+    private component: LogoEditorComponent,
+    private newValue: string,
+    private oldValue: string
+  ) {}
+
+  execute(): void {
+    this.component.sloganText = this.newValue;
+    this.component.updateLogoPreview();
+  }
+
+  undo(): void {
+    this.component.sloganText = this.oldValue;
+    this.component.updateLogoPreview();
+  }
+
+  description = 'Change slogan';
+}
+
 class FontChangeCommand implements UndoRedoCommand {
   constructor(
     private component: LogoEditorComponent,
@@ -359,6 +379,10 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     this.setupUndoRedo();
     this.setupClickOutsideListener();
     
+    // Initialize previous values for undo/redo
+    this.brandNamePreviousValue = this.brandName;
+    this.sloganPreviousValue = this.sloganText;
+    
     // Initialize autosave service with unsaved changes
     this.autosaveService.markHasUnsavedChanges();
     
@@ -388,6 +412,14 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
     this.logoRenderer.destroy();
     this.autosaveService.destroy();
+    
+    // Clean up timers
+    if (this.brandNameTimer) {
+      clearTimeout(this.brandNameTimer);
+    }
+    if (this.sloganTimer) {
+      clearTimeout(this.sloganTimer);
+    }
   }
 
   // Tab management
@@ -448,8 +480,26 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     this.updateLogoPreview();
   }
 
+  private brandNameTimer: any;
+  private brandNamePreviousValue: string = '';
+
   onBrandNameChange(): void {
+    // Clear existing timer
+    if (this.brandNameTimer) {
+      clearTimeout(this.brandNameTimer);
+    }
+
+    // Update preview immediately for real-time feedback
     this.updateLogoPreview();
+
+    // Set timer to create undo checkpoint after 1 second of no typing
+    this.brandNameTimer = setTimeout(() => {
+      if (this.brandName !== this.brandNamePreviousValue) {
+        const command = new BrandNameChangeCommand(this, this.brandName, this.brandNamePreviousValue);
+        this.undoRedoService.executeCommand(command);
+        this.brandNamePreviousValue = this.brandName;
+      }
+    }, 1000);
   }
 
   // Font formatting methods
@@ -539,8 +589,26 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     this.updateLogoPreview();
   }
 
+  private sloganTimer: any;
+  private sloganPreviousValue: string = '';
+
   onSloganChange(): void {
+    // Clear existing timer
+    if (this.sloganTimer) {
+      clearTimeout(this.sloganTimer);
+    }
+
+    // Update preview immediately for real-time feedback
     this.updateLogoPreview();
+
+    // Set timer to create undo checkpoint after 1 second of no typing
+    this.sloganTimer = setTimeout(() => {
+      if (this.sloganText !== this.sloganPreviousValue) {
+        const command = new SloganChangeCommand(this, this.sloganText, this.sloganPreviousValue);
+        this.undoRedoService.executeCommand(command);
+        this.sloganPreviousValue = this.sloganText;
+      }
+    }, 1000);
   }
   
   // Slogan-specific methods

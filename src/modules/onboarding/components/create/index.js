@@ -10,6 +10,7 @@ import useGetOnboardingInfo from 'modules/onboarding/hooks/use-get-onboarding-in
 import Text from '@eig-builder/module-localization'
 import Grid from '@mui/material/Grid2'
 import TextField from '@mui/material/TextField'
+import TextFieldWithUndo from '../../../components/common/text-field-with-undo'
 import { mfeRefreshToken, useMaterialTheme, MfeContext } from '@eig-builder/module-addons-mfe'
 import { DataElementLocations } from '@eig-builder/core-utils/helpers/tagging-helper'
 import { useIsMobile } from '@eig-builder/core-utils/hooks/useResponsiveQuery'
@@ -229,7 +230,7 @@ const Create = () => {
     <Grid container spacing={0} className='px-4 mt-5 mt-sm-0'>
       <Grid size={12}>
         <div className={`wrapper-inputfields ${showSloganField ? 'slogan--show' : ''}`}>
-          <TextField
+          <TextFieldWithUndo
             className='mt-2 mb-2'
             fullWidth
             autoFocus={!isMobile}
@@ -249,7 +250,7 @@ const Create = () => {
             <>
               <SloganContainerDiv>
                 <SloganText>
-                  <TextField
+                  <TextFieldWithUndo
                     variant='outlined'
                     fullWidth
                     name='slogan'

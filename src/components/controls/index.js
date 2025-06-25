@@ -1,5 +1,6 @@
 import Container from './items/control-container'
 import TextControl from './items/text-control'
+import TextControlWithUndo from './items/text-control-with-undo'
 import SliderControl from './items/slider-control'
 import SwitchControl from './items/switch-control'
 import CapitalizeSwitchControl from './items/capitalize-control'
@@ -21,6 +22,7 @@ export default {
   AdvancedControls,
   Container,
   TextControl,
+  TextControlWithUndo,
   SliderControl,
   CurrentIconControl,
   SwitchControl,

@@ -30,7 +30,7 @@ const NameControls = () => {
   return (
     <Controls.Container>
       <TextWrapper>
-        <Controls.TextControl
+        <Controls.TextControlWithUndo
           label={brandNameLabel}
           locked={logoIsReadonlyBrandLock(logoMakerContext.selectedLogo, logoMakerContext.sku)}
           templateKey='text.brandName'

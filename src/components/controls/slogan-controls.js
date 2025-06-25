@@ -78,7 +78,7 @@ const SloganControls = () => {
   return (
     <Controls.Container>
       <Controls.FieldWrapper>
-        <Controls.TextControl max={{ value: 40, helperText: 30 }} label={sloganTextLabel} templateKey='text.slogan' />
+        <Controls.TextControlWithUndo max={{ value: 40, helperText: 30 }} label={sloganTextLabel} templateKey='text.slogan' />
       </Controls.FieldWrapper>
       <Controls.Conditional templateKey='text.slogan'>
         <React.Fragment>

@@ -16,7 +16,7 @@
 // Logo Editor - 3-Column Figma Design Layout
 .logo-editor-container {
   display: grid;
-  grid-template-columns: 4.44% 31.46% 64.1%;;
+  grid-template-columns: 4% 31.3% 64.7%; //4.44% 31.46% 64.1%;
   // height: 100vh;
   background: #f8f9fa; 
 
@@ -62,7 +62,7 @@
     display: flex;
     flex-direction: column;
     padding: 20px 0px;
-    gap: 8px;
+    gap: 14px;
     align-items: center;
     justify-content: center;
     margin-top: 100px;
@@ -125,10 +125,9 @@
       }
 
       &:hover {
-        background: rgba(243, 244, 246, 0.5);
-        transform: translateY(-1px);
-        filter: brightness(0.8); // darken to primary-dark-1 coloring
-
+        background: #E5F2EB!important;
+        color: var(--ns-primary) !important;
+        border-radius: 50px;
         // Mobile responsive - remove transform on mobile
         @media (max-width: 768px) {
           transform: none;
@@ -209,8 +208,8 @@
   }
 
   .logo-container {
-    margin-bottom: 8px;
-    padding: 20px 40px;
+    // margin-bottom: 8px;
+    padding: 23px 40px 0 40px;
 
     // Mobile responsive
     @media (max-width: 768px) {
@@ -239,8 +238,10 @@
 
   .section-header {
     margin-bottom: 24px;
+    margin-top: 48px;
 
     h2 {
+      margin: 16px 0;
       // font-size: 20px;
       // font-weight: 600;
       // color: #111827;
@@ -339,8 +340,8 @@
     }
 
     .font-tile {
-      padding: 12px 11px;
-      border: 1px solid #e5e7eb;
+      padding: 10px;
+      border: 2px solid #e5e7eb;
       border-radius: 8px;
       background: #ffffff;
       cursor: pointer;
@@ -351,12 +352,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      height: 40px;
 
       &:hover {
         border-color: var(--ns-primary);
-        background: var(--ns-primary-light);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+        background: var(--ns-primary-light); 
+        // transform: translateY(-1px);
+        // box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
       }
 
       &.active {
@@ -663,9 +665,9 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 12px 16px;
+            padding: 2px 16px;
             border: 2px dashed #d1d5db;
-            border-radius: 8px;
+            border-radius: 50px;
             background: #f9fafb;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -904,7 +906,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
 
       // Mobile responsive
       @media (max-width: 768px) {

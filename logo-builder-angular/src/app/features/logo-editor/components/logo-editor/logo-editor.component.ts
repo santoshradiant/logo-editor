@@ -1570,7 +1570,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
 
     // Set canvas size
     canvas.width = 859;
-    canvas.height = 790;
+    canvas.height = 720;
 
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);

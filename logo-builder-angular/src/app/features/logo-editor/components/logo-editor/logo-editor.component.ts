@@ -138,11 +138,21 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   // Recommended fonts - exactly 6 fonts as per figma.md, first one selected by default
   recommendedFonts: Array<{ name: string; family: string; display: string }> = [
     { name: 'DM Serif Display', family: 'DM Serif Display', display: 'DM Serif Display' },
-    { name: 'Poppins', family: 'Poppins', display: 'Poppins' },
-    { name: 'Playfair Display', family: 'Playfair Display', display: 'Playfair Display' },
-    { name: 'Space Grotesk', family: 'Space Grotesk', display: 'Space Grotesk' },
-    { name: 'Raleway', family: 'Raleway', display: 'Raleway' },
-    { name: 'Libre Baskerville', family: 'Libre Baskerville', display: 'Libre Baskerville' }
+      { name: 'Poppins', family: 'Poppins', display: 'Poppins' },
+      { name: 'Playfair Display', family: 'Playfair Display', display: 'Playfair Display' },
+      { name: 'Space Grotesk', family: 'Space Grotesk', display: 'Space Grotesk' },
+      { name: 'Raleway', family: 'Raleway', display: 'Raleway' },
+      { name: 'Libre Baskerville', family: 'Libre Baskerville', display: 'Libre Baskerville' },
+      { name: 'Quicksand', family: 'Quicksand', display: 'Quicksand' },
+      { name: 'Syne', family: 'Syne', display: 'Syne' },
+      { name: 'Pacifico', family: 'Pacifico', display: 'Pacifico' }, 
+
+      // { name: 'Ostelika One', family: 'Ostelika-One', display: 'Ostelika One' },
+      // { name: 'Venova Oder', family: 'Venova-Oder', display: 'Venova Oder' },
+      // { name: 'Hollendai', family: 'Hollendai', display: 'Hollendai' },
+      // { name: 'Bodoni', family: 'Bodoni', display: 'Bodoni' },
+      // { name: 'Giaomene', family: 'Giaomene', display: 'Giaomene' },
+      // { name: 'Chamge', family: 'Chamge', display: 'Chamge' }
   ];
   
   // First font selected by default as per figma.md

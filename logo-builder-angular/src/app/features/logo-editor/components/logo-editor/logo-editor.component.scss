@@ -332,6 +332,10 @@
       grid-template-columns: repeat(3, 1fr);
       gap: 12px;
 
+      @media (max-width: 768px) {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
       // Mobile responsive
       @media (max-width: 480px) {
         grid-template-columns: 1fr;
@@ -2343,7 +2347,7 @@
     .logo-canvas-wrapper {
       position: relative;
       background: #ffffff;
-      border-radius: 12px;
+      // border-radius: 12px;
       padding: 40px;
       box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
       border: 1px solid #e5e7eb;
@@ -2361,7 +2365,7 @@
 // Responsive Design
 @media (max-width: 1200px) {
   .logo-editor-container {
-    grid-template-columns: 64px 320px 1fr;
+    grid-template-columns:  4% 31.3% 64.7%; 
   }
 
   .icon-sidebar .icon-nav .nav-icon-btn {
@@ -3095,53 +3099,7 @@
   }
 }
 
-// Custom Font Tile - per figma.md requirements
-.custom-font-button {
-  cursor: pointer;
-  transition: all 0.2s ease;
-  
-  .upload-zone {
-    border: 2px dotted var(--ns-primary);
-    border-radius: 8px;
-    padding: 16px;
-    background: var(--ns-grey-light-4);
-    transition: all 0.2s ease;
-    
-    .upload-label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--ns-primary);
-      cursor: pointer;
-      transition: all 0.2s ease;
-      
-      svg {
-        transition: all 0.2s ease;
-      }
-      
-      span {
-        transition: all 0.2s ease;
-      }
-    }
-  }
-  
-  // Hover effect as per figma.md requirements
-  &:hover {
-    .upload-zone {
-      border: 2px solid var(--ns-primary-dark);
-      background: var(--ns-primary-light-4);
-      
-      .upload-label {
-        color: var(--ns-primary-dark);
-        text-decoration: underline;
-        
-        svg path {
-          fill: var(--ns-primary-dark);
-        }
-      }
-    }
-  }
-}
+
 
 // Custom Font Dropdown - scrollable with scrollbar as per figma.md
 .custom-font-dropdown {

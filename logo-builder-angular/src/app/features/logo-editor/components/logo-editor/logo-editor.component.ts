@@ -10,6 +10,7 @@ import { FontResourcesService } from '../../../../core/services/font-resources.s
 import { SymbolResourcesService } from '../../../../core/services/symbol-resources.service';
 import { ExportService } from '../../../../core/services/export.service';
 import { UndoRedoService, UndoRedoCommand } from '../../../../core/services/undo-redo.service';
+import { AutosaveService } from '../../../../core/services/autosave.service';
 import { Logo, LogoTemplate, NounIconItem } from '../../../../core/models/logo.model';
 import { FontDefinition, FontCategory } from '../../../../core/models/font.model';
 import { SymbolDefinition } from '../../../../core/models/symbol.model';
@@ -333,6 +334,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     private symbolService: SymbolResourcesService,
     private exportService: ExportService,
     private undoRedoService: UndoRedoService,
+    private autosaveService: AutosaveService,
     private fb: FormBuilder
   ) {
     console.log('Logo Editor Constructor - Services injected:', {
@@ -356,6 +358,9 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     this.loadAdvancedFeatures();
     this.setupUndoRedo();
     this.setupClickOutsideListener();
+    
+    // Initialize autosave service with unsaved changes
+    this.autosaveService.markHasUnsavedChanges();
     
     const logoId = this.route.snapshot.paramMap.get('id');
     if (logoId && logoId !== 'new') {
@@ -382,6 +387,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
     this.logoRenderer.destroy();
+    this.autosaveService.destroy();
   }
 
   // Tab management
@@ -981,6 +987,14 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
         });
       }, 0);
     }
+    
+    // Trigger autosave with current logo data
+    this.triggerAutosave();
+  }
+
+  private triggerAutosave(): void {
+    const logoData = this.getLogoData();
+    this.autosaveService.triggerSave(logoData);
   }
 
   // Enhanced download functionality with multiple formats
@@ -2137,14 +2151,50 @@ let initalsStyle = '';
 
   // Original Functions (Enhanced)
   onSave(): void {
-    if (this.logo) {
-      this.undoRedoService.executeCommand({
-        execute: () => console.log('Logo saved:', this.logo?.name),
-        undo: () => console.log('Save undone'),
-        description: 'Save logo'
-      });
-      alert('Logo saved successfully!');
-    }
+    // Manually trigger save for immediate save action
+    const logoData = this.getLogoData();
+    
+    // Force an immediate save
+    this.autosaveService.performSave(logoData);
+    console.log('Manual save initiated');
+  }
+
+  private getLogoData(): any {
+    return {
+      brandName: this.brandName,
+      selectedFont: this.selectedFont,
+      fontSize: this.fontSize,
+      letterSpacing: this.letterSpacing,
+      lineHeight: this.lineHeight,
+      isMultiline: this.isMultiline,
+      isBold: this.isBold,
+      isItalic: this.isItalic,
+      sloganText: this.sloganText,
+      enableSlogan: this.enableSlogan,
+      sloganFont: this.sloganFont,
+      sloganFontSize: this.sloganFontSize,
+      sloganLetterSpacing: this.sloganLetterSpacing,
+      sloganLineHeight: this.sloganLineHeight,
+      sloganIsBold: this.sloganIsBold,
+      sloganIsItalic: this.sloganIsItalic,
+      sloganIsMultiline: this.sloganIsMultiline,
+      textAlignment: this.textAlignment,
+      selectedIcon: this.selectedIcon,
+      iconSize: this.iconSize,
+      iconRotation: this.iconRotation,
+      showLogoIcon: this.showLogoIcon,
+      activeIconType: this.activeIconType,
+      userInitials: this.userInitials,
+      iconMargin: this.iconMargin,
+      iconBackground: this.iconBackground,
+      backgroundType: this.backgroundType,
+      backgroundCorners: this.backgroundCorners,
+      iconAlignment: this.iconAlignment,
+      selectedColorScheme: this.selectedColorScheme,
+      customColors: this.customColors,
+      selectedShape: this.selectedShape,
+      lastModified: new Date().toISOString()
+    };
   }
 
   onPreview(): void {

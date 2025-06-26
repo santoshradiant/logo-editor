@@ -1919,11 +1919,24 @@ let initalsStyle = '';
 
   private async drawIconImage(ctx: CanvasRenderingContext2D, x: number, y: number, icon: NounIconItem): Promise<void> {
     if (!icon || !icon.thumbnailUrl) {
-      // Fallback: draw a placeholder circle
-      ctx.beginPath();
-      ctx.arc(x, y, this.iconSize / 2, 0, 2 * Math.PI);
+      // Fallback: draw a placeholder rectangle
+      const size = this.iconSize;
+      const drawX = x - size / 2;
+      const drawY = y - size / 2;
+      
+      ctx.fillStyle = this.customColors.icon + '20'; // Semi-transparent background
+      ctx.fillRect(drawX, drawY, size, size);
+      
+      ctx.strokeStyle = this.customColors.icon;
+      ctx.lineWidth = 2;
+      ctx.strokeRect(drawX, drawY, size, size);
+      
+      // Draw a simple icon symbol (generic icon placeholder)
       ctx.fillStyle = this.customColors.icon;
-      ctx.fill();
+      ctx.font = `${size * 0.4}px Arial`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('🖼', x, y);
       return;
     }
 
@@ -1948,12 +1961,30 @@ let initalsStyle = '';
               // Save the current context state
               ctx.save();
               
-              // Create a clip path for the icon area to contain any overflow
-              ctx.beginPath();
-              ctx.arc(x, y, size / 2, 0, 2 * Math.PI);
-              ctx.clip();
+              // Only apply clipping if background is enabled and set to circle
+              if (this.iconBackground && this.backgroundCorners === 'circle') {
+                ctx.beginPath();
+                ctx.arc(x, y, size / 2, 0, 2 * Math.PI);
+                ctx.clip();
+              } else if (this.iconBackground && this.backgroundCorners === 'rounded') {
+                // Create rounded rectangle clip path
+                const radius = 8;
+                ctx.beginPath();
+                ctx.moveTo(drawX + radius, drawY);
+                ctx.lineTo(drawX + size - radius, drawY);
+                ctx.quadraticCurveTo(drawX + size, drawY, drawX + size, drawY + radius);
+                ctx.lineTo(drawX + size, drawY + size - radius);
+                ctx.quadraticCurveTo(drawX + size, drawY + size, drawX + size - radius, drawY + size);
+                ctx.lineTo(drawX + radius, drawY + size);
+                ctx.quadraticCurveTo(drawX, drawY + size, drawX, drawY + size - radius);
+                ctx.lineTo(drawX, drawY + radius);
+                ctx.quadraticCurveTo(drawX, drawY, drawX + radius, drawY);
+                ctx.closePath();
+                ctx.clip();
+              }
+              // No clipping for full icon display - this shows the complete icon
               
-              // Draw the image
+              // Draw the image at full size
               ctx.drawImage(newImg, drawX, drawY, size, size);
               
               // Restore the context state
@@ -1994,25 +2025,21 @@ let initalsStyle = '';
       
     } catch (error) {
       console.error('Error loading icon image:', error);
-      // Fallback: draw a placeholder with icon styling
+      // Fallback: draw a styled placeholder that shows full size
       ctx.save();
       
-      // Draw a styled placeholder that indicates it's an icon
       const size = this.iconSize;
-      const radius = size / 2;
+      const drawX = x - size / 2;
+      const drawY = y - size / 2;
       
-      // Draw background circle
-      ctx.beginPath();
-      ctx.arc(x, y, radius, 0, 2 * Math.PI);
+      // Draw background rectangle for full size display
       ctx.fillStyle = this.customColors.icon + '20'; // Semi-transparent background
-      ctx.fill();
+      ctx.fillRect(drawX, drawY, size, size);
       
       // Draw icon border
-      ctx.beginPath();
-      ctx.arc(x, y, radius - 2, 0, 2 * Math.PI);
       ctx.strokeStyle = this.customColors.icon;
       ctx.lineWidth = 2;
-      ctx.stroke();
+      ctx.strokeRect(drawX, drawY, size, size);
       
       // Draw a simple icon symbol (generic icon placeholder)
       ctx.fillStyle = this.customColors.icon;

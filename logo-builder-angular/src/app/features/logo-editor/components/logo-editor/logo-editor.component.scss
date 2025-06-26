@@ -1019,16 +1019,20 @@
 
 .d-flex{
   display: flex;
-} 
-.align-center{
+}
+.align-items-center{
   align-items: center;
-} 
-.justify-space-between{
+}
+.justify-content-between{
   justify-content: space-between;
 }
+
 // Slogan Section Specific Styles
 .text-alignment {
   margin-bottom: 24px;
+      margin-bottom: 24px;
+    justify-content: space-between;
+    align-items: center;
 
   .form-label {
     display: block;
@@ -1114,8 +1118,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  padding: 16px 0;
+  margin-bottom: 8px; 
   // border-bottom: 1px solid #e5e7eb;
 
   .control-label {
@@ -1183,31 +1186,26 @@
 
 .icon-type-tabs {
   display: flex;
-  margin-bottom: 20px;
-  border-radius: 8px;
-  background: #f9fafb;
-  padding: 4px;
+  margin-bottom: 8px;     
+  gap: 12px;
+  max-width: 150px;
 
-  .tab-btn {
-    flex: 1;
-    padding: 8px 16px;
-    border: none;
-    background: transparent;
-    color: #6b7280;
-    font-size: 14px;
-    font-weight: 500;
+  .tab-btn { 
+    font-family:  'Inter', sans-serif;
+    font-size: 12px;font-weight: 500;
+    color: var(--ns-button-text-color);
     border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-
-    &:hover {
-      color: var( --ns-black);;
-    }
+    border-width: 1px;
+    padding: 6px; 
+    min-width: 72px;
+    background: var(--ns-white);
+    border-color: var(--ns-dashed-border-color); 
 
     &.active {
-      background: #ffffff;
-      color: var( --ns-black);;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      background:var(--ns-primary-light);
+      color: var(--ns-primary);
+      border-color: var(--ns-primary);
+      border-width: 2px;
       font-weight: 600;
     }
   }
@@ -1215,13 +1213,14 @@
 
 .search-box-wrapper {
   position: relative; // Add relative positioning for dropdown positioning
-  margin-bottom: 20px;
-
+  margin-bottom: 16px;
+  @extend .d-flex; 
+  @extend .align-items-center;
+  @extend .justify-content-between;
   .search-input-container {
     position: relative;
     display: flex;
-    align-items: center;
-    margin-bottom: 12px;
+    align-items: center; 
 
     .search-icon {
       position: absolute;
@@ -1393,23 +1392,34 @@
   .icon-grid-container {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
+    gap: 16px;
     margin-bottom: 20px;
 
     .icon-item {
+      width: 82.55px;
+      height: 82.55px;
       position: relative;
       display: flex;
       align-items: center;
-      justify-content: center;
-      padding: 12px 8px;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
+      justify-content: center; 
+      border: 2px solid #e5e7eb; 
       background: #ffffff;
       cursor: pointer;
       transition: all 0.2s ease;
       min-height: 60px;
       aspect-ratio: 1;
-
+      background: #EBEBEB;
+      border-radius: 2px;
+      padding:0px;
+      .icon-outline-wrapper{
+        width: 100%;
+        height: 96%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 2px;
+      padding:0px;
+      }
       .icon-wrapper {
         display: flex;
         align-items: center;
@@ -1426,17 +1436,18 @@
 
       &:hover {
         border: 2px solid #059669; // 2px primary-dark stroke as per figma
-        background: #f0fffe;
-        transform: translateY(-1px);
-        margin: -1px; // offset by 2px compensation for border change
-        border-radius: 10px; // rounded hover effect
+        background: rgba(0 122 51 / 33%); 
+        .icon-outline-wrapper{   
+          border: 2px solid #ffffff;
+        }
       }
 
       &.selected {
-        border-color: var(--ns-primary);
-        background: #e6fffa;
-        box-shadow: 0 2px 4px rgba(0, 184, 148, 0.2);
-        
+       border: 2px solid #059669; // 2px primary-dark stroke as per figma
+        background: rgba(0 122 51 / 33%); 
+                .icon-outline-wrapper{   
+          border: 2px solid #ffffff;
+        }
         &::after {
           content: '✓';
           position: absolute;
@@ -2486,6 +2497,9 @@
 
 .text-alignment {
   margin-bottom: 24px;
+      margin-bottom: 24px;
+    justify-content: space-between;
+    align-items: center;
 
   .subsection-title {
     font-size: 14px;

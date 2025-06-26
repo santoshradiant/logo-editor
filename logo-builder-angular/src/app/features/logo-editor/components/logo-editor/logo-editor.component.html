@@ -661,9 +661,9 @@
           </label>
         </div>
       </div>
-
+<div  [ngClass]="showLogoIcon ? 'enable' : 'disable'">
       <!-- Symbol/Initials Tabs -->
-      <div class="icon-type-tabs" *ngIf="showLogoIcon">
+      <div class="icon-type-tabs" >
         <button 
           class="tab-btn" 
           [class.active]="activeIconType === 'symbol'" 
@@ -681,7 +681,7 @@
       </div>
 
       <!-- Symbol Tab Content -->
-      <div *ngIf="showLogoIcon && activeIconType === 'symbol'">
+      <div *ngIf="activeIconType === 'symbol'">
         <!-- Search Box with Pagination -->
         <div class="search-box-wrapper">
           <div class="search-input-container">
@@ -760,9 +760,10 @@
               class="icon-item"
               [class.selected]="selectedIcon?.id === icon.id"
               (click)="selectIcon(icon)"
-            >
+            ><div class="icon-outline-wrapper">
               <div class="icon-wrapper">
                 <img [src]="icon.thumbnailUrl" [alt]="icon.name || 'icon'" />
+              </div>
               </div>
             </button>
           </div>
@@ -778,7 +779,7 @@
       </div>
 
       <!-- Initials Tab Content -->
-      <div *ngIf="showLogoIcon && activeIconType === 'initials'" class="initials-content">
+      <div *ngIf="activeIconType === 'initials'" class="initials-content">
         <div class="initials-input-wrapper">
           <label class="control-label">Enter Initials</label>
           <input 
@@ -873,10 +874,11 @@
         </div>
       </div>
       </div>
-
+      
       <!-- Size Control -->
        <div class="controls-section">
-      <div class="control-row" *ngIf="showLogoIcon && (selectedIcon || userInitials)">
+        <!-- <div class="control-row" *ngIf="showLogoIcon && (selectedIcon || userInitials)"> -->
+      <div class="control-row">
         <div class="control-group">
           <label class="control-label">Size</label>
           <div class="slider-wrapper">
@@ -898,7 +900,8 @@
 
       <!-- Margin Control -->
        <div class="controls-section">
-      <div class="control-row" *ngIf="showLogoIcon && (selectedIcon || userInitials)">
+      <!-- <div class="control-row" *ngIf="showLogoIcon && (selectedIcon || userInitials)"> -->
+        <div class="control-row"  >
         <div class="control-group">
           <label class="control-label">Margin</label>
           <div class="slider-wrapper">
@@ -920,7 +923,8 @@
 
       <!-- Background Toggle -->
         <div class="controls-section">
-      <div class="control-row" *ngIf="showLogoIcon && (selectedIcon || userInitials)">
+      <!-- <div class="control-row" *ngIf="showLogoIcon && (selectedIcon || userInitials)"> -->
+        <div class="control-row">
         <div class="control-group">
           <label class="control-label">Background</label>
           <div class="toggle-wrapper">
@@ -933,8 +937,8 @@
       </div>
 </div>
       <!-- Background Content Dropdown -->
-      <div class="background-controls" *ngIf="showLogoIcon && iconBackground && (selectedIcon || userInitials)">
-        
+      <!-- <div class="background-controls" *ngIf="showLogoIcon && iconBackground && (selectedIcon || userInitials)"> -->
+        <div class="background-controls" *ngIf="iconBackground">
         <!-- Background Type Selection -->
         <div class="control-row">
           <div class="control-group">
@@ -991,7 +995,8 @@
       </div>
 
       <!-- Alignment Control -->
-      <div class="control-row" *ngIf="showLogoIcon && (selectedIcon || userInitials)">
+      <!-- <div class="control-row" *ngIf="showLogoIcon && (selectedIcon || userInitials)"> -->
+<div class="control-row">
         <div class="control-group">
           <label class="control-label">Alignment</label>
           <div class="alignment-controls">
@@ -1037,6 +1042,7 @@
           </div>
         </div>
       </div>
+</div>
     </div>
 
     <!-- Shapes Section -->

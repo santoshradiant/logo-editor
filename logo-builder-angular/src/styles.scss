@@ -46,6 +46,7 @@
 --ns-defult-border-color:#d1d5db;
 --ns-default-border-hover-color:#007a33;
 --ns-description-text-color:#7c7c7c;
+--ns-button-text-color:#404040;
 --default-font-size:14px;
 }
 // Import Inter font from Google Fonts
@@ -93,6 +94,16 @@ h6 { @include heading(1rem); }     //14px
     border-color: var(--ns-primary);
   }
 } 
+.d-flex{
+  display: flex;
+}
+.align-items-center{
+  align-items: center;
+}
+.justify-content-between{
+  justify-content: space-between;
+}
+
 
 /* Brand-themed buttons */
 .btn-primary {

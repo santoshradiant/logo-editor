@@ -263,7 +263,7 @@
       display: block;
       // font-size: 14px;
       // font-weight: 500;
-      // color: #374151;
+      // color: var( --ns-black);;
       margin-bottom: 8px;
     }
 
@@ -273,7 +273,7 @@
       border: 1px solid #e5e7eb;
       border-radius: 8px;
       // font-size: 14px;
-      color: #374151;
+      color: var( --ns-black);;
       background: #ffffff;
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
@@ -323,7 +323,7 @@
     .subsection-title {
       font-size: 14px;
       font-weight: 600;
-      color: #374151;
+      color: var( --ns-black);;
       margin: 0 0 16px 0;
     }
 
@@ -350,7 +350,7 @@
       background: #ffffff;
       cursor: pointer;
       transition: all 0.2s ease; 
-      color: #374151;
+      color: var( --ns-black);;
       text-align: center;
       // min-height: 56px;
       display: flex;
@@ -392,7 +392,7 @@
     .subsection-title {
       font-size: 14px;
       font-weight: 600;
-      color: #374151;
+      color: var( --ns-black);;
       margin: 0 0 12px 0;
     }
 
@@ -480,7 +480,7 @@
           span {
             font-size: 14px;
             font-weight: 500;
-            color: #374151;
+            color: var( --ns-black);;
           }
 
           small {
@@ -508,7 +508,7 @@
 
           .font-name {
             font-size: 14px;
-            color: #374151;
+            color: var( --ns-black);;
           }
 
           &:hover {
@@ -710,7 +710,7 @@
       cursor: pointer;
       transition: all 0.2s ease;
       font-size: 14px;
-      color: #374151;
+      color: var( --ns-black);;
 
       &:hover {
         border-color: var(--ns-primary);
@@ -791,7 +791,7 @@
           .font-name {
             font-size: 16px;
             font-weight: 500;
-            color: #374151;
+            color: var( --ns-black);;
             display: block;
 
             &.active {
@@ -861,7 +861,7 @@
 
             .font-name {
               font-size: 14px;
-              color: #374151;
+              color: var( --ns-black);;
               display: block;
 
               &.active {
@@ -936,7 +936,7 @@
         .control-label {
           font-size: 14px;
           font-weight: 600;
-          color: #374151;
+          color: var( --ns-black);;
           margin: 0;
         }
       }
@@ -1088,7 +1088,7 @@
     display: block;
     font-size: 14px;
     font-weight: 600;
-    color: #374151;
+    color: var( --ns-black);;
     margin-bottom: 12px;
   }
 
@@ -1170,12 +1170,12 @@
   align-items: center;
   margin-bottom: 20px;
   padding: 16px 0;
-  border-bottom: 1px solid #e5e7eb;
+  // border-bottom: 1px solid #e5e7eb;
 
   .control-label {
     font-size: 14px;
     font-weight: 600;
-    color: #374151;
+    color: var( --ns-black);;
     margin: 0;
   }
 
@@ -1255,12 +1255,12 @@
     transition: all 0.2s ease;
 
     &:hover {
-      color: #374151;
+      color: var( --ns-black);;
     }
 
     &.active {
       background: #ffffff;
-      color: #374151;
+      color: var( --ns-black);;
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
       font-weight: 600;
     }
@@ -1360,12 +1360,12 @@
 
       .suggestion-match {
         font-weight: 400;
-        color: #374151;
+        color: var( --ns-black);;
       }
 
       .suggestion-completion {
         font-weight: 600; // semi-bold for suggested letters
-        color: #374151;
+        color: var( --ns-black);;
       }
     }
   }
@@ -1539,7 +1539,7 @@
       display: block;
       font-size: 14px;
       font-weight: 600;
-      color: #374151;
+      color: var( --ns-black);;
       margin-bottom: 8px;
     }
 
@@ -1671,7 +1671,7 @@
       .radio-label {
         font-size: 14px;
         font-weight: 500;
-        color: #374151;
+        color: var( --ns-black);;
       }
 
       input[type="radio"]:checked + .radio-custom {
@@ -1727,7 +1727,7 @@
       .checkbox-label {
         font-size: 14px;
         font-weight: 500;
-        color: #374151;
+        color: var( --ns-black);;
       }
 
       input[type="checkbox"]:checked + .checkbox-custom {
@@ -1853,7 +1853,7 @@
     .subsection-title {
       font-size: 16px;
       font-weight: 600;
-      color: #374151;
+      color: var( --ns-black);;
       margin-bottom: 16px;
     }
 
@@ -1963,7 +1963,7 @@
     .subsection-title {
       font-size: 16px;
       font-weight: 600;
-      color: #374151;
+      color: var( --ns-black);;
       margin-bottom: 16px;
     }
 
@@ -2019,7 +2019,7 @@
           .color-control-label {
             font-size: 14px;
             font-weight: 500;
-            color: #374151;
+            color: var( --ns-black);;
 
             &.disabled {
               color: #9ca3af;
@@ -2152,7 +2152,7 @@
             display: block;
             font-size: 14px;
             font-weight: 500;
-            color: #374151;
+            color: var( --ns-black);;
             margin-bottom: 8px;
           }
 
@@ -2198,7 +2198,7 @@
             &.enabled:hover,
             &.hovered {
               background: #f3f4f6;
-              color: #374151;
+              color: var( --ns-black);;
             }
           }
 
@@ -2870,7 +2870,7 @@
 
     &.secondary {
       background: #f3f4f6;
-      color: #374151;
+      color: var( --ns-black);;
 
       &:hover {
         background: #e5e7eb;

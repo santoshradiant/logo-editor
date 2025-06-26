@@ -922,10 +922,10 @@
       </div>
 
       <!-- Background Toggle -->
-        <div class="controls-section">
+        <div class="controls-section ">
       <!-- <div class="control-row" *ngIf="showLogoIcon && (selectedIcon || userInitials)"> -->
-        <div class="control-row">
-        <div class="control-group">
+        <div class="control-row control-row-inner">
+        <div class="control-group align-items-center">
           <label class="control-label">Background</label>
           <div class="toggle-wrapper">
             <label class="switch">
@@ -938,11 +938,30 @@
 </div>
       <!-- Background Content Dropdown -->
       <!-- <div class="background-controls" *ngIf="showLogoIcon && iconBackground && (selectedIcon || userInitials)"> -->
-        <div class="background-controls" *ngIf="iconBackground">
+        <div class="background-controls controls-section" *ngIf="iconBackground">
         <!-- Background Type Selection -->
-        <div class="control-row">
-          <div class="control-group">
-            <label class="control-label">Background Type</label>
+       
+
+        <!-- Rounded Corners Toggle -->
+        <div class="control-row d-flex align-items-center justify-content-between">
+          <div class="control-group">            
+            <div class="checkbox-wrapper">
+              <label class="checkbox-option">
+                <input 
+                  type="checkbox" 
+                  [checked]="backgroundCorners === 'rounded'"
+                  (change)="toggleRoundedCorners()"
+                >
+                <span class="checkbox-custom">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" *ngIf="backgroundCorners === 'rounded'">
+                    <path d="M2 6L5 9L10 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+                <span class="checkbox-label">Rounded Corners</span>
+              </label>
+            </div>
+          </div>
+          <div class="control-group">            
             <div class="background-type-selection">
               <label class="radio-option">
                 <input 
@@ -968,36 +987,16 @@
               </label>
             </div>
           </div>
-        </div>
 
-        <!-- Rounded Corners Toggle -->
-        <div class="control-row">
-          <div class="control-group">
-            <label class="control-label">Rounded Corners</label>
-            <div class="checkbox-wrapper">
-              <label class="checkbox-option">
-                <input 
-                  type="checkbox" 
-                  [checked]="backgroundCorners === 'rounded'"
-                  (change)="toggleRoundedCorners()"
-                >
-                <span class="checkbox-custom">
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" *ngIf="backgroundCorners === 'rounded'">
-                    <path d="M2 6L5 9L10 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </span>
-                <span class="checkbox-label">Enable rounded corners</span>
-              </label>
-            </div>
-          </div>
         </div>
 
       </div>
 
       <!-- Alignment Control -->
       <!-- <div class="control-row" *ngIf="showLogoIcon && (selectedIcon || userInitials)"> -->
+        <div class="controls-section">
 <div class="control-row">
-        <div class="control-group">
+        <div class="d-flex align-items-center justify-content-between control-group">
           <label class="control-label">Alignment</label>
           <div class="alignment-controls">
             <button 
@@ -1009,8 +1008,8 @@
               <img 
                 [src]="iconAlignment === 'left' ? 'assets/icons/selected-svg/alignment-left.svg' : 'assets/icons/unselected-svg/alignment-left.svg'"
                 alt="Left align"
-                width="20"
-                height="15"
+                width="40"
+                height="10"
               />
             </button>
             <button 
@@ -1022,8 +1021,8 @@
               <img 
                 [src]="iconAlignment === 'center' ? 'assets/icons/selected-svg/alignment-center.svg' : 'assets/icons/unselected-svg/alignment-center.svg'"
                 alt="Center align"
-                width="20"
-                height="15"
+                width="40"
+                height="10"
               />
             </button>
             <button 
@@ -1035,12 +1034,13 @@
               <img 
                 [src]="iconAlignment === 'right' ? 'assets/icons/selected-svg/alignment-right.svg' : 'assets/icons/unselected-svg/alignment-right.svg'"
                 alt="Right align"
-                width="20"
-                height="15"
+                width="40"
+                height="10"
               />
             </button>
           </div>
         </div>
+      </div>
       </div>
 </div>
     </div>

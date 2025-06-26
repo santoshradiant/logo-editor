@@ -1,24 +1,22 @@
-// CSS Variables
-:root {
-  --ns-primary: #00B894;
-  --ns-primary-light: #e6fffa;
-  --ns-primary-light-4: #f0fdfa;
-  --ns-primary-dark: #00a085;
-  --ns-primary-dark-1: #009688;
-  --ns-secondary-light-4: #f3f4f6;
-  --ns-grey-light-3: #d1d5db;
-  --ns-theme-grey: #6b7280;
-  --ns-off-white: #f9fafb;
-  --ns-grey-light-4: #f3f4f6;
-}
+ 
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+.border-default{
+  border: 2px solid var(--ns-default-border-color);
+}
+.border-dashed{
+  border: 2px dotted var(--ns-dashed-border-color);
+}
+.border-dotted-active{
+  border: 2px dotted var(--ns-default-active-color);
+}
 
 // Logo Editor - 3-Column Figma Design Layout
 .logo-editor-container {
   display: grid;
   grid-template-columns: 4% 31.3% 64.7%; //4.44% 31.46% 64.1%;
   // height: 100vh;
-  background: #f8f9fa; 
+  background: va(--ns-default-background); 
 
   // Mobile responsive layout
   @media (max-width: 768px) {
@@ -241,6 +239,7 @@
     margin-top: 48px;
 
     h2 {
+      color:var(--ns-black);
       margin: 16px 0;
       // font-size: 20px;
       // font-weight: 600;
@@ -250,7 +249,7 @@
     }
 
     .section-description { 
-      color: #6b7280;
+      color: var(--ns-description-text-color);
       line-height: 24px;
       margin: 0;
     }
@@ -270,7 +269,7 @@
     .form-input {
       width: 100%;
       // padding: 12px 16px;
-      border: 1px solid #e5e7eb;
+      border: 1px solid #404040;
       border-radius: 8px;
       // font-size: 14px;
       color: var( --ns-black);;
@@ -278,9 +277,10 @@
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
       &:focus {
+        border-width: 2px;
         outline: none;
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        border-color: var(--ns-primary);
+        // box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
       }
 
       &::placeholder {
@@ -296,7 +296,7 @@
 
       // Mobile responsive
       @media (max-width: 768px) {
-        font-size: 16px; // Prevent zoom on iOS
+       // font-size: 16px; // Prevent zoom on iOS
         padding: 12px 14px;
       }
     }
@@ -387,7 +387,7 @@
 
 
   .custom-font-section {
-    margin-bottom: 32px;
+    margin-bottom: 24px;
 
     .subsection-title {
       font-size: 14px;
@@ -459,41 +459,7 @@
         overflow-y: auto;
       }
 
-      .upload-zone {
-        .upload-label {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 8px;
-          padding: 20px;
-          border: 2px dashed #d1d5db;
-          border-radius: 8px;
-          cursor: pointer;
-          transition: all 0.2s ease;
-
-          svg {
-            width: 24px;
-            height: 24px;
-            color: #9ca3af;
-          }
-
-          span {
-            font-size: 14px;
-            font-weight: 500;
-            color: var( --ns-black);;
-          }
-
-          small {
-            font-size: 12px;
-            color: #6b7280;
-          }
-
-          &:hover {
-            border-color: #3b82f6;
-            background: #f8faff;
-          }
-        }
-      }
+     
 
       .uploaded-fonts {
         margin-top: 16px;
@@ -670,7 +636,7 @@
             align-items: center;
             gap: 8px;
             padding: 2px 16px;
-            border: 2px dashed #d1d5db;
+              border: 2px dashed var(--ns-dashed-border-color);
             border-radius: 50px;
             background: #f9fafb;
             cursor: pointer;
@@ -681,6 +647,8 @@
             text-decoration: underline;
 
             &:hover {
+             border-style: solid;
+              border-width: 2px;
               border-color: var(--ns-primary);
               background: var(--ns-primary-light);
               color: var(--ns-primary);
@@ -789,7 +757,7 @@
           }
 
           .font-name {
-            font-size: 16px;
+           // font-size: 16px;
             font-weight: 500;
             color: var( --ns-black);;
             display: block;
@@ -815,34 +783,7 @@
           margin: -16px -16px 16px -16px;
         }
 
-        .upload-zone {
-          margin-bottom: 16px;
 
-          .upload-label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px 16px;
-            border: 2px dashed #d1d5db;
-            border-radius: 8px;
-            background: #f9fafb;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            color: #6b7280;
-            font-size: 14px;
-
-            &:hover {
-              border-color: var(--ns-primary);
-              background: var(--ns-primary-light);
-              color: var(--ns-primary);
-            }
-
-            svg {
-              width: 16px;
-              height: 16px;
-            }
-          }
-        }
 
         .uploaded-fonts {
           .font-item {
@@ -1548,7 +1489,7 @@
       padding: 12px 16px;
       border: 1px solid #d1d5db;
       border-radius: 8px;
-      font-size: 16px;
+     // font-size: 16px;
       font-weight: 600;
       text-align: center;
       text-transform: uppercase;
@@ -1851,7 +1792,7 @@
     margin-bottom: 32px;
 
     .subsection-title {
-      font-size: 16px;
+     // font-size: 16px;
       font-weight: 600;
       color: var( --ns-black);;
       margin-bottom: 16px;
@@ -1961,7 +1902,7 @@
 
   .custom-color-section {
     .subsection-title {
-      font-size: 16px;
+     // font-size: 16px;
       font-weight: 600;
       color: var( --ns-black);;
       margin-bottom: 16px;
@@ -2233,7 +2174,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 16px 24px;
-    background: #f5f5f5;
+    background: var(--ns-default-background); ;
 
     .preview-actions {
       display: flex;
@@ -2257,12 +2198,12 @@
         }
 
         &.secondary {
-          border: 1px solid #f5f5f5;
-          background: #f5f5f5;
+          border: 1px solid var(--ns-default-background); ;
+          background: var(--ns-default-background); ;
 
           &:hover:not(:disabled) {
             border-color: #007a33;
-            background: #f5f5f5;
+            background: var(--ns-default-background); ;
             color: #007a33;
           }
 
@@ -2303,7 +2244,7 @@
         padding: 10px 20px;
         border: 1px solid var(--ns-primary);
         border-radius: 8px;
-        background: #f5f5f5;
+        background: var(--ns-default-background); ;
         color: #007a33;
         font-weight: 700;
         font-size: 14px;
@@ -2342,7 +2283,7 @@
     align-items: center;
     justify-content: center;
     padding: 40px;
-    background: #f5f5f5;
+    background: var(--ns-default-background); ;
 
     .logo-canvas-wrapper {
       position: relative;
@@ -2701,7 +2642,7 @@
     }
 
     .section-description {
-      font-size: 14px;
+      // font-size: 14px;
       line-height: 1.6;
     }
   }
@@ -2808,19 +2749,18 @@
     width: 100% !important;
     max-width: 100% !important;
   }
-
   // Fix section headers
   .section-header {
     margin-bottom: 20px !important;
 
     h2 {
-      font-size: 20px !important;
+      // font-size: 20px !important;
       margin-bottom: 8px !important;
     }
-
+  
     .section-description {
-      font-size: 14px !important;
-      color: #6b7280 !important;
+      // font-size: 14px !important;
+      // color: #6b7280 !important;
     }
   }
 }
@@ -3045,12 +2985,12 @@
   border: 1px solid var(--ns-grey-light-3);
   border-radius: 8px;
   padding: 12px 16px;
-  font-size: 16px;
+ // font-size: 16px;
   transition: all 0.2s ease;
   
   // Hover state: stroke changes to darker color (grey-light-3 to theme-grey)
   &.hovered {
-    border-color: var(--ns-theme-grey);
+    border-color: var(--ns-primary);
   }
   
   // Focus state: 2px primary colored border
@@ -3215,3 +3155,10 @@
     --thumb-color: var(--ns-primary-dark-1);
   }
 }
+
+.form-input{
+  border-color: #404040;
+  &:focus,  &:hover{
+    border-color: var(--ns-primary);
+  }
+} 

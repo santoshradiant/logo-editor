@@ -562,7 +562,7 @@
   // Font Selection Row Layout
   .font-selection-row {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 12px;
     margin-bottom: 24px;
 
@@ -573,38 +573,39 @@
 
     .font-style-controls {
       display: flex;
-      gap: 8px;
+      // gap: 8px;
       margin-top: 2px; // Align with dropdown button
 
       .style-btn {
-        width: 44px;
-        height: 44px;
+        width: 36px;
+        height: 24px;
         background: #ffffff;
-        border: 1px solid #e5e7eb;
-        border-radius: 8px;
+        border: 1px solid #CCCCCC;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
         transition: all 0.2s ease;
         color: #6b7280;
+        &:first-child{
+          border-top-left-radius: 4px;
+          border-bottom-left-radius: 4px;
+        }
+        &:last-child{
+          border-top-right-radius: 4px;
+          border-bottom-right-radius: 4px;
+        }
 
-        &:hover {
+        &:hover, &:focus  {
           border-color: var(--ns-primary);
-          background: var(--ns-primary-light);
+          background:#f5f5f5;
           color: var(--ns-primary);
-        }
+        } 
 
-        &:focus {
-          outline: none;
+        &.active { 
           border-color: var(--ns-primary);
-          box-shadow: 0 0 0 3px rgba(0, 184, 148, 0.1);
-        }
-
-        &.active {
-          background: var(--ns-primary);
-          border-color: var(--ns-primary);
-          color: white;
+          background:#f5f5f5;
+          color: var(--ns-primary);
         }
 
         svg {
@@ -909,14 +910,15 @@
         &::-webkit-slider-track {
           height: 6px;
           background: #e5e7eb;
-          border-radius: 3px;
+          border-radius: 3px; 
         }
 
         &::-webkit-slider-thumb {
+          transform: translateY(3px);
           -webkit-appearance: none;
           appearance: none;
-          width: 20px;
-          height: 20px;
+          width: 16px;
+          height:16px;
           border-radius: 50%;
           background: var(--ns-primary);
           cursor: pointer;
@@ -924,20 +926,23 @@
           box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
           transition: all 0.15s ease;
 
-          &:hover {
-            transform: scale(1.1);
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+          &:hover { 
+             box-shadow: none;
+            // box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
           }
         }
 
         &::-moz-range-thumb {
-          width: 20px;
-          height: 20px;
+          width: 16px;
+          height: 16px;
           border-radius: 50%;
           background: var(--ns-primary);
           cursor: pointer;
           border: 3px solid #ffffff;
           box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+          &:hover{
+             box-shadow: none;
+          }
         }
 
         &::-moz-range-track {
@@ -2290,8 +2295,12 @@
       background: #ffffff;
       // border-radius: 12px;
       padding: 40px;
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+      // box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
       border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    box-shadow: 0px 2px 4px 0px #0000001F;
+    box-shadow: 0px 4px 6px 0px #0000000F;
+
 
       .logo-canvas {
         display: block;
@@ -3145,7 +3154,7 @@
   transition: all 0.2s ease;
   
   &:hover {
-    filter: brightness(0.9);
+    //filter: brightness(0.9);
   }
 }
 

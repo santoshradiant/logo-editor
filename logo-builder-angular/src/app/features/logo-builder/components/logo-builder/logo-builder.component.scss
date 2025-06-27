@@ -383,4 +383,434 @@
     flex-direction: column;
     gap: 0.5rem;
   }
+}
+
+// Logo Creation Entry Screen Styles
+.logo-creation-container {
+  display: flex;
+  min-height: 100vh;
+  background: #f8f9fa;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+// Left Side - Brand Input Section
+.brand-input-section {
+  flex: 0 0 350px;
+  background: #ffffff;
+  padding: 40px 32px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #e1e5e9;
+  
+  .brand-header {
+    margin-bottom: 40px;
+    
+    .logo {
+      width: 120px;
+      height: auto;
+      margin-bottom: 24px;
+    }
+    
+    h1 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #1a1a1a;
+      line-height: 1.3;
+      margin: 0 0 12px 0;
+    }
+    
+    p {
+      font-size: 14px;
+      color: #666666;
+      line-height: 1.5;
+      margin: 0;
+    }
+  }
+  
+  .brand-form {
+    flex: 1;
+    
+    .form-group {
+      margin-bottom: 24px;
+      
+      label {
+        display: block;
+        font-size: 14px;
+        font-weight: 500;
+        color: #333333;
+        margin-bottom: 8px;
+        
+        .optional {
+          font-weight: 400;
+          color: #999999;
+        }
+      }
+      
+      .brand-input,
+      .slogan-input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e1e5e9; // grey-light-3
+        border-radius: 8px;
+        font-size: 16px;
+        font-family: inherit;
+        transition: all 0.2s ease;
+        box-sizing: border-box;
+        
+        &::placeholder {
+          color: #999999;
+        }
+        
+        // Hover state - darker border
+        &:hover {
+          border-color: #b3b8bd; // theme-grey (darker)
+        }
+        
+        // Focus state - primary colored border
+        &:focus {
+          outline: none;
+          border-color: #0066CC;
+          border-width: 2px;
+          box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+      }
+    }
+  }
+  
+  .cta-section {
+    margin-top: auto;
+    
+    .cta-button {
+      width: 100%;
+      padding: 16px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      // Disabled state
+      &:disabled {
+        background: #f1f3f4;
+        color: #999999;
+        cursor: not-allowed;
+      }
+      
+      // Enabled state
+      &.enabled:not(:disabled) {
+        background: #0066CC;
+        color: #ffffff;
+        
+        &:hover {
+          background: #0052A3;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+        }
+        
+        &:active {
+          transform: translateY(0);
+        }
+      }
+    }
+  }
+}
+
+// Right Side - Logo Gallery Section
+.logo-gallery-section {
+  flex: 1;
+  padding: 40px 32px;
+  display: flex;
+  flex-direction: column;
+  
+  .gallery-header {
+    margin-bottom: 32px;
+    
+    h2 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #666666;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin: 0;
+    }
+  }
+  
+  .logo-gallery {
+    flex: 1;
+    overflow-y: auto;
+    position: relative;
+    
+    // Scrollbar styling
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: #d1d5da;
+      border-radius: 3px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    
+    &:hover::-webkit-scrollbar-thumb {
+      opacity: 1;
+    }
+    
+    &.scrollable::-webkit-scrollbar-thumb {
+      opacity: 1;
+    }
+    
+    .logo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+      padding-bottom: 40px;
+      
+      .logo-thumbnail {
+        position: relative;
+        aspect-ratio: 280 / 200;
+        background: #ffffff;
+        border: 2px solid transparent;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        overflow: hidden;
+        
+        // Hover effect - 2px primary colored border
+        &:hover,
+        &.hovered {
+          border-color: #0066CC;
+          box-shadow: 0 4px 12px rgba(0, 102, 204, 0.15);
+          transform: translateY(-2px);
+        }
+        
+        // Selected state
+        &.selected {
+          border-color: #0066CC;
+          box-shadow: 0 4px 12px rgba(0, 102, 204, 0.15);
+          transform: translateY(-2px);
+        }
+        
+        .logo-preview {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #ffffff;
+          
+          svg {
+            max-width: 100%;
+            max-height: 100%;
+          }
+        }
+        
+        // Selection overlay - 33% opacity primary color
+        .selection-overlay {
+          position: absolute;
+          top: 2px;
+          left: 2px;
+          right: 2px;
+          bottom: 2px;
+          background: rgba(0, 102, 204, 0.33);
+          border-radius: 8px;
+          pointer-events: none;
+        }
+        
+        // Selection check icon - top right, 8px from edges
+        .selection-check {
+          position: absolute;
+          top: 8px;
+          right: 8px;
+          z-index: 10;
+          
+          svg {
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+          }
+        }
+      }
+    }
+    
+    .load-more-section {
+      display: flex;
+      justify-content: center;
+      padding: 32px 0;
+      
+      .load-more-button {
+        padding: 12px 32px;
+        border: 2px solid #e1e5e9;
+        background: #ffffff;
+        color: #666666;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        
+        // Hover state - filled primary colored button with white text
+        &:hover:not(.loading) {
+          background: #0066CC;
+          border-color: #0066CC;
+          color: #ffffff;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+        }
+        
+        &.loading {
+          cursor: not-allowed;
+          opacity: 0.6;
+        }
+      }
+    }
+  }
+}
+
+// Mobile Responsiveness
+@media (max-width: 768px) {
+  .logo-creation-container {
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  .brand-input-section {
+    flex: none;
+    padding: 24px 20px;
+    border-right: none;
+    border-bottom: 1px solid #e1e5e9;
+    
+    .brand-header {
+      margin-bottom: 24px;
+      
+      h1 {
+        font-size: 20px;
+      }
+    }
+    
+    .brand-form .form-group {
+      margin-bottom: 20px;
+    }
+    
+    // Mobile keyboard positioning (as per figma.md)
+    .brand-input:focus,
+    .slogan-input:focus {
+      position: relative;
+      top: -8px; // 8px from top of OS/Browser typing elements
+    }
+  }
+  
+  .logo-gallery-section {
+    flex: 1;
+    padding: 20px;
+    
+    .logo-gallery .logo-grid {
+      // Mobile: horizontally scrollable with swipe
+      display: flex;
+      overflow-x: auto;
+      overflow-y: hidden;
+      grid-template-columns: none;
+      gap: 16px;
+      padding-bottom: 20px;
+      scroll-snap-type: x mandatory;
+      
+      .logo-thumbnail {
+        flex: none;
+        width: calc(100vw - 72px); // Account for padding and snap positioning
+        margin-left: 16px; // 16px from left edge for snap positioning
+        margin-right: 0;
+        scroll-snap-align: start;
+        
+        &:first-child {
+          margin-left: 16px;
+        }
+        
+        &:last-child {
+          margin-right: 16px;
+        }
+        
+        // Mobile selection check - 4px from edges (as per figma.md)
+        .selection-check {
+          top: 4px;
+          right: 4px;
+        }
+      }
+      
+      // Hide scrollbar on mobile
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+  }
+}
+
+// Tablet Responsiveness
+@media (max-width: 1024px) and (min-width: 769px) {
+  .brand-input-section {
+    flex: 0 0 300px;
+    padding: 32px 24px;
+  }
+  
+  .logo-gallery-section {
+    padding: 32px 24px;
+    
+    .logo-gallery .logo-grid {
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px;
+    }
+  }
+}
+
+// Animation for Load More (as per figma.md)
+@keyframes slideInFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.logo-thumbnail {
+  animation: slideInFromBottom 0.3s ease-out;
+}
+
+// Focus states and accessibility
+.brand-input:focus,
+.slogan-input:focus,
+.cta-button:focus,
+.load-more-button:focus {
+  outline: 2px solid #0066CC;
+  outline-offset: 2px;
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .logo-thumbnail {
+    border-width: 3px;
+  }
+  
+  .brand-input,
+  .slogan-input {
+    border-width: 3px;
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .logo-thumbnail,
+  .cta-button,
+  .load-more-button {
+    transition: none;
+    transform: none !important;
+  }
+  
+  .logo-thumbnail {
+    animation: none;
+  }
 } 

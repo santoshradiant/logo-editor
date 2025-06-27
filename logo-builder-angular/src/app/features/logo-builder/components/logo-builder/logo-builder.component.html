@@ -150,4 +150,104 @@
       <span>✅ Undo/Redo system active</span>
     </div>
   </div>
+</div>
+
+<!-- Logo Creation Entry Screen -->
+<div class="logo-creation-container">
+  
+  <!-- Left Side - Brand Input -->
+  <div class="brand-input-section">
+    <div class="brand-header">
+      <img src="assets/icons/logo-placeholder.svg" alt="Network Solutions" class="logo" />
+      <h1>Your logo journey starts here. Pick a design to customize.</h1>
+      <p>Choose a logo you like — you can tweak every detail in the next steps to make it all yours.</p>
+    </div>
+
+    <div class="brand-form">
+      <div class="form-group">
+        <label for="brandName">Brand Name</label>
+        <input 
+          type="text" 
+          id="brandName"
+          class="brand-input"
+          [(ngModel)]="brandName"
+          (input)="onBrandNameChange()"
+          (focus)="onBrandNameFocus()"
+          (blur)="onBrandNameBlur()"
+          (dblclick)="onBrandNameDoubleClick($event)"
+          placeholder="Enter your brand name"
+          #brandNameInput
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="slogan">Slogan <span class="optional">(optional)</span></label>
+        <input 
+          type="text" 
+          id="slogan"
+          class="slogan-input"
+          [(ngModel)]="slogan"
+          (input)="onSloganChange()"
+          placeholder="Enter your slogan"
+        />
+      </div>
+    </div>
+
+    <div class="cta-section">
+      <button 
+        class="cta-button"
+        [class.enabled]="selectedLogoId !== null"
+        [disabled]="selectedLogoId === null"
+        (click)="onStartCustomizing()"
+      >
+        {{ selectedLogoId !== null ? 'Start Customizing' : 'Pick a logo to start' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Right Side - Logo Gallery -->
+  <div class="logo-gallery-section">
+    <div class="gallery-header">
+      <h2>SELECT A STARTING POINT</h2>
+    </div>
+
+    <div class="logo-gallery" [class.scrollable]="showScrollbar" (scroll)="onScroll($event)">
+      <div class="logo-grid">
+        <div 
+          *ngFor="let logo of displayedLogos; let i = index; trackBy: trackByLogoId"
+          class="logo-thumbnail"
+          [class.selected]="selectedLogoId === logo.id"
+          [class.hovered]="hoveredLogoId === logo.id"
+          (click)="selectLogo(logo, i)"
+          (mouseenter)="onLogoHover(logo.id)"
+          (mouseleave)="onLogoLeave()"
+        >
+          <!-- Logo Preview Container -->
+          <div class="logo-preview" #logoPreview></div>
+          
+          <!-- Selection Check Icon -->
+          <div class="selection-check" *ngIf="selectedLogoId === logo.id">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="12" fill="#0066CC"/>
+              <path d="M9 12L11 14L15 10" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+
+          <!-- Selection Overlay -->
+          <div class="selection-overlay" *ngIf="selectedLogoId === logo.id"></div>
+        </div>
+      </div>
+
+      <!-- Load More Section -->
+      <div class="load-more-section" *ngIf="hasMoreLogos">
+        <button 
+          class="load-more-button"
+          [class.loading]="isLoadingMore"
+          (click)="loadMoreLogos()"
+        >
+          {{ isLoadingMore ? 'Loading...' : 'Load More' }}
+        </button>
+      </div>
+    </div>
+  </div>
 </div> 

@@ -11,6 +11,8 @@ import { SymbolResourcesService } from '../../../../core/services/symbol-resourc
 import { ExportService } from '../../../../core/services/export.service';
 import { UndoRedoService, UndoRedoCommand } from '../../../../core/services/undo-redo.service';
 import { AutosaveService } from '../../../../core/services/autosave.service';
+import { TemplateAdapterService, EditorConfiguration } from '../../../../core/services/template-adapter.service';
+import { LogoTemplateData } from '../../../../core/services/logo-generator.service';
 import { Logo, LogoTemplate, NounIconItem } from '../../../../core/models/logo.model';
 import { FontDefinition, FontCategory } from '../../../../core/models/font.model';
 import { SymbolDefinition } from '../../../../core/models/symbol.model';
@@ -385,6 +387,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     private exportService: ExportService,
     private undoRedoService: UndoRedoService,
     private autosaveService: AutosaveService,
+    private templateAdapter: TemplateAdapterService,
     private fb: FormBuilder
   ) {
     console.log('Logo Editor Constructor - Services injected:', {
@@ -429,6 +432,9 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
         this.createNewLogo();
       }
     });
+
+    // Check for template data from logo builder navigation
+    this.checkForTemplateData();
 
     // Initialize previous values for undo/redo
     this.brandNamePreviousValue = this.brandName;
@@ -589,6 +595,90 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     
     // Update character counter if brand name is pre-filled
     this.showCharacterCounter = this.brandName.length >= this.characterCountThreshold;
+  }
+
+  // Check for template data from logo builder navigation
+  private checkForTemplateData(): void {
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation?.extras?.state) {
+      const state = navigation.extras.state as any;
+      
+      if (state.fromTemplate && state.editorConfig) {
+        // Apply template configuration to editor
+        this.applyTemplateConfiguration(state.editorConfig as EditorConfiguration);
+        console.log('Applied template configuration:', state.editorConfig);
+      }
+    }
+    
+    // Also check query parameters for template data
+    const isTemplate = this.route.snapshot.queryParams['template'] === 'true';
+    if (isTemplate) {
+      const brandName = this.route.snapshot.queryParams['brandName'];
+      const slogan = this.route.snapshot.queryParams['slogan'];
+      
+      if (brandName) {
+        this.brandName = brandName;
+        this.showCharacterCounter = this.brandName.length >= this.characterCountThreshold;
+      }
+      
+      if (slogan) {
+        this.sloganText = slogan;
+        this.enableSlogan = true;
+      }
+    }
+  }
+
+  // Apply template configuration to editor properties
+  private applyTemplateConfiguration(config: EditorConfiguration): void {
+    // Brand configuration
+    this.brandName = config.brandName;
+    this.selectedFont = config.selectedFont;
+    this.fontSize = config.fontSize;
+    this.letterSpacing = config.letterSpacing;
+    this.lineHeight = config.lineHeight;
+    this.isBold = config.isBold;
+    this.isItalic = config.isItalic;
+    
+    // Slogan configuration
+    this.sloganText = config.sloganText;
+    this.enableSlogan = config.enableSlogan;
+    this.sloganFont = config.sloganFont;
+    this.sloganFontSize = config.sloganFontSize;
+    this.sloganLetterSpacing = config.sloganLetterSpacing;
+    this.sloganLineHeight = config.sloganLineHeight;
+    this.sloganIsBold = config.sloganIsBold;
+    this.sloganIsItalic = config.sloganIsItalic;
+    this.textAlignment = config.textAlignment as any;
+    
+    // Icon configuration
+    this.selectedIcon = config.selectedIcon;
+    this.iconSize = config.iconSize;
+    this.iconRotation = config.iconRotation;
+    this.showLogoIcon = config.showLogoIcon;
+    this.activeIconType = config.activeIconType;
+    this.userInitials = config.userInitials;
+    this.iconMargin = config.iconMargin;
+    this.iconBackground = config.iconBackground;
+    this.backgroundType = config.backgroundType;
+    this.backgroundCorners = config.backgroundCorners;
+    this.iconAlignment = config.iconAlignment;
+    
+    // Color configuration
+    this.selectedColorScheme = config.selectedColorScheme;
+    this.customColors = { ...config.customColors };
+    this.selectedShape = config.selectedShape;
+    this.customColor = config.customColor;
+    
+    // Update character counter
+    this.showCharacterCounter = this.brandName.length >= this.characterCountThreshold;
+    
+    // Update component states
+    this.updateComponentStates();
+    
+    // Trigger logo preview update after applying configuration
+    setTimeout(() => {
+      this.updateLogoPreview();
+    }, 100);
   }
 
   // Get recommended fonts based on domain onboarding (AI)

@@ -58,8 +58,7 @@
 
       <div class="form-group brand-text">
         <label class="form-label">Brand Name</label>
-        <input
-          *ngIf="!isMultiline"
+        <input          
           type="text"
           class="form-input"
           [class.hovered]="brandNameFieldHovered"
@@ -75,7 +74,7 @@
           placeholder="Enter your brand name"
           maxlength="40"
         />
-        <textarea
+        <!-- <textarea
           *ngIf="isMultiline"
           class="form-input multiline-input"
           [class.hovered]="brandNameFieldHovered"
@@ -90,7 +89,7 @@
           (dblclick)="onBrandNameFieldDoubleClick($event)"
           placeholder="Enter your brand name (use Enter for new lines)"
           rows="3"
-        ></textarea>
+        ></textarea> -->
         
         <!-- Character counter - show at 30 characters as per figma.md -->
         <div class="character-counter" *ngIf="showCharacterCounter">
@@ -287,8 +286,7 @@
 
       <!-- Slogan Text Input -->
       <div class="form-group slogan-text" *ngIf="enableSlogan">
-        <input
-          *ngIf="!sloganIsMultiline"
+        <input          
           type="text"
           class="form-input"
           [(ngModel)]="sloganText"
@@ -296,14 +294,23 @@
           placeholder="Enter your slogan"
           maxlength="40"
         />
-        <textarea
+        <!-- <input
+          *ngIf="!sloganIsMultiline"
+          type="text"
+          class="form-input"
+          [(ngModel)]="sloganText"
+          (ngModelChange)="onSloganChange()"
+          placeholder="Enter your slogan"
+          maxlength="40"
+        /> -->
+        <!-- <textarea
           *ngIf="sloganIsMultiline"
           class="form-input multiline-input"
           [(ngModel)]="sloganText"
           (ngModelChange)="onSloganChange()"
           placeholder="Enter your slogan (use Enter for new lines)"
           rows="3"
-        ></textarea>
+        ></textarea> -->
       </div>
 
       <!-- Recommended Fonts -->
@@ -1005,12 +1012,9 @@
               (click)="setIconAlignment('left')"
               title="Left align"
             >
-              <img 
-                [src]="iconAlignment === 'left' ? 'assets/icons/selected-svg/alignment-left.svg' : 'assets/icons/unselected-svg/alignment-left.svg'"
-                alt="Left align"
-                width="40"
-                height="10"
-              />
+          <svg width="39" height="10" viewBox="0 0 40 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M13.9997 10.4923H39.4787V8.57566H13.9997V10.4923ZM13.9997 6.52502L39.4787 6.659V0.908998L13.9997 0.775024V6.52502ZM0.47849 0.77549L0.478516 10.4923H10.0618V0.77549H0.47849Z" [attr.fill] ="iconAlignment === 'left' ? '#007A33' : '#000000'"/>
+          </svg>              
             </button>
             <button 
               class="align-btn" 
@@ -1018,12 +1022,10 @@
               (click)="setIconAlignment('center')"
               title="Center align"
             >
-              <img 
-                [src]="iconAlignment === 'center' ? 'assets/icons/selected-svg/alignment-center.svg' : 'assets/icons/unselected-svg/alignment-center.svg'"
-                alt="Center align"
-                width="40"
-                height="10"
-              />
+            <svg width="39" height="20" viewBox="0 0 39 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 20.5262H39V18.6096H0V20.5262ZM0 16.5589L39 16.6929V10.9429L0 10.8089V16.5589ZM14.7083 0.633667V9.02625H24.2917V0.633667H14.7083Z" [attr.fill] ="iconAlignment === 'center' ? '#007A33' : '#000000'"/>
+            </svg>
+              
             </button>
             <button 
               class="align-btn" 
@@ -1031,12 +1033,9 @@
               (click)="setIconAlignment('right')"
               title="Right align"
             >
-              <img 
-                [src]="iconAlignment === 'right' ? 'assets/icons/selected-svg/alignment-right.svg' : 'assets/icons/unselected-svg/alignment-right.svg'"
-                alt="Right align"
-                width="40"
-                height="10"
-              />
+          <svg width="39" height="14" viewBox="0 0 40 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M39.2803 12.4799V14.3969H0.280273V12.4799H39.2803ZM9.86328 0.870483V10.5883H0.280273L0.279297 0.870483H9.86328ZM39.2803 7.37048V10.5638L13.8008 10.4291V7.23669L39.2803 7.37048ZM39.7598 5.12439H13.7598V0.87439H39.7598V5.12439Z"   [attr.fill] ="iconAlignment === 'right' ? '#007A33' : '#000000'"/>
+          </svg>
             </button>
           </div>
         </div>

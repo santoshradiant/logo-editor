@@ -1788,61 +1788,63 @@
 }
 
 // Colors Section Specific Styles - Enhanced Implementation
+// ===========================
+// Colors Section Styles
+// ===========================
+
 .colors-section {
+  // ---------------------------
+  // Recommended Colors
+  // ---------------------------
   .recommended-colors {
-    margin-bottom: 32px;
+    margin-bottom: 36px;
 
     .subsection-title {
-     // font-size: 16px;
       font-weight: 600;
-      color: var( --ns-black);;
+      color: var(--ns-black, #000);
       margin-bottom: 16px;
     }
 
     .color-schemes-grid {
       display: grid;
-      grid-template-columns: repeat(4, 68px);
-      gap: 12px;
-      margin-bottom: 8px;
+      grid-template-columns: repeat(4, 58px);
+      gap: 32px;
 
       .color-scheme-pill {
         display: flex;
         align-items: center;
-        width: 56px;
+        justify-content: center;
+        width: 52px;
         height: 22px;
-        justify-content: center;        
-        border: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 1px;
+        border: 2px solid rgba(0, 0, 0, 0.1);
         border-radius: 20px;
-        background: #ffffff;
+        background: #fff;
         cursor: pointer;
         transition: all 0.15s ease;
-        padding: 1px;
 
-        .color-dot.primary {
-          width: 100%;
-		      height: 100%;        
-          //border: 1px solid transparent;
-          border-radius: 999px 0 0 999px;
-        }
-        .color-dot.secondary {
-          width: 100%;
-		      height: 100%;        
-          //border: 1px solid transparent;
-          border-radius: 0px 18px 18px 0;
+        .color-dot {
+          &.primary {
+            width: 100%;
+            height: 100%;
+            border-radius: 999px 0 0 999px;
+          }
+          &.secondary {
+            width: 100%;
+            height: 100%;
+            border-radius: 0 18px 18px 0;
+          }
         }
 
         &:hover,
         &.hovered {
-          //border-color: var(--ns-primary-dark, #007a33);
-          border-width: 2px;
-          transform: translateY(-1px);
+            border: 2px solid var(--ns-primary, #00b894);
         }
 
         &.selected {
-          border-color: var(--ns-primary, #00b894);
-          border-width: 2px;
+          border: 2px solid var(--ns-primary, #00b894);
           background: #f0fdf4;
-          
+
           .color-dot {
             border-color: rgba(0, 0, 0, 0.2);
           }
@@ -1850,62 +1852,13 @@
       }
     }
   }
-
-
-.custom-color-section .color-scheme-pill {
-        display: flex;
-        align-items: center;
-        width: 56px;
-        height: 22px;
-        justify-content: center;        
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        border-radius: 20px;
-        background: #ffffff;
-        cursor: pointer;
-        transition: all 0.15s ease;
-        padding: 1px;
-
-        .color-dot.cicon {
-          width: 100%;
-		      height: 100%;        
-          //border: 1px solid transparent;
-          border-radius: 999px 0 0 999px;
-        }
-        .color-dot.cname {
-          width: 100%;
-		      height: 100%;    
-          border-left: 1px solid #cccccc;
-          border-right: 1px solid #cccccc;;
-          //border: 1px solid transparent;
-          border-radius: 0px;
-        }
-        .color-dot.cslogan {
-          width: 100%;
-		      height: 100%;    
-          border-right: 1px solid #cccccc;;     
-          //border: 1px solid transparent;
-          border-radius: 0px;
-        }
-        .color-dot.cshape {
-          width: 100%;
-		      height: 100%;        
-          //border: 1px solid transparent;
-          border-radius: 0px 18px 18px 0;
-        }
-
-        &:hover,
-        &.hovered {
-          //border-color: var(--ns-primary-dark, #007a33);
-          border-width: 2px;
-          transform: translateY(-1px);
-        }
-      }
-
+  // ---------------------------
+  // Custom Color Section
+  // ---------------------------
   .custom-color-section {
     .subsection-title {
-     // font-size: 16px;
       font-weight: 600;
-      color: var( --ns-black);;
+      color: var(--ns-black, #000);
       margin-bottom: 16px;
     }
 
@@ -1914,10 +1867,10 @@
         display: flex;
         align-items: center;
         gap: 8px;
-        padding: 12px 16px;
+        padding: 6px 12px;
         border: 2px dashed #d1d5db;
-        border-radius: 8px;
-        background: transparent;
+        border-radius: 50px;
+        background: #f5f5f5;
         color: var(--ns-primary, #00b894);
         font-weight: 500;
         cursor: pointer;
@@ -1942,14 +1895,15 @@
         display: grid;
         grid-template-columns: 1fr;
         gap: 16px;
+        margin-top: 24px;
 
         .color-control-item {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 12px 16px;
-          border-bottom: 1px solid #cccccc;
-          background: #ffffff;
+          padding-bottom: 16px;
+          background: #fff;
+          border-bottom: 1px solid #ccc;
           transition: all 0.15s ease;
 
           &.disabled {
@@ -1959,9 +1913,9 @@
           }
 
           .color-control-label {
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 500;
-            color: var( --ns-black);;
+            color: var(--ns-black, #000);
 
             &.disabled {
               color: #9ca3af;
@@ -1978,21 +1932,20 @@
               position: relative;
               width: 32px;
               height: 32px;
-              border: 1px solid #d1d5db;
-              border-radius: 6px;
+              border: 1px solid #d5d7db;
+              border-radius: 2px;
               cursor: pointer;
-              transition: all 0.15s ease;
               overflow: hidden;
+              transition: all 0.15s ease;
 
               &:hover {
                 border-color: var(--ns-primary-dark, #007a33);
-                border-width: 2px;
-                transform: scale(1.05);
+                border-width: 1px; 
               }
 
               &.disabled {
-                cursor: not-allowed;
                 opacity: 0.5;
+                cursor: not-allowed;
               }
 
               .color-preview-icon {
@@ -2010,10 +1963,10 @@
             }
 
             .hex-value {
-              font-size: 12px;
-              font-family: monospace;
-              color: #6b7280;
+              font-size: 10px;
+              font-family: "B612 Mono", monospace;
               font-weight: 500;
+              color: #6b7280;
 
               &.disabled {
                 color: #9ca3af;
@@ -2023,25 +1976,63 @@
         }
       }
     }
+
+    .color-scheme-pill {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 22px;
+      padding: 1px;
+      border: 1px solid #cccccc;
+      border-radius: 20px;
+      background: #fff;
+      cursor: pointer;
+      transition: all 0.15s ease;
+
+      .color-dot {
+        &.cicon {
+          width: 100%;
+          height: 100%;
+          border-radius: 999px 0 0 999px;
+        }
+        &.cname,
+        &.cslogan {
+          width: 100%;
+          height: 100%;
+          border-left: 1px solid #ccc;
+          // border-right: 1px solid #ccc;
+        }
+        &.cshape {
+          width: 100%;
+          height: 100%;
+          border-radius: 0 18px 18px 0;
+          border-left: 1px solid #ccc;
+        }
+      } 
+    }
+
+    .color-scheme-pill-large{
+      width:116px;
+      height:24px;
+      border:2px solid var(--ns-primary);
+    }
   }
 
+  // ---------------------------
   // Color Picker Modal
+  // ---------------------------
   .color-picker-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    // background: rgba(0, 0, 0, 0.5);
+    inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
 
     .color-picker-modal {
-      background: #ffffff;
+      background: #fff;
       border-radius: 12px;
-      // box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
       max-width: 339px;
       max-height: 90vh;
       overflow: hidden;
@@ -2076,15 +2067,9 @@
             transition: all 0.15s ease;
 
             &:hover,
-            &.hovered {
-              border-color: var(--ns-primary-light, #a3f3d0);
-              transform: scale(1.1);
-            }
-
             &.selected {
               border-color: var(--ns-primary-light, #a3f3d0);
               transform: scale(1.1);
-              box-shadow: 0 0 0 2px var(--ns-primary-light, #a3f3d0);
             }
           }
         }
@@ -2094,17 +2079,17 @@
             display: block;
             font-size: 14px;
             font-weight: 500;
-            color: var( --ns-black);;
+            color: var(--ns-black, #000);
             margin-bottom: 8px;
           }
 
           .hex-input {
             width: 100%;
             padding: 8px 12px;
+            font-size: 14px;
+            font-family: monospace;
             border: 1px solid #d1d5db;
             border-radius: 6px;
-            font-family: monospace;
-            font-size: 14px;
             transition: border-color 0.15s ease;
 
             &:focus {
@@ -2133,27 +2118,27 @@
           border: 1px solid transparent;
 
           &.cancel-btn {
-            background: #ffffff;
+            background: #fff;
             color: #6b7280;
             border-color: #d1d5db;
 
-            &.enabled:hover,
+            &:hover,
             &.hovered {
               background: #f3f4f6;
-              color: var( --ns-black);;
+              color: var(--ns-black, #000);
             }
           }
 
           &.apply-btn {
             background: var(--ns-primary, #00b894);
-            color: #ffffff;
+            color: #fff;
 
             &:disabled {
               opacity: 0.5;
               cursor: not-allowed;
             }
 
-            &.enabled:hover,
+            &:hover,
             &.hovered {
               background: var(--ns-primary-dark, #007a33);
             }
@@ -2163,6 +2148,7 @@
     }
   }
 }
+
 
 // Right Panel - Preview (Flexible)
 .preview-panel {

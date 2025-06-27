@@ -12,6 +12,7 @@
   pointer-events: auto !important;
 }
 
+
 .color-picker-grid {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -19,22 +20,23 @@
   background: #333;
   color: white;
   padding: 10px;
-  border-radius: 8px;
+  border-radius: 4px;
   width: fit-content;
 }
 
 .left-panel {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 88px;
 }
 
 .canvas-wrapper {
-  position: relative;
-  width: 130px;
-  height: 130px;
-  border: 2px solid #aaa;
-  border-radius: 4px;
+    position: relative;
+    width: 88px;
+    height: 88px;
+    border: 2px solid #aaa;
+    border-radius: 4px;
 
   canvas {
     width: 100%;
@@ -48,7 +50,7 @@
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    border: 2px solid #fff;
+    border: 3px solid #fff;
     box-shadow: var(--theme-grey--light3);    
     pointer-events: none;
     top: 5px;
@@ -60,10 +62,13 @@
   display: flex;
   align-items: center;
   margin-top: 10px;
-  font-size: 14px;
+  font-size: 8px;
+  width: 100%;
+  gap: 5px;
 
   label {
-    margin-right: 6px;
+    margin-right: 6px; 
+    font-weight: 600;
   }
 
   input {
@@ -71,8 +76,9 @@
     border: none;
     border-radius: 4px;
     color: white;
-    padding: 4px;
-    width: 80px;
+    padding: 4px 8px;
+    width: 46px;
+    font-size: 10px;
   }
 }
 
@@ -83,24 +89,38 @@
 }
 
 .preset-colors {
-  display: grid;
-  grid-template-columns: repeat(5, 30px);
-  grid-gap: 6px;
-  justify-content: start;
-  margin-bottom: 10px;
+    display: grid;
+    grid-template-columns: repeat(5, 24px);
+    grid-gap: 12px;
+    justify-content: start;
+    margin-bottom: 10px;
+    button {
+      width: 24px;
+      height: 24px;
+      border-radius: 2px;
+      cursor: pointer;
+      box-shadow: none;
+      border: 1px solid #cccccc;
+      position: relative;
+      &:hover{
+        border-width: 2px;
+        border-color: var(--ns-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        &:before{
+          display: block;
+          align-items: center;
+          justify-content: center;
+          position: absolute;
+          width:12px;
+          height: 12px;
+          content: "";
+          border: 2px solid #ff0000;
 
-  button {
-    width: 30px;
-    height: 30px;
-    // border: 2px solid var(--theme-grey--light3);
-    border-radius: 4px;
-    cursor: pointer;
-    transition: border-color 0.2s ease;
-  }
-
-  button:hover {
-    border-color: var(--primary--light1);
-  }
+        }
+      }
+    } 
 
   .eyedropper {
     background: transparent;
@@ -114,11 +134,45 @@
   margin-bottom: 12px;
   input[type='range'] {
     width: 100%;
-    height: 8px;
+    height: 10px;
     border-radius: 4px;
     background: linear-gradient(to right, red, yellow, lime, cyan, blue, magenta, red);
     outline: none;
     appearance: none;
+      // Webkit browsers (Chrome, Safari)
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%; 
+    border: 3px solid #fff;
+    cursor: pointer;
+    box-shadow: 0 0 2px #333;
+    transition: background 0.2s;
+  }
+
+  // Firefox
+  &::-moz-range-thumb {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%; 
+    border: 3px solid #fff;
+    cursor: pointer;
+    box-shadow: 0 0 2px #333;
+    transition: background 0.2s;
+  }
+
+  // IE/Edge
+  &::-ms-thumb {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%; 
+    border: 3px solid #fff;
+    cursor: pointer;
+    box-shadow: 0 0 2px #333;
+    transition: background 0.2s;
+  }
   }
 }
 
@@ -133,26 +187,24 @@
     border-radius: 4px;
     border: none;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 12px;
   }
 
   .cancel {
-    background: #555;
+    background: transparent;
     color: #ccc;
+    font-weight: 600;
+    &:hover {
+      background: #a3a3a3;
+      color: #eee;
+    }
   }
-
   .apply {
     background: #aaa;
-    color: black;
+    color: #404040;
+    font-weight: 600;
+    border-radius: 3px;
   }
 }
-.actions .cancel {
-  background: #555;
-  color: #ccc;
-  transition: background 0.2s, color 0.2s;
-}
-
-.actions .cancel:hover {
-  background: #777;
-  color: #eee;
-}
+ 
+ 

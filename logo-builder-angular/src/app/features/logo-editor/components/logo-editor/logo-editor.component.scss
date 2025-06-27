@@ -1054,7 +1054,7 @@
       align-items: center;
       justify-content: center;
       height: 33px;
-      border: 1px solid #e5e7eb;
+      border: 2px solid #e5e7eb;
       border-radius: 0px;
       background: #ffffff;
       cursor: pointer;
@@ -1083,7 +1083,7 @@
         border-color: var(--ns-primary);
         background: var(--ns-primary-light);
         color: var(--ns-primary);
-        transform: translateY(-1px);
+        
       }
 
       &.active {
@@ -1729,59 +1729,82 @@
 .shapes-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  gap: 15px 24px;
   margin-bottom: 24px;
-
+ 
   .shape-option {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 16px 8px;
+    padding: 16px;
     border: 1px solid #e5e7eb;
-    border-radius: 12px;
+    border-radius: 3px;
     background: #ffffff;
     cursor: pointer;
     transition: all 0.2s ease;
-
+    position: relative;
+ 
     .shape-icon {
-      width: 32px;
-      height: 32px;
+      width: 68.57px;
+      height: 68.57px;
       display: flex;
       align-items: center;
       justify-content: center;
       margin-bottom: 8px;
-      color: #6b7280;
-
+      color: #000000;
+ 
       svg {
-        width: 24px;
-        height: 24px;
+      width: 68.57px;
+      height: 68.57px;
       }
     }
-
+ 
     .shape-name {
+      display: none;
       font-size: 11px;
       color: #6b7280;
       text-align: center;
       font-weight: 500;
     }
-
+ 
     &:hover {
-      border-color: #3b82f6;
-      background: #f8faff;
-      transform: translateY(-1px);
+      border-color: var(--ns-primary);
+      border-width: 2px;
+      background: rgba(0, 122, 51, 0.33);
+      // border-color: #3b82f6;
+      // background: #f8faff;
     }
-
+ 
     &.active {
-      border-color: #3b82f6;
-      background: #eff6ff;
-
-      .shape-icon {
-        color: #3b82f6;
+      border-color: var(--ns-primary);
+      border-width: 2px;
+      background: rgba(0, 122, 51, 0.33);
+      // border-color: #3b82f6;
+      // background: #eff6ff;
+      &:after{
+        content: "\2713";
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        width: 16px;
+        height: 16px;
+        background: var(--ns-primary);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: bold;
       }
-
+ 
+      .shape-icon {
+        // color: #3b82f6;
+      }
+ 
       .shape-name {
-        color: #1d4ed8;
-        font-weight: 600;
+        // color: #1d4ed8;
+        // font-weight: 600;
       }
     }
   }
@@ -1856,6 +1879,7 @@
   // Custom Color Section
   // ---------------------------
   .custom-color-section {
+    position: relative;
     .subsection-title {
       font-weight: 600;
       color: var(--ns-black, #000);
@@ -2023,129 +2047,14 @@
   // Color Picker Modal
   // ---------------------------
   .color-picker-overlay {
-    position: fixed;
-    inset: 0;
+    position: absolute; 
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
+    top: 30px;
+    left: 130px;
 
-    .color-picker-modal {
-      background: #fff;
-      border-radius: 12px;
-      max-width: 339px;
-      max-height: 90vh;
-      overflow: hidden;
-
-      .color-picker-header {
-        padding: 20px 24px 0;
-        border-bottom: 1px solid #e5e7eb;
-
-        h4 {
-          margin: 0 0 16px;
-          font-size: 18px;
-          font-weight: 600;
-          color: #111827;
-        }
-      }
-
-      .color-picker-content {
-        padding: 24px;
-
-        .color-swatches-grid {
-          display: grid;
-          grid-template-columns: repeat(6, 1fr);
-          gap: 8px;
-          margin-bottom: 24px;
-
-          .color-swatch-option {
-            width: 36px;
-            height: 36px;
-            border-radius: 6px;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: all 0.15s ease;
-
-            &:hover,
-            &.selected {
-              border-color: var(--ns-primary-light, #a3f3d0);
-              transform: scale(1.1);
-            }
-          }
-        }
-
-        .hex-input-section {
-          label {
-            display: block;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--ns-black, #000);
-            margin-bottom: 8px;
-          }
-
-          .hex-input {
-            width: 100%;
-            padding: 8px 12px;
-            font-size: 14px;
-            font-family: monospace;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            transition: border-color 0.15s ease;
-
-            &:focus {
-              outline: none;
-              border-color: var(--ns-primary, #00b894);
-              box-shadow: 0 0 0 3px rgba(0, 184, 148, 0.1);
-            }
-          }
-        }
-      }
-
-      .color-picker-actions {
-        display: flex;
-        gap: 12px;
-        padding: 20px 24px;
-        border-top: 1px solid #e5e7eb;
-        background: #f9fafb;
-
-        .picker-btn {
-          flex: 1;
-          padding: 10px 16px;
-          border-radius: 6px;
-          font-weight: 500;
-          cursor: pointer;
-          transition: all 0.15s ease;
-          border: 1px solid transparent;
-
-          &.cancel-btn {
-            background: #fff;
-            color: #6b7280;
-            border-color: #d1d5db;
-
-            &:hover,
-            &.hovered {
-              background: #f3f4f6;
-              color: var(--ns-black, #000);
-            }
-          }
-
-          &.apply-btn {
-            background: var(--ns-primary, #00b894);
-            color: #fff;
-
-            &:disabled {
-              opacity: 0.5;
-              cursor: not-allowed;
-            }
-
-            &:hover,
-            &.hovered {
-              background: var(--ns-primary-dark, #007a33);
-            }
-          }
-        }
-      }
-    }
   }
 }
 
@@ -2369,27 +2278,7 @@
   }
 }
 
-// Slogan-specific styles
-.slogan-toggle-container {
-  margin-bottom: 16px;
 
-  .toggle-group {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    // padding: 12px 16px;
-    background: var(--ns-background);
-    // border: 1px solid var(--ns-border-light);
-    // border-radius: 8px;
-
-    .toggle-label {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--ns-text-primary);
-      margin: 0;
-    }
-  }
-}
 
 .font-formatting-inline {
   margin-top: 12px;
@@ -2489,7 +2378,8 @@
       align-items: center;
       justify-content: center;
       padding: 9px;
-      border: 1px solid var(--ns-border-light);
+      
+      border: 2px solid var(--ns-border-light);
       border-radius: 0px;
       background: var(--ns-background);
       color: var(--ns-text-secondary);
@@ -2818,23 +2708,51 @@
   }
 }
 
-.form-group.slogan-toggle-container {
+// .form-group.slogan-container {
+//   display: flex;
+//   align-items: center;
+//   justify-content: space-between;
+
+//   .form-label {
+//     // Optional: add spacing or styling for the label
+//     margin-right: 1rem;
+//   }
+
+//   // .toggle-group {
+//   //   // Optional: align toggle to the right
+//   //   display: flex;
+//   //   align-items: center;
+//   // }
+// }
+
+// Slogan-specific styles
+.slogan-container {
+  margin-bottom: 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-
-  .form-label {
+.form-label {
     // Optional: add spacing or styling for the label
     margin-right: 1rem;
   }
 
   .toggle-group {
-    // Optional: align toggle to the right
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    // padding: 12px 16px;
+    background: var(--ns-background);
+    // border: 1px solid var(--ns-border-light);
+    // border-radius: 8px;
+
+    .toggle-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ns-text-primary);
+      margin: 0;
+    }
   }
 }
-
 
 .form-group.slogan-text, .form-group.brand-text {
   width: 100%;

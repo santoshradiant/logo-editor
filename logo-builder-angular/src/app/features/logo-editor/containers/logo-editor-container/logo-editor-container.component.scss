@@ -1,0 +1,188 @@
+@import '../../../../../shared/styles/variables';
+@import '../../../../../shared/styles/mixins';
+
+.lz-logo-editor-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  background-color: var(--background-color, #f8f9fa);
+  font-family: var(--font-family-base, 'Inter', sans-serif);
+  position: relative;
+  overflow: hidden;
+
+  .logo-editor-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+  }
+
+  .logo-editor-header {
+    flex-shrink: 0;
+    background-color: var(--header-background, #ffffff);
+    border-bottom: 1px solid var(--border-color, #e9ecef);
+    box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1));
+    z-index: var(--z-index-header, 100);
+  }
+
+  .logo-editor-main {
+    display: flex;
+    flex: 1;
+    min-height: 0; // Important for proper flex behavior
+    overflow: hidden;
+  }
+
+  .logo-editor-sidebar {
+    flex-shrink: 0;
+    width: var(--sidebar-width, 280px);
+    background-color: var(--sidebar-background, #ffffff);
+    border-right: 1px solid var(--border-color, #e9ecef);
+    overflow-y: auto;
+    
+    @include media-breakpoint-down(md) {
+      width: var(--sidebar-width-mobile, 240px);
+    }
+    
+    @include media-breakpoint-down(sm) {
+      display: none; // Hide sidebar on small screens
+    }
+  }
+
+  .logo-editor-content {
+    flex: 1;
+    padding: var(--spacing-md, 1rem);
+    overflow-y: auto;
+    background-color: var(--content-background, #ffffff);
+    
+    @include media-breakpoint-down(sm) {
+      padding: var(--spacing-sm, 0.75rem);
+    }
+  }
+
+  .logo-editor-preview {
+    flex-shrink: 0;
+    width: var(--preview-width, 400px);
+    background-color: var(--preview-background, #f8f9fa);
+    border-left: 1px solid var(--border-color, #e9ecef);
+    overflow: hidden;
+    
+    @include media-breakpoint-down(lg) {
+      width: var(--preview-width-tablet, 320px);
+    }
+    
+    @include media-breakpoint-down(md) {
+      display: none; // Hide preview on medium screens
+    }
+  }
+
+  .logo-editor-footer {
+    flex-shrink: 0;
+    background-color: var(--footer-background, #ffffff);
+    border-top: 1px solid var(--border-color, #e9ecef);
+    padding: var(--spacing-sm, 0.75rem) var(--spacing-md, 1rem);
+    box-shadow: var(--shadow-sm-up, 0 -1px 3px rgba(0, 0, 0, 0.1));
+  }
+
+  .loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--z-index-overlay, 1000);
+    backdrop-filter: blur(2px);
+  }
+}
+
+// Mobile-specific layout adjustments
+@include media-breakpoint-down(sm) {
+  .lz-logo-editor-container {
+    .logo-editor-main {
+      flex-direction: column;
+    }
+    
+    .logo-editor-content {
+      order: 1;
+    }
+    
+    // Show mobile navigation at bottom
+    .logo-editor-sidebar {
+      display: block;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: auto;
+      height: var(--mobile-nav-height, 60px);
+      border-right: none;
+      border-top: 1px solid var(--border-color, #e9ecef);
+      background-color: var(--mobile-nav-background, #ffffff);
+      z-index: var(--z-index-mobile-nav, 200);
+    }
+    
+    .logo-editor-content {
+      padding-bottom: calc(var(--mobile-nav-height, 60px) + var(--spacing-md, 1rem));
+    }
+  }
+}
+
+// Print styles
+@media print {
+  .lz-logo-editor-container {
+    .logo-editor-header,
+    .logo-editor-sidebar,
+    .logo-editor-footer,
+    .loading-overlay {
+      display: none !important;
+    }
+    
+    .logo-editor-content {
+      padding: 0;
+      overflow: visible;
+    }
+    
+    .logo-editor-preview {
+      display: block;
+      width: 100%;
+      border: none;
+    }
+  }
+}
+
+// Focus management for accessibility
+.lz-logo-editor-container {
+  &:focus-within {
+    outline: 2px solid var(--focus-ring-color, #0066cc);
+    outline-offset: -2px;
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .lz-logo-editor-container {
+    .logo-editor-header,
+    .logo-editor-sidebar,
+    .logo-editor-preview {
+      border-color: ButtonText;
+    }
+    
+    .loading-overlay {
+      background-color: Canvas;
+      color: CanvasText;
+    }
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .lz-logo-editor-container {
+    .loading-overlay {
+      backdrop-filter: none;
+    }
+  }
+} 

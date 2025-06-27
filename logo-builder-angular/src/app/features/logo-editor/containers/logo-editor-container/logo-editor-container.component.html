@@ -1,0 +1,89 @@
+<div class="lz-logo-editor-container">
+  <div class="logo-editor-layout" *ngIf="viewModel$ | async as viewModel">
+    
+    <!-- Header Section -->
+    <header class="logo-editor-header">
+      <lz-logo-editor-header-presentation
+        [state]="viewModel.state"
+        (backClick)="navigateBack()"
+        (saveClick)="saveChanges()"
+        (undoClick)="executeUndo()"
+        (redoClick)="executeRedo()">
+      </lz-logo-editor-header-presentation>
+    </header>
+
+    <!-- Main Content -->
+    <main class="logo-editor-main">
+      
+      <!-- Sidebar Navigation -->
+      <aside class="logo-editor-sidebar">
+        <lz-logo-editor-tabs-presentation
+          [activeTab]="viewModel.state.activeTab"
+          (tabChange)="setActiveTab($event)">
+        </lz-logo-editor-tabs-presentation>
+      </aside>
+
+      <!-- Editor Content -->
+      <section class="logo-editor-content">
+        
+        <!-- Brand Tab -->
+        <lz-logo-editor-brand-presentation
+          *ngIf="viewModel.state.activeTab === 'brand'"
+          [brandConfig]="viewModel.brandConfig"
+          [isLoading]="viewModel.state.isLoading"
+          (brandConfigChange)="updateBrandConfig($event)"
+          (brandNameChange)="updateBrandName($event)"
+          (fontChange)="selectFont($event)">
+        </lz-logo-editor-brand-presentation>
+
+        <!-- Icon Tab -->
+        <lz-logo-editor-icon-presentation
+          *ngIf="viewModel.state.activeTab === 'icon'"
+          [iconConfig]="viewModel.iconConfig"
+          [isLoading]="viewModel.state.isLoading"
+          (iconConfigChange)="updateIconConfig($event)"
+          (iconSelect)="selectIcon($event)">
+        </lz-logo-editor-icon-presentation>
+
+        <!-- Color Tab -->
+        <lz-logo-editor-color-presentation
+          *ngIf="viewModel.state.activeTab === 'color'"
+          [colorConfig]="viewModel.colorConfig"
+          [isLoading]="viewModel.state.isLoading"
+          (colorConfigChange)="updateColorConfig($event)"
+          (colorSchemeChange)="updateColorScheme($event)">
+        </lz-logo-editor-color-presentation>
+
+      </section>
+
+      <!-- Preview Section -->
+      <section class="logo-editor-preview">
+        <lz-logo-editor-preview-presentation
+          [brandConfig]="viewModel.brandConfig"
+          [sloganConfig]="viewModel.sloganConfig"
+          [iconConfig]="viewModel.iconConfig"
+          [colorConfig]="viewModel.colorConfig"
+          [isLoading]="viewModel.state.isLoading">
+        </lz-logo-editor-preview-presentation>
+      </section>
+
+    </main>
+
+    <!-- Footer Actions -->
+    <footer class="logo-editor-footer">
+      <lz-logo-editor-actions-presentation
+        [hasUnsavedChanges]="viewModel.state.hasUnsavedChanges"
+        [isLoading]="viewModel.state.isLoading"
+        (exportClick)="exportLogo($event)"
+        (saveClick)="saveChanges()">
+      </lz-logo-editor-actions-presentation>
+    </footer>
+
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" *ngIf="(viewModel$ | async)?.state.isLoading">
+    <lz-loading-spinner></lz-loading-spinner>
+  </div>
+
+</div>

@@ -1,0 +1,324 @@
+@import '../../../../../../shared/styles/variables';
+@import '../../../../../../shared/styles/mixins';
+
+.lz-brand-configuration {
+  padding: var(--spacing-md, 1rem);
+  background-color: var(--content-background, #ffffff);
+  border-radius: var(--border-radius-md, 8px);
+  
+  .brand-section {
+    margin-bottom: var(--spacing-lg, 1.5rem);
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    .section-title {
+      font-size: var(--font-size-lg, 1.125rem);
+      font-weight: var(--font-weight-semibold, 600);
+      color: var(--text-color-primary, #1a1a1a);
+      margin: 0 0 var(--spacing-md, 1rem) 0;
+      border-bottom: 1px solid var(--border-color-light, #f0f0f0);
+      padding-bottom: var(--spacing-sm, 0.75rem);
+    }
+  }
+
+  // Brand Name Section
+  .input-group {
+    position: relative;
+    
+    .character-counter {
+      font-size: var(--font-size-xs, 0.75rem);
+      color: var(--text-color-secondary, #666666);
+      margin-top: var(--spacing-xs, 0.5rem);
+      text-align: right;
+      transition: color var(--transition-fast, 0.15s) ease;
+      
+      &.error {
+        color: var(--color-error, #dc3545);
+        font-weight: var(--font-weight-medium, 500);
+      }
+    }
+  }
+
+  // Font Selection Section
+  .font-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-sm, 0.75rem);
+    
+    @include media-breakpoint-down(md) {
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    }
+    
+    @include media-breakpoint-down(sm) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .font-tile {
+    position: relative;
+    background-color: var(--background-color-light, #f8f9fa);
+    border: 1px solid var(--border-color, #e9ecef);
+    border-radius: var(--border-radius-md, 8px);
+    padding: var(--spacing-md, 1rem);
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all var(--transition-fast, 0.15s) ease;
+    overflow: hidden;
+    
+    &:hover {
+      border-color: var(--color-primary, #0066cc);
+      box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1));
+      transform: translateY(-1px);
+    }
+    
+    &.selected {
+      border-color: var(--color-primary, #0066cc);
+      background-color: var(--color-primary-light, #e6f3ff);
+      box-shadow: var(--shadow-md, 0 4px 6px rgba(0, 0, 0, 0.1));
+      
+      &::after {
+        content: '✓';
+        position: absolute;
+        top: var(--spacing-xs, 0.5rem);
+        right: var(--spacing-xs, 0.5rem);
+        width: 20px;
+        height: 20px;
+        background-color: var(--color-primary, #0066cc);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--font-size-xs, 0.75rem);
+        font-weight: var(--font-weight-bold, 700);
+      }
+    }
+    
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      
+      &:hover {
+        transform: none;
+        box-shadow: none;
+      }
+    }
+    
+    .font-preview {
+      font-size: var(--font-size-lg, 1.125rem);
+      font-weight: var(--font-weight-medium, 500);
+      color: var(--text-color-primary, #1a1a1a);
+      text-align: center;
+      line-height: 1.2;
+      margin-bottom: var(--spacing-xs, 0.5rem);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 100%;
+    }
+    
+    .font-name {
+      font-size: var(--font-size-sm, 0.875rem);
+      color: var(--text-color-secondary, #666666);
+      text-align: center;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 100%;
+    }
+  }
+
+  // Custom Font Upload
+  .custom-font-tile {
+    position: relative;
+    
+    .custom-font-button {
+      width: 100%;
+      height: 100%;
+      background: none;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: var(--spacing-xs, 0.5rem);
+      color: var(--color-primary, #0066cc);
+      font-size: var(--font-size-sm, 0.875rem);
+      cursor: inherit;
+      
+      &:disabled {
+        color: var(--text-color-disabled, #999999);
+      }
+    }
+    
+    .custom-font-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background-color: var(--background-color, #ffffff);
+      border: 1px solid var(--border-color, #e9ecef);
+      border-radius: var(--border-radius-md, 8px);
+      box-shadow: var(--shadow-lg, 0 8px 16px rgba(0, 0, 0, 0.15));
+      z-index: var(--z-index-dropdown, 100);
+      margin-top: var(--spacing-xs, 0.5rem);
+      overflow: hidden;
+      
+      .upload-section {
+        padding: var(--spacing-md, 1rem);
+        border-bottom: 1px solid var(--border-color-light, #f0f0f0);
+        
+        .hidden-input {
+          position: absolute;
+          opacity: 0;
+          pointer-events: none;
+        }
+        
+        .upload-label {
+          display: flex;
+          align-items: center;
+          gap: var(--spacing-xs, 0.5rem);
+          padding: var(--spacing-sm, 0.75rem) var(--spacing-md, 1rem);
+          background-color: var(--color-primary, #0066cc);
+          color: white;
+          border-radius: var(--border-radius-sm, 4px);
+          cursor: pointer;
+          font-size: var(--font-size-sm, 0.875rem);
+          font-weight: var(--font-weight-medium, 500);
+          transition: background-color var(--transition-fast, 0.15s) ease;
+          
+          &:hover {
+            background-color: var(--color-primary-dark, #0052a3);
+          }
+        }
+      }
+      
+      .uploaded-fonts {
+        .uploaded-fonts-header {
+          padding: var(--spacing-sm, 0.75rem) var(--spacing-md, 1rem);
+          font-size: var(--font-size-xs, 0.75rem);
+          font-weight: var(--font-weight-semibold, 600);
+          color: var(--text-color-secondary, #666666);
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        }
+        
+        .uploaded-font-item {
+          display: block;
+          width: 100%;
+          padding: var(--spacing-sm, 0.75rem) var(--spacing-md, 1rem);
+          background: none;
+          border: none;
+          text-align: left;
+          color: var(--text-color-primary, #1a1a1a);
+          cursor: pointer;
+          transition: background-color var(--transition-fast, 0.15s) ease;
+          
+          &:hover {
+            background-color: var(--background-color-light, #f8f9fa);
+          }
+        }
+      }
+    }
+  }
+
+  // Font Styling Section
+  .styling-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: var(--spacing-md, 1rem);
+    margin-bottom: var(--spacing-md, 1rem);
+    
+    .control-group {
+      .control-label {
+        display: block;
+        font-size: var(--font-size-sm, 0.875rem);
+        font-weight: var(--font-weight-medium, 500);
+        color: var(--text-color-primary, #1a1a1a);
+        margin-bottom: var(--spacing-xs, 0.5rem);
+      }
+    }
+  }
+
+  .style-toggles {
+    display: flex;
+    gap: var(--spacing-sm, 0.75rem);
+    flex-wrap: wrap;
+  }
+
+  // Live Preview Section
+  .font-preview-container {
+    padding: var(--spacing-lg, 1.5rem);
+    background-color: var(--background-color-light, #f8f9fa);
+    border: 1px solid var(--border-color, #e9ecef);
+    border-radius: var(--border-radius-md, 8px);
+    text-align: center;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    .font-preview-text {
+      color: var(--text-color-primary, #1a1a1a);
+      word-break: break-word;
+      max-width: 100%;
+      
+      &.multiline {
+        white-space: pre-wrap;
+        text-align: left;
+      }
+    }
+  }
+}
+
+// Focus management for accessibility
+.lz-brand-configuration {
+  .font-tile:focus,
+  .custom-font-button:focus,
+  .uploaded-font-item:focus {
+    outline: 2px solid var(--focus-ring-color, #0066cc);
+    outline-offset: 2px;
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .lz-brand-configuration {
+    .font-tile {
+      border-color: ButtonText;
+      
+      &.selected {
+        background-color: Highlight;
+        color: HighlightText;
+      }
+    }
+    
+    .character-counter.error {
+      color: CanvasText;
+      background-color: Canvas;
+    }
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .lz-brand-configuration {
+    .font-tile {
+      transition: none;
+      
+      &:hover {
+        transform: none;
+      }
+    }
+    
+    .character-counter {
+      transition: none;
+    }
+  }
+} 

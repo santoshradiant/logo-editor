@@ -1,0 +1,200 @@
+<div class="lz-brand-configuration">
+  
+  <!-- Brand Name Section -->
+  <section class="brand-section" aria-labelledby="brand-name-heading">
+    <h3 id="brand-name-heading" class="section-title">Brand Name</h3>
+    
+    <div class="input-group">
+      <!-- Using shared form input component from monorepo -->
+      <shared-form-input
+        label="Enter your brand name"
+        placeholder="Your Brand Name"
+        type="text"
+        [value]="brandConfig.name"
+        [required]="true"
+        [maxLength]="maxCharacters"
+        [errorMessages]="{
+          required: 'Brand name is required',
+          maxlength: 'Brand name is too long'
+        }"
+        (valueChange)="onBrandNameInput($event)"
+        [disabled]="isLoading">
+      </shared-form-input>
+      
+      <!-- Character Counter -->
+      <div class="character-counter" 
+           *ngIf="isShowingCharacterCounter"
+           [class.error]="isCharacterLimitExceeded"
+           aria-live="polite">
+        {{ characterCountText }}
+      </div>
+    </div>
+  </section>
+
+  <!-- Font Selection Section -->
+  <section class="brand-section" aria-labelledby="font-selection-heading">
+    <h3 id="font-selection-heading" class="section-title">Font Selection</h3>
+    
+    <!-- Recommended Fonts Grid -->
+    <div class="font-grid" role="group" aria-label="Recommended fonts">
+      <button
+        *ngFor="let font of displayFonts; let i = index"
+        class="font-tile"
+        [class.selected]="selectedFontIndex === i"
+        [style.font-family]="font.family"
+        [disabled]="isLoading"
+        (click)="onFontSelect(font, i)"
+        [attr.aria-pressed]="selectedFontIndex === i"
+        [attr.aria-label]="'Select ' + font.display + ' font'">
+        
+        <div class="font-preview">{{ font.display }}</div>
+        <div class="font-name">{{ font.name }}</div>
+      </button>
+
+      <!-- Custom Font Upload Tile -->
+      <div class="font-tile custom-font-tile">
+        <button 
+          class="custom-font-button"
+          (click)="onCustomFontToggle()"
+          [disabled]="isLoading"
+          aria-label="Upload custom font">
+          <shared-icon name="upload" size="24"></shared-icon>
+          <span>Custom Font</span>
+        </button>
+
+        <!-- Custom Font Dropdown -->
+        <div class="custom-font-dropdown" 
+             *ngIf="showCustomFontDropdown"
+             role="menu">
+          
+          <!-- File Upload -->
+          <div class="upload-section">
+            <input 
+              type="file" 
+              accept=".ttf,.otf,.woff,.woff2"
+              (change)="onFontUpload($event)"
+              #fontFileInput
+              class="hidden-input"
+              id="font-upload">
+              
+            <label for="font-upload" class="upload-label">
+              <shared-icon name="upload" size="16"></shared-icon>
+              Upload Font File
+            </label>
+          </div>
+
+          <!-- Uploaded Fonts List -->
+          <div class="uploaded-fonts" *ngIf="hasUploadedFonts">
+            <div class="uploaded-fonts-header">Uploaded Fonts</div>
+            <button
+              *ngFor="let font of uploadedFonts"
+              class="uploaded-font-item"
+              [style.font-family]="font.family"
+              (click)="onUploadedFontSelect(font)"
+              role="menuitem">
+              {{ font.name }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Font Styling Section -->
+  <section class="brand-section" aria-labelledby="font-styling-heading">
+    <h3 id="font-styling-heading" class="section-title">Font Styling</h3>
+    
+    <div class="styling-grid">
+      
+      <!-- Font Size -->
+      <div class="control-group">
+        <label for="font-size" class="control-label">Font Size</label>
+        <shared-number-input
+          id="font-size"
+          [value]="brandConfig.fontSize"
+          [min]="minFontSize"
+          [max]="maxFontSize"
+          unit="px"
+          (valueChange)="onFontSizeChange($event)"
+          [disabled]="isLoading">
+        </shared-number-input>
+      </div>
+
+      <!-- Letter Spacing -->
+      <div class="control-group">
+        <label for="letter-spacing" class="control-label">Letter Spacing</label>
+        <shared-number-input
+          id="letter-spacing"
+          [value]="brandConfig.letterSpacing"
+          [min]="-5"
+          [max]="10"
+          [step]="0.1"
+          unit="px"
+          (valueChange)="onLetterSpacingChange($event)"
+          [disabled]="isLoading">
+        </shared-number-input>
+      </div>
+
+      <!-- Line Height -->
+      <div class="control-group">
+        <label for="line-height" class="control-label">Line Height</label>
+        <shared-number-input
+          id="line-height"
+          [value]="brandConfig.lineHeight"
+          [min]="0.8"
+          [max]="3"
+          [step]="0.1"
+          (valueChange)="onLineHeightChange($event)"
+          [disabled]="isLoading">
+        </shared-number-input>
+      </div>
+    </div>
+
+    <!-- Font Style Toggles -->
+    <div class="style-toggles">
+      <shared-toggle-button
+        label="Bold"
+        [checked]="brandConfig.isBold"
+        (checkedChange)="onBoldToggle()"
+        [disabled]="isLoading"
+        icon="bold">
+      </shared-toggle-button>
+
+      <shared-toggle-button
+        label="Italic"
+        [checked]="brandConfig.isItalic"
+        (checkedChange)="onItalicToggle()"
+        [disabled]="isLoading"
+        icon="italic">
+      </shared-toggle-button>
+
+      <shared-toggle-button
+        label="Multiline"
+        [checked]="brandConfig.isMultiline"
+        (checkedChange)="onMultilineToggle()"
+        [disabled]="isLoading"
+        icon="text-wrap">
+      </shared-toggle-button>
+    </div>
+  </section>
+
+  <!-- Live Preview -->
+  <section class="brand-section" aria-labelledby="preview-heading">
+    <h3 id="preview-heading" class="section-title">Preview</h3>
+    
+    <div class="font-preview-container">
+      <div 
+        class="font-preview-text"
+        [style.font-family]="brandConfig.selectedFont"
+        [style.font-size.px]="brandConfig.fontSize"
+        [style.letter-spacing.px]="brandConfig.letterSpacing"
+        [style.line-height]="brandConfig.lineHeight"
+        [style.font-weight]="brandConfig.isBold ? 700 : 400"
+        [style.font-style]="brandConfig.isItalic ? 'italic' : 'normal'"
+        [class.multiline]="brandConfig.isMultiline">
+        {{ brandConfig.name || 'Your Brand Name' }}
+      </div>
+    </div>
+  </section>
+
+</div> 

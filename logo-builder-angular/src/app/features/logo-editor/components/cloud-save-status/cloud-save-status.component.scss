@@ -1,0 +1,87 @@
+.cloud-save-status {
+  display: flex !important;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  border-radius: 0;
+  transition: all 0.3s ease;
+  visibility: visible !important;
+}
+
+.cloud-save-status:hover {
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.cloud-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.cloud-icon {
+  transition: all 0.3s ease;
+}
+
+.cloud-icon.saved {
+  color: #22c55e; /* Green */
+}
+
+.cloud-icon.saving {
+  color: #6b7280; /* Gray */
+}
+
+.cloud-icon.error {
+  color: #ef4444; /* Red */
+}
+
+.cloud-icon.unsaved {
+  color: #6b7280; /* Gray */
+}
+
+.status-text {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.status-saved .status-text {
+  color: #22c55e;
+}
+
+.status-saving .status-text {
+  color: #3b82f6;
+}
+
+.status-error .status-text {
+  color: #ef4444;
+}
+
+.status-idle .status-text {
+  color: #f59e0b;
+}
+
+/* Spinning animation for saving state */
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Hide component when no status to show */
+.cloud-save-status.ng-hide {
+  display: none;
+}

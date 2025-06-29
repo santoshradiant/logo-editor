@@ -1039,32 +1039,203 @@
       </div>
     </div>
 
-    <!-- Shapes Section -->
-    <div class="editor-section" *ngIf="activeTab === 'shapes'">
+    <!-- Shapes Section - Enhanced implementation per figma-shape.md -->
+    <div class="editor-section shapes-section" *ngIf="activeTab === 'shapes'">
       <div class="section-header">
         <h2>Frame your logo</h2>
-        <p class="section-description">Add a shape to frame your design.</p>
+        <p class="section-description">Add an optional shape to frame your logo and give it extra structure and style. Or keep it clean and go without.</p>
       </div>
 
-      <div class="shapes-grid">
+      <!-- Shape Toggle -->
+      <div class="control-row">
+        <div class="control-group shape-toggle-control">
+          <label class="control-label">Shape</label>
+        </div>
+        <div class="control-helper">
+          <div class="toggle-switch">
+            <input 
+              type="checkbox" 
+              id="shapeEnabled" 
+              [(ngModel)]="shapeEnabled" 
+              (change)="onShapeToggleChange()"
+              (mouseenter)="onShapeToggleHover(true)"
+              (mouseleave)="onShapeToggleHover(false)"
+            />
+            <label 
+              for="shapeEnabled" 
+              class="toggle-slider"
+              [class.hovered]="shapeToggleHovered"
+              [class.inactive-hover]="!shapeEnabled && shapeToggleHovered"
+            ></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shape Selection Grid -->
+      <div class="shapes-grid" *ngIf="shapeEnabled">
         <button
           *ngFor="let shape of shapes"
           class="shape-option"
           [class.active]="selectedShape?.name === shape.name"
+          [class.hovered]="shape === hoveredShape"
           (click)="selectShape(shape)"
+          (mouseenter)="hoveredShape = shape"
+          (mouseleave)="hoveredShape = null"
+          [title]="shape.name"
         >
           <div class="shape-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-              <path
-                *ngIf="shape.name === 'Circle'"
-                d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"
-              />
-              <path *ngIf="shape.name === 'Square'" d="M3,3V21H21V3H3M5,5H19V19H5V5Z" />
-              <path *ngIf="shape.name === 'Triangle'" d="M12,2L22,20H2L12,2Z" />
+            <!-- Circle -->
+            <svg *ngIf="shape.name === 'Circle'" width="40" height="40" viewBox="0 0 40 40" fill="currentColor">
+              <circle cx="20" cy="20" r="18" fill="currentColor"/>
+            </svg>
+            
+            <!-- Rectangle -->
+            <svg *ngIf="shape.name === 'Rectangle'" width="40" height="40" viewBox="0 0 40 40" fill="currentColor">
+              <rect x="4" y="10" width="32" height="20" fill="currentColor"/>
+            </svg>
+            
+            <!-- Diamond -->
+            <svg *ngIf="shape.name === 'Diamond'" width="40" height="40" viewBox="0 0 40 40" fill="currentColor">
+              <path d="M20 4 L36 20 L20 36 L4 20 Z" fill="currentColor"/>
+            </svg>
+            
+            <!-- Pentagon -->
+            <svg *ngIf="shape.name === 'Pentagon'" width="40" height="40" viewBox="0 0 40 40" fill="currentColor">
+              <path d="M20 4 L32 14 L26 30 L14 30 L8 14 Z" fill="currentColor"/>
+            </svg>
+            
+            <!-- Hexagon -->
+            <svg *ngIf="shape.name === 'Hexagon'" width="40" height="40" viewBox="0 0 40 40" fill="currentColor">
+              <path d="M10 20 L15 8 L25 8 L30 20 L25 32 L15 32 Z" fill="currentColor"/>
+            </svg>
+            
+            <!-- Square Border -->
+            <svg *ngIf="shape.name === 'Square Border'" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="8" y="8" width="24" height="24"/>
+            </svg>
+            
+            <!-- Top Bottom Lines -->
+            <svg *ngIf="shape.name === 'Top Bottom Lines'" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="6" y1="10" x2="34" y2="10"/>
+              <line x1="6" y1="30" x2="34" y2="30"/>
+            </svg>
+            
+            <!-- Left Right Lines -->
+            <svg *ngIf="shape.name === 'Left Right Lines'" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="10" y1="6" x2="10" y2="34"/>
+              <line x1="30" y1="6" x2="30" y2="34"/>
+            </svg>
+            
+            <!-- Bottom Line -->
+            <svg *ngIf="shape.name === 'Bottom Line'" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="6" y1="30" x2="34" y2="30"/>
+            </svg>
+            
+            <!-- Corner Lines Left Top -->
+            <svg *ngIf="shape.name === 'Corner Lines Left Top'" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M8 8 L8 16 M8 8 L16 8"/>
+              <path d="M32 32 L32 24 M32 32 L24 32"/>
+            </svg>
+            
+            <!-- Corner Lines Right Bottom -->
+            <svg *ngIf="shape.name === 'Corner Lines Right Bottom'" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M32 8 L32 16 M32 8 L24 8"/>
+              <path d="M8 32 L8 24 M8 32 L16 32"/>
             </svg>
           </div>
-          <span class="shape-name">{{ shape.name }}</span>
         </button>
+      </div>
+
+      <!-- Shape Controls -->
+      <div class="shape-controls" *ngIf="shapeEnabled && selectedShape">
+        
+        <!-- Corner Roundness Control -->
+        <div class="control-row" *ngIf="selectedShape.hasCorners">
+          <div class="control-group">
+            <label 
+              class="control-label"
+              [class.hovered]="cornerRoundnessHovered"
+              (mouseenter)="onCornerRoundnessHover(true)"
+              (mouseleave)="onCornerRoundnessHover(false)"
+            >
+              Corner Roundness
+            </label>
+          </div>
+          <div class="control-helper">
+            <div class="slider-container">
+              <input 
+                type="range" 
+                class="slider corner-roundness-slider"
+                [class.hovered]="cornerRoundnessHovered"
+                [class.active]="cornerRoundness > 0"
+                min="0" 
+                max="100" 
+                step="1"
+                [(ngModel)]="cornerRoundness"
+                (ngModelChange)="onCornerRoundnessChange()"
+                (mouseenter)="onCornerRoundnessHover(true)"
+                (mouseleave)="onCornerRoundnessHover(false)"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Filled Toggle -->
+        <div class="control-row">
+          <div class="control-group">
+            <label class="control-label">Filled</label>
+          </div>
+          <div class="control-helper">
+            <div class="toggle-switch">
+              <input 
+                type="checkbox" 
+                id="shapeFilled" 
+                [(ngModel)]="shapeFilled" 
+                (change)="onShapeFilledChange()"
+                (mouseenter)="onFilledToggleHover(true)"
+                (mouseleave)="onFilledToggleHover(false)"
+              />
+              <label 
+                for="shapeFilled" 
+                class="toggle-slider"
+                [class.hovered]="filledToggleHovered"
+                [class.active-hover]="shapeFilled && filledToggleHovered"
+              ></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Line Width Control (only when not filled) -->
+        <div class="control-row" *ngIf="!shapeFilled">
+          <div class="control-group">
+            <label 
+              class="control-label"
+              [class.hovered]="lineWidthHovered"
+              (mouseenter)="onLineWidthHover(true)"
+              (mouseleave)="onLineWidthHover(false)"
+            >
+              Line Width
+            </label>
+          </div>
+          <div class="control-helper">
+            <div class="slider-container">
+              <input 
+                type="range" 
+                class="slider line-width-slider"
+                [class.hovered]="lineWidthHovered"
+                [class.active]="shapeLineWidth !== 2"
+                min="1" 
+                max="10" 
+                step="1"
+                [(ngModel)]="shapeLineWidth"
+                (ngModelChange)="onShapeLineWidthChange()"
+                (mouseenter)="onLineWidthHover(true)"
+                (mouseleave)="onLineWidthHover(false)"
+              />
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 

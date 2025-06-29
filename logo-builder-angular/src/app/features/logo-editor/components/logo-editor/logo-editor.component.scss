@@ -1783,63 +1783,229 @@
   }
 }
 
-// Shapes Section Specific Styles
-.shapes-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-bottom: 24px;
+// Shapes Section Specific Styles - Enhanced per figma-shape.md
+.shapes-section {
+  .shape-toggle-control {
+    .control-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: #374151;
+      transition: color 0.2s ease;
+      
+      &.hovered {
+        color: #1f2937;
+      }
+    }
+  }
 
-  .shape-option {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 16px 8px;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    background: #ffffff;
-    cursor: pointer;
-    transition: all 0.2s ease;
+  .toggle-switch {
+    position: relative;
+    display: inline-block;
+    
+    input[type="checkbox"] {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute;
+    }
+    
+    .toggle-slider {
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 20px;
+      background-color: #e5e7eb; // grey-light-1 equivalent
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      
+      // Slider handle
+      &::before {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 16px;
+        height: 16px;
+        background-color: #ffffff;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+      
+      // Inactive hover state - darken to grey-light-1
+      &.inactive-hover {
+        background-color: #d1d5db;
+      }
+      
+      // Active hover state - primary-dark
+      &.active-hover {
+        background-color: var(--ns-primary-dark, #00a085);
+      }
+      
+      // Hovered state
+      &.hovered {
+        box-shadow: 0 0 0 3px rgba(0, 184, 148, 0.1);
+      }
+    }
+    
+    // Checked state
+    input[type="checkbox"]:checked + .toggle-slider {
+      background-color: var(--ns-primary, #00b894);
+      
+      &::before {
+        transform: translateX(20px);
+      }
+    }
+  }
 
-    .shape-icon {
-      width: 32px;
-      height: 32px;
+  .shapes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 24px 0;
+    
+    .shape-option {
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 8px;
-      color: #6b7280;
-
-      svg {
-        width: 24px;
-        height: 24px;
-      }
-    }
-
-    .shape-name {
-      font-size: 11px;
-      color: #6b7280;
-      text-align: center;
-      font-weight: 500;
-    }
-
-    &:hover {
-      border-color: #3b82f6;
-      background: #f8faff;
-      transform: translateY(-1px);
-    }
-
-    &.active {
-      border-color: #3b82f6;
-      background: #eff6ff;
-
+      padding: 16px;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      background: #ffffff;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-height: 80px;
+      
       .shape-icon {
-        color: #3b82f6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6b7280;
+        
+        svg {
+          width: 40px;
+          height: 40px;
+          transition: all 0.2s ease;
+        }
       }
-
-      .shape-name {
-        color: #1d4ed8;
-        font-weight: 600;
+      
+      // Hover effect with 2px primary-dark stroke
+      &:hover,
+      &.hovered {
+        border-color: var(--ns-primary-dark, #00a085);
+        border-width: 2px;
+        background: #f0fdf4;
+        transform: translateY(-1px);
+        
+        .shape-icon {
+          color: var(--ns-primary-dark, #00a085);
+        }
+      }
+      
+      // Selected state
+      &.active {
+        border-color: var(--ns-primary, #00b894);
+        border-width: 2px;
+        background: #f0fdf4;
+        
+        .shape-icon {
+          color: var(--ns-primary, #00b894);
+        }
+      }
+    }
+  }
+  
+  .shape-controls {
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid #e5e7eb;
+    
+    .control-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      
+      .control-group {
+        .control-label {
+          font-size: 14px;
+          font-weight: 500;
+          color: #374151;
+          transition: color 0.2s ease;
+          
+          // Hover effect - darken to theme-grey when in zero state
+          &.hovered {
+            color: var(--ns-theme-grey, #6b7280);
+          }
+        }
+      }
+      
+      .control-helper {
+        display: flex;
+        align-items: center;
+        
+        .slider-container {
+          width: 120px;
+          
+          .slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #e5e7eb;
+            outline: none;
+            transition: all 0.2s ease;
+            -webkit-appearance: none;
+            
+            // Webkit slider thumb
+            &::-webkit-slider-thumb {
+              -webkit-appearance: none;
+              appearance: none;
+              width: 18px;
+              height: 18px;
+              border-radius: 50%;
+              background: #d1d5db;
+              cursor: pointer;
+              transition: all 0.2s ease;
+              border: 2px solid #ffffff;
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            
+            // Firefox slider thumb
+            &::-moz-range-thumb {
+              width: 18px;
+              height: 18px;
+              border-radius: 50%;
+              background: #d1d5db;
+              cursor: pointer;
+              transition: all 0.2s ease;
+              border: 2px solid #ffffff;
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            
+            // Active state - primary coloring
+            &.active {
+              &::-webkit-slider-thumb {
+                background: var(--ns-primary, #00b894);
+              }
+              
+              &::-moz-range-thumb {
+                background: var(--ns-primary, #00b894);
+              }
+            }
+            
+            // Hover state - primary-dark
+            &.hovered {
+              &::-webkit-slider-thumb {
+                background: var(--ns-primary-dark, #00a085);
+              }
+              
+              &::-moz-range-thumb {
+                background: var(--ns-primary-dark, #00a085);
+              }
+            }
+          }
+        }
       }
     }
   }

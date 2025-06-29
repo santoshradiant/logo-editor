@@ -275,16 +275,34 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   }
 
 
-  // Shapes section
-  shapes: Array<{ name: string; icon: string }> = [
-    { name: 'Circle', icon: 'circle' },
-    { name: 'Square', icon: 'square' },
-    { name: 'Triangle', icon: 'play' },
-    { name: 'Pentagon', icon: 'stop' },
-    { name: 'Hexagon', icon: 'hexagon' },
-    { name: 'Star', icon: 'star' }
+  // Shapes section - Enhanced implementation per figma-shape.md
+  shapeEnabled: boolean = false; // Shape should be disabled by default
+  shapes: Array<{ name: string; icon: string; hasCorners: boolean }> = [
+    { name: 'Circle', icon: 'circle', hasCorners: false },
+    { name: 'Rectangle', icon: 'square', hasCorners: true },
+    { name: 'Diamond', icon: 'diamond', hasCorners: true },
+    { name: 'Pentagon', icon: 'pentagon', hasCorners: true },
+    { name: 'Hexagon', icon: 'hexagon', hasCorners: true },
+    { name: 'Square Border', icon: 'square-border', hasCorners: true },
+    { name: 'Top Bottom Lines', icon: 'top-bottom-lines', hasCorners: false },
+    { name: 'Left Right Lines', icon: 'left-right-lines', hasCorners: false },
+    { name: 'Bottom Line', icon: 'bottom-line', hasCorners: false },
+    { name: 'Corner Lines Left Top', icon: 'corner-lines-lt', hasCorners: false },
+    { name: 'Corner Lines Right Bottom', icon: 'corner-lines-rb', hasCorners: false }
   ];
-  selectedShape: { name: string; icon: string } | null = null;
+  selectedShape: { name: string; icon: string; hasCorners: boolean } | null = null;
+  
+  // Shape controls
+  cornerRoundness: number = 0; // 0-100 range
+  shapeFilled: boolean = true; // Filled by default when shape is enabled
+  shapeLineWidth: number = 2; // Line width for stroke shapes (1-10 range)
+  
+  // Shape interaction states
+  shapeToggleHovered: boolean = false;
+  cornerRoundnessHovered: boolean = false;
+  filledToggleHovered: boolean = false;
+  lineWidthHovered: boolean = false;
+  hoveredShape: { name: string; icon: string; hasCorners: boolean } | null = null;
 
   // Colors section - Enhanced implementation based on figma designs
   colorSchemes: Array<{ primary: string; secondary: string }> = [
@@ -981,11 +999,63 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Shapes section methods
-  selectShape(shape: { name: string; icon: string }): void {
+  // Shapes section methods - Enhanced per figma-shape.md
+  onShapeToggleChange(): void {
+    // Note: shapeEnabled is already updated by the time this method is called due to [(ngModel)]
+    if (this.shapeEnabled) {
+      // Apply first shape selection (circle) when enabling shape
+      this.selectedShape = this.shapes[0];
+      // Shape color should be adopted from logo icon coloring
+      this.customColors.shape = this.customColors.icon;
+      // Shape should be filled by default
+      this.shapeFilled = true;
+    } else {
+      this.selectedShape = null;
+    }
+    this.componentStates.shape = this.shapeEnabled && this.selectedShape !== null;
+    this.updateLogoPreview();
+  }
+
+  selectShape(shape: { name: string; icon: string; hasCorners: boolean }): void {
+    if (!this.shapeEnabled) return;
+    
     this.selectedShape = shape;
     this.componentStates.shape = true;
     this.updateLogoPreview();
+  }
+
+  onCornerRoundnessChange(): void {
+    if (this.selectedShape && this.selectedShape.hasCorners) {
+      this.updateLogoPreview();
+    }
+  }
+
+  onShapeFilledChange(): void {
+    // Note: shapeFilled is already updated by the time this method is called due to [(ngModel)]
+    this.updateLogoPreview();
+  }
+
+  onShapeLineWidthChange(): void {
+    if (!this.shapeFilled) {
+      this.updateLogoPreview();
+    }
+  }
+
+  // Shape interaction states
+  onShapeToggleHover(isHovered: boolean): void {
+    this.shapeToggleHovered = isHovered;
+  }
+
+  onCornerRoundnessHover(isHovered: boolean): void {
+    this.cornerRoundnessHovered = isHovered;
+  }
+
+  onFilledToggleHover(isHovered: boolean): void {
+    this.filledToggleHovered = isHovered;
+  }
+
+  onLineWidthHover(isHovered: boolean): void {
+    this.lineWidthHovered = isHovered;
   }
 
   // Colors section methods - Enhanced implementation
@@ -1018,7 +1088,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       icon: this.showLogoIcon && (this.selectedIcon !== null || this.userInitials !== ''),
       name: this.brandName.trim() !== '',
       slogan: this.enableSlogan && this.sloganText.trim() !== '',
-      shape: this.selectedShape !== null
+      shape: this.shapeEnabled && this.selectedShape !== null
     };
   }
 
@@ -1589,29 +1659,9 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw selected shape background (if any)
-    if (this.selectedShape) {
-      ctx.strokeStyle = this.customColors.shape;
-      ctx.lineWidth = 3;
-      
-      switch (this.selectedShape.name) {
-        case 'Circle':
-          ctx.beginPath();
-          ctx.arc(canvas.width / 2, canvas.height / 2, 120, 0, 2 * Math.PI);
-          ctx.stroke();
-          break;
-        case 'Square':
-          ctx.strokeRect(canvas.width / 2 - 120, canvas.height / 2 - 120, 240, 240);
-          break;
-        case 'Triangle':
-          ctx.beginPath();
-          ctx.moveTo(canvas.width / 2, canvas.height / 2 - 120);
-          ctx.lineTo(canvas.width / 2 - 120, canvas.height / 2 + 120);
-          ctx.lineTo(canvas.width / 2 + 120, canvas.height / 2 + 120);
-          ctx.closePath();
-          ctx.stroke();
-          break;
-      }
+    // Draw shape frame (if enabled and selected) - Enhanced per figma-shape.md
+    if (this.shapeEnabled && this.selectedShape) {
+      this.drawShapeFrame(ctx, canvas.width, canvas.height);
     }
 
     // Calculate text dimensions first to determine overall layout
@@ -1915,6 +1965,156 @@ let initalsStyle = '';
     ctx.lineTo(x, y + radius);
     ctx.quadraticCurveTo(x, y, x + radius, y);
     ctx.closePath();
+  }
+
+  // Enhanced shape drawing method per figma-shape.md requirements
+  private drawShapeFrame(ctx: CanvasRenderingContext2D, canvasWidth: number, canvasHeight: number): void {
+    if (!this.selectedShape) return;
+
+    const centerX = canvasWidth / 2;
+    const centerY = canvasHeight / 2;
+    const shapeSize = 200; // Base size for shapes
+    
+    // Set shape styling
+    if (this.shapeFilled) {
+      ctx.fillStyle = this.customColors.shape;
+      ctx.strokeStyle = 'transparent';
+      ctx.lineWidth = 0;
+    } else {
+      ctx.strokeStyle = this.customColors.shape;
+      ctx.fillStyle = 'transparent';
+      ctx.lineWidth = this.shapeLineWidth;
+    }
+    
+    // Calculate corner radius for shapes with corners
+    const cornerRadius = this.selectedShape.hasCorners ? (this.cornerRoundness / 100) * 40 : 0;
+    
+    ctx.beginPath();
+    
+    switch (this.selectedShape.name) {
+      case 'Circle':
+        ctx.arc(centerX, centerY, shapeSize / 2, 0, 2 * Math.PI);
+        break;
+        
+      case 'Rectangle':
+        if (cornerRadius > 0) {
+          this.drawRoundedRect(ctx, centerX - shapeSize/2, centerY - shapeSize/3, shapeSize, shapeSize * 2/3, cornerRadius);
+        } else {
+          ctx.rect(centerX - shapeSize/2, centerY - shapeSize/3, shapeSize, shapeSize * 2/3);
+        }
+        break;
+        
+      case 'Diamond':
+        ctx.moveTo(centerX, centerY - shapeSize/2);
+        ctx.lineTo(centerX + shapeSize/2, centerY);
+        ctx.lineTo(centerX, centerY + shapeSize/2);
+        ctx.lineTo(centerX - shapeSize/2, centerY);
+        ctx.closePath();
+        break;
+        
+      case 'Pentagon':
+        const pentagonRadius = shapeSize / 2;
+        for (let i = 0; i < 5; i++) {
+          const angle = (i * 2 * Math.PI / 5) - Math.PI / 2;
+          const x = centerX + pentagonRadius * Math.cos(angle);
+          const y = centerY + pentagonRadius * Math.sin(angle);
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        break;
+        
+      case 'Hexagon':
+        const hexRadius = shapeSize / 2;
+        for (let i = 0; i < 6; i++) {
+          const angle = i * Math.PI / 3;
+          const x = centerX + hexRadius * Math.cos(angle);
+          const y = centerY + hexRadius * Math.sin(angle);
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        break;
+        
+      case 'Square Border':
+        // Square border is always stroke, ignore filled setting
+        ctx.strokeStyle = this.customColors.shape;
+        ctx.lineWidth = this.shapeLineWidth;
+        if (cornerRadius > 0) {
+          this.drawRoundedRect(ctx, centerX - shapeSize/2, centerY - shapeSize/2, shapeSize, shapeSize, cornerRadius);
+        } else {
+          ctx.rect(centerX - shapeSize/2, centerY - shapeSize/2, shapeSize, shapeSize);
+        }
+        ctx.stroke();
+        return; // Skip the fill/stroke logic below
+        
+      case 'Top Bottom Lines':
+        ctx.strokeStyle = this.customColors.shape;
+        ctx.lineWidth = this.shapeLineWidth;
+        // Top line
+        ctx.moveTo(centerX - shapeSize/2, centerY - shapeSize/4);
+        ctx.lineTo(centerX + shapeSize/2, centerY - shapeSize/4);
+        // Bottom line
+        ctx.moveTo(centerX - shapeSize/2, centerY + shapeSize/4);
+        ctx.lineTo(centerX + shapeSize/2, centerY + shapeSize/4);
+        ctx.stroke();
+        return;
+        
+      case 'Left Right Lines':
+        ctx.strokeStyle = this.customColors.shape;
+        ctx.lineWidth = this.shapeLineWidth;
+        // Left line
+        ctx.moveTo(centerX - shapeSize/2, centerY - shapeSize/3);
+        ctx.lineTo(centerX - shapeSize/2, centerY + shapeSize/3);
+        // Right line
+        ctx.moveTo(centerX + shapeSize/2, centerY - shapeSize/3);
+        ctx.lineTo(centerX + shapeSize/2, centerY + shapeSize/3);
+        ctx.stroke();
+        return;
+        
+      case 'Bottom Line':
+        ctx.strokeStyle = this.customColors.shape;
+        ctx.lineWidth = this.shapeLineWidth;
+        ctx.moveTo(centerX - shapeSize/2, centerY + shapeSize/4);
+        ctx.lineTo(centerX + shapeSize/2, centerY + shapeSize/4);
+        ctx.stroke();
+        return;
+        
+      case 'Corner Lines Left Top':
+        ctx.strokeStyle = this.customColors.shape;
+        ctx.lineWidth = this.shapeLineWidth;
+        // Top left corner
+        ctx.moveTo(centerX - shapeSize/2, centerY - shapeSize/3);
+        ctx.lineTo(centerX - shapeSize/2, centerY - shapeSize/2);
+        ctx.lineTo(centerX - shapeSize/3, centerY - shapeSize/2);
+        // Bottom right corner
+        ctx.moveTo(centerX + shapeSize/3, centerY + shapeSize/2);
+        ctx.lineTo(centerX + shapeSize/2, centerY + shapeSize/2);
+        ctx.lineTo(centerX + shapeSize/2, centerY + shapeSize/3);
+        ctx.stroke();
+        return;
+        
+      case 'Corner Lines Right Bottom':
+        ctx.strokeStyle = this.customColors.shape;
+        ctx.lineWidth = this.shapeLineWidth;
+        // Top right corner
+        ctx.moveTo(centerX + shapeSize/3, centerY - shapeSize/2);
+        ctx.lineTo(centerX + shapeSize/2, centerY - shapeSize/2);
+        ctx.lineTo(centerX + shapeSize/2, centerY - shapeSize/3);
+        // Bottom left corner
+        ctx.moveTo(centerX - shapeSize/2, centerY + shapeSize/3);
+        ctx.lineTo(centerX - shapeSize/2, centerY + shapeSize/2);
+        ctx.lineTo(centerX - shapeSize/3, centerY + shapeSize/2);
+        ctx.stroke();
+        return;
+    }
+    
+    // Apply fill or stroke for closed shapes
+    if (this.shapeFilled) {
+      ctx.fill();
+    } else {
+      ctx.stroke();
+    }
   }
 
   private async drawIconImage(ctx: CanvasRenderingContext2D, x: number, y: number, icon: NounIconItem): Promise<void> {

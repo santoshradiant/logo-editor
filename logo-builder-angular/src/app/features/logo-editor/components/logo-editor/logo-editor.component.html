@@ -819,7 +819,7 @@
               (click)="selectIcon(icon)"
             ><div class="icon-outline-wrapper">
               <div class="icon-wrapper">
-                <img [src]="icon.thumbnailUrl" [alt]="icon.name || 'icon'" />
+                <img [src]="icon.svgUrl" [alt]="icon.name || 'icon'" />
               </div>
               </div>
             </button>
@@ -995,7 +995,7 @@
 </div>
       <!-- Background Content Dropdown -->
       <!-- <div class="background-controls" *ngIf="showLogoIcon && iconBackground && (selectedIcon || userInitials)"> -->
-        <div class="background-controls controls-section" *ngIf="iconBackground">
+        <div class="background-controls controls-section" [style.opacity]="iconBackground ? '1' : '0.3'" [style.pointer-events]="!iconBackground ? 'none' : 'auto'">
         <!-- Background Type Selection -->
        
 
@@ -1103,7 +1103,7 @@
 
       <!-- Shape Toggle -->
       <div class="control-row">
-        <div class="control-group shape-toggle-control">
+        <!-- <div class="control-group shape-toggle-control">
           <label class="control-label">Shape</label>
         </div>
         <div class="control-helper">
@@ -1123,11 +1123,24 @@
               [class.inactive-hover]="!shapeEnabled && shapeToggleHovered"
             ></label>
           </div>
+        </div> -->
+
+      <div class="form-group shapes-toogel-controls">
+        <label class="form-label">Shape</label>
+        <div class="toggle-group">
+          <div class="toggle-switch">
+            <input type="checkbox" id="shapeEnabled" [(ngModel)]="shapeEnabled" (change)="onShapeToggleChange()"
+              (mouseenter)="onShapeToggleHover(true)" (mouseleave)="onShapeToggleHover(false)" />
+            <label for="shapeEnabled" class="toggle-slider" [class.hovered]="shapeToggleHovered"
+              [class.inactive-hover]="!shapeEnabled && shapeToggleHovered"></label>
+          </div>
         </div>
       </div>
 
+      </div>
+<div class="shapes-toogle-container" [style.opacity]="shapeEnabled ? '1' : '0.3'" [style.pointer-events]="!shapeEnabled ? 'none' : 'auto'">
       <!-- Shape Selection Grid -->
-      <div class="shapes-grid" *ngIf="shapeEnabled">
+      <div class="shapes-grid">
         <button
           *ngFor="let shape of shapes"
           class="shape-option"
@@ -1202,10 +1215,10 @@
       </div>
 
       <!-- Shape Controls -->
-      <div class="shape-controls" *ngIf="shapeEnabled && selectedShape">
+      <div class="shape-controls" >
         
         <!-- Corner Roundness Control -->
-        <div class="control-row" *ngIf="selectedShape.hasCorners">
+        <!-- <div class="control-row" *ngIf="selectedShape?.hasCorners">
           <div class="control-group">
             <label 
               class="control-label"
@@ -1233,11 +1246,53 @@
               />
             </div>
           </div>
+        </div> -->
+<div class="control-row" *ngIf="selectedShape?.hasCorners">
+          <div class="control-group">
+            <label class="control-label"> Corner Roundness</label>
+            <div class="slider-wrapper">
+              <input
+                type="range" 
+                class=" range-slider slider corner-roundness-slider"
+                [class.hovered]="cornerRoundnessHovered"
+                [class.active]="cornerRoundness > 0"
+                min="0" 
+                max="100" 
+                step="1"
+                [(ngModel)]="cornerRoundness"
+                (ngModelChange)="onCornerRoundnessChange()"
+                (mouseenter)="onCornerRoundnessHover(true)"
+                (mouseleave)="onCornerRoundnessHover(false)"
+                [style.--min]="0"
+                [style.--max]="100"
+              />
+            </div>
+          </div>
         </div>
 
-        <!-- Filled Toggle -->
-        <div class="control-row">
+<!-- <div class="control-row">
           <div class="control-group">
+            <label class="control-label">Font Size</label>
+            <div class="slider-wrapper">
+              <input
+                type="range"
+                class="range-slider"
+                [(ngModel)]="fontSize"
+                (ngModelChange)="onFontSizeChange()"
+                min="24"
+                max="120"
+                [style.--val]="fontSize"
+                [style.--min]="24"
+                [style.--max]="120"
+              />
+            </div>
+          </div>
+        </div> -->
+
+
+        <!-- Filled Toggle -->
+        <div class="control-row filled-toggle">
+          <!-- <div class="control-group">
             <label class="control-label">Filled</label>
           </div>
           <div class="control-helper">
@@ -1257,12 +1312,32 @@
                 [class.active-hover]="shapeFilled && filledToggleHovered"
               ></label>
             </div>
+          </div> -->
+
+
+          <div class="control-group">
+            <label class="control-label">Filled</label>
+          </div>
+          <div class="control-helper">
+            
+            <div class="toggle-switch">
+              <input type="checkbox" 
+                id="shapeFilled" 
+                [(ngModel)]="shapeFilled" 
+                (change)="onShapeFilledChange()"
+                (mouseenter)="onFilledToggleHover(true)"
+                (mouseleave)="onFilledToggleHover(false)" />
+              <label   for="shapeFilled" 
+                class="toggle-slider"
+                [class.hovered]="filledToggleHovered"
+                [class.active-hover]="shapeFilled && filledToggleHovered"></label>
+            </div>
           </div>
         </div>
 
-        <!-- Line Width Control (only when not filled) -->
-        <div class="control-row" *ngIf="!shapeFilled">
-          <div class="control-group">
+       <!-- Line Width Control (only when not filled) -->
+        <div class="control-row" [style.opacity]="shapeFilled ? '1' : '0.3'" [style.pointer-events]="!shapeFilled ? 'none' : 'auto'" >
+          <!-- <div class="control-group">
             <label 
               class="control-label"
               [class.hovered]="lineWidthHovered"
@@ -1288,9 +1363,35 @@
                 (mouseleave)="onLineWidthHover(false)"
               />
             </div>
+          </div> -->
+
+
+          <div class="control-group">
+            <label class="control-label">Line Width</label>
+            <div class="slider-wrapper">
+              <input
+                type="range"
+                class="range-slider"
+                [class.hovered]="lineWidthHovered"
+                [class.active]="shapeLineWidth !== 2"
+                min="1" 
+                max="10" 
+                step="1"
+                [(ngModel)]="shapeLineWidth"
+                (ngModelChange)="onShapeLineWidthChange()"
+                (mouseenter)="onLineWidthHover(true)"
+                (mouseleave)="onLineWidthHover(false)"
+                [style.--min]="1"
+                [style.--max]="10"
+              />
+            </div>
           </div>
+
+
         </div>
 
+      </div>
+       
       </div>
     </div>
 

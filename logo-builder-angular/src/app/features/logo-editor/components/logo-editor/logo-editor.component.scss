@@ -1,4 +1,3 @@
- 
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 .border-default{
@@ -976,11 +975,22 @@
       display: inline-block;
       width: 36px;
       height: 20px;
+      cursor: pointer;
+      
+      // Ensure the entire toggle area is clickable
+      &:hover .toggle-slider {
+        box-shadow: 0 0 0 2px rgba(var(--ns-primary-rgb), 0.2);
+      }
 
       input[type='checkbox'] {
-        opacity: 0;
-        width: 0;
-        height: 0;
+        // Keep the checkbox properly positioned and sized for accessibility
+        position: absolute !important;
+        opacity: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        margin: 0 !important;
+        cursor: pointer !important;
+        z-index: 2 !important;
 
         &:checked + .toggle-slider {
           background-color: var(--ns-primary);
@@ -988,6 +998,10 @@
           &::before {
             transform: translateX(15px);
           }
+        }
+        
+        &:focus + .toggle-slider {
+          box-shadow: 0 0 0 2px rgba(var(--ns-primary-rgb), 0.3);
         }
       }
 
@@ -999,8 +1013,9 @@
         right: 0;
         bottom: 0;
         background-color: #d1d5db;
-        transition: 0.3s;
+        transition: all 0.3s ease;
         border-radius: 24px;
+        z-index: 1;
 
         &::before {
           position: absolute;
@@ -1008,11 +1023,20 @@
           height: 15px;
           width: 15px;
           left: 3px;
-          bottom: 3px;
+          bottom: 2.5px;
           background-color: white;
-          transition: 0.3s;
+          transition: all 0.3s ease;
           border-radius: 50%;
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        // Active state styling
+        &.active {
+          background-color: var(--ns-primary);
+          
+          &::before {
+            transform: translateX(15px);
+          }
         }
       }
     }
@@ -3077,3 +3101,34 @@
     border-color: var(--ns-primary);
   }
 } 
+
+// Multiline textarea specific styles
+.multiline-input {
+  resize: vertical;
+  min-height: 60px;
+  line-height: 1.4;
+  font-family: inherit;
+  
+  // Disable horizontal resize to prevent layout issues
+  resize: vertical;
+  
+  // Ensure proper padding and line height for multiline text
+  &:focus {
+    outline: none;
+  }
+}
+
+// Multiline-enabled input styling (single-line input with word wrapping on canvas)
+.multiline-enabled {
+  border-left: 4px solid var(--ns-primary);
+  background: rgba(var(--ns-primary-rgb), 0.02);
+  
+  &::placeholder {
+    font-style: italic;
+    color: var(--ns-primary);
+  }
+  
+  &:focus {
+    background: rgba(var(--ns-primary-rgb), 0.05);
+  }
+}

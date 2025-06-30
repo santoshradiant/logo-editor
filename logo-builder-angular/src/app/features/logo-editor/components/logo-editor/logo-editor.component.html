@@ -58,7 +58,9 @@
 
       <div class="form-group brand-text">
         <label class="form-label">Brand Name</label>
+        <!-- Single line input when multiline is disabled -->
         <input          
+          *ngIf="!isMultiline"
           type="text"
           class="form-input"
           [class.hovered]="brandNameFieldHovered"
@@ -74,9 +76,12 @@
           placeholder="Enter your brand name"
           maxlength="40"
         />
-        <!-- <textarea
+        
+        <!-- Single line input when multiline is enabled (word wrapping happens on canvas) -->
+        <input
           *ngIf="isMultiline"
-          class="form-input multiline-input"
+          type="text"
+          class="form-input multiline-enabled"
           [class.hovered]="brandNameFieldHovered"
           [class.focused]="brandNameFieldFocused"
           [class.character-limit-exceeded]="isCharacterLimitExceeded()"
@@ -87,9 +92,9 @@
           (focus)="onBrandNameFieldFocus()"
           (blur)="onBrandNameFieldBlur()"
           (dblclick)="onBrandNameFieldDoubleClick($event)"
-          placeholder="Enter your brand name (use Enter for new lines)"
-          rows="3"
-        ></textarea> -->
+          placeholder="Enter your brand name (will wrap automatically)"
+          maxlength="40"
+        />
         
         <!-- Character counter - show at 30 characters as per figma.md -->
         <div class="character-counter" *ngIf="showCharacterCounter">
@@ -195,9 +200,15 @@
           </div>
           <div class="control-helper">
             
-            <div class="toggle-switch">
-              <input type="checkbox" id="multiline" [(ngModel)]="isMultiline" (ngModelChange)="onMultilineToggle()" />
-              <label for="multiline" class="toggle-slider"></label>
+            <div class="toggle-switch" (click)="toggleMultiline($event)">
+              <input 
+                type="checkbox" 
+                id="multiline" 
+                [checked]="isMultiline"
+                readonly
+                style="position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; z-index: 1;"
+              />
+              <label for="multiline" class="toggle-slider" [class.active]="isMultiline"></label>
             </div>
             <!-- <small class="helper-text">
               {{ isMultiline ? 'Text will display on multiple lines' : 'Text will display on a single line' }}
@@ -233,11 +244,12 @@
                 class="range-slider"
                 [(ngModel)]="letterSpacing"
                 (ngModelChange)="onLetterSpacingChange()"
-                min="-2"
-                max="10"
+                min="-5"
+                max="20"
+                step="0.5"
                 [style.--val]="letterSpacing"
-                [style.--min]="-2 "
-                [style.--max]="10"
+                [style.--min]="-5"
+                [style.--max]="20"
               />
             </div>
           </div>
@@ -277,8 +289,14 @@
       <div class="form-group slogan-container">
         <label class="form-label">Slogan</label>
         <div class="toggle-group">
-          <div class="toggle-switch">
-            <input type="checkbox" id="sloganToggle" [(ngModel)]="enableSlogan" (ngModelChange)="onSloganToggle()" />
+          <div class="toggle-switch" (click)="toggleSlogan()">
+            <input 
+              type="checkbox" 
+              id="sloganToggle" 
+              [(ngModel)]="enableSlogan" 
+              (change)="onSloganToggle()"
+              style="position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; z-index: 1;"
+            />
             <label for="sloganToggle" class="toggle-slider"></label>
           </div>
         </div>
@@ -577,13 +595,12 @@
                 [(ngModel)]="sloganLineCount"
                 (ngModelChange)="onSloganLineCountChange()"
                 min="1"
-                max="4"
+                max="6"
                 step="1"
                 [style.--val]="sloganLineCount"
                 [style.--min]="1"
-                [style.--max]="4"
+                [style.--max]="6"
               />
-              <!-- <div class="slider-value">{{ sloganLineCount }}</div> -->
             </div>
           </div>
         </div>
@@ -619,11 +636,12 @@
                 class="range-slider"
                 [(ngModel)]="sloganLetterSpacing"
                 (ngModelChange)="onSloganLetterSpacingChange()"
-                min="-2"
-                max="10"
+                min="-5"
+                max="20"
+                step="0.5"
                 [style.--val]="sloganLetterSpacing"
-                [style.--min]="-2"
-                [style.--max]="10"
+                [style.--min]="-5"
+                [style.--max]="20"
               />
             </div>
           </div>
@@ -638,12 +656,12 @@
                 class="range-slider"
                 [(ngModel)]="sloganLineHeight"
                 (ngModelChange)="onSloganLineHeightChange()"
-                min="0.8"
-                max="2"
-                step="0.1"
+                min="0.5"
+                max="3"
+                step="0.05"
                 [style.--val]="sloganLineHeight"
-                [style.--min]="0.8"
-                [style.--max]="2"
+                [style.--min]="0.5"
+                [style.--max]="3"
               />
             </div>
           </div>
@@ -664,8 +682,13 @@
       <div class="logo-icon-toggle">
         <label class="control-label">Logo Icon</label>
         <div class="toggle-wrapper">
-          <label class="switch">
-            <input type="checkbox" [(ngModel)]="showLogoIcon" (ngModelChange)="onLogoIconToggle()">
+          <label class="switch" (click)="toggleLogoIcon()">
+            <input 
+              type="checkbox" 
+              [(ngModel)]="showLogoIcon" 
+              (change)="onLogoIconToggle()"
+              style="position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; z-index: 1;"
+            >
             <span class="slider"></span>
           </label>
         </div>

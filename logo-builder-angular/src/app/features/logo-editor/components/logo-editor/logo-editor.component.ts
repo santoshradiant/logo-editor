@@ -200,7 +200,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   initialsIsItalic: boolean= false;
   sloganIsItalic: boolean = false;
   sloganIsMultiline: boolean = false;
-  sloganLineCount: number = 1;
+  sloganLineCount: number = 2;
 
   // Icon section - Improved sizing ranges
   availableIcons: Array<{ name: string; url: string }> = [
@@ -648,8 +648,100 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     this.updateLogoPreview();
   }
 
-  onMultilineToggle(): void {
+  // Disabled - using direct toggleMultiline method instead
+  // onMultilineToggle(): void {
+  //   this.updateLogoPreview();
+  //   console.log('Multiline status changed to:', this.isMultiline);
+  //   this.triggerAutosave();
+  // }
+
+  // Direct toggle method for click handling
+  toggleMultiline(event?: Event): void {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    
+    this.isMultiline = !this.isMultiline;
+    
+    console.log('Multiline toggled to:', this.isMultiline); // Debug log
+    
+    // Immediate canvas update
     this.updateLogoPreview();
+    
+    // Trigger autosave with current state
+    this.triggerAutosave();
+  }
+
+  // Helper method to wrap text based on available width
+  private wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number, forceMultiline: boolean = false): string[] {
+    const words = text.split(' ').filter(word => word.trim() !== '');
+    
+    if (words.length === 0) return [''];
+    
+    // When multiline is forced (toggle is ON), put first word on line 1, rest on subsequent lines
+    if (forceMultiline && words.length > 1) {
+      const lines: string[] = [];
+      lines.push(words[0]); // First word on first line
+      
+      // Wrap remaining words normally
+      let currentLine = '';
+      for (let i = 1; i < words.length; i++) {
+        const word = words[i];
+        const testLine = currentLine + (currentLine ? ' ' : '') + word;
+        const metrics = ctx.measureText(testLine);
+        
+        if (metrics.width > maxWidth && currentLine) {
+          lines.push(currentLine);
+          currentLine = word;
+        } else {
+          currentLine = testLine;
+        }
+      }
+      
+      if (currentLine) {
+        lines.push(currentLine);
+      }
+      
+      return lines;
+    }
+    
+    // Normal word wrapping for single-line mode
+    const lines: string[] = [];
+    let currentLine = '';
+
+    // Adjust max width if there are icons that might interfere with text space
+    let adjustedMaxWidth = maxWidth;
+    
+    // If there's an icon on left or right, reduce available width for text
+    if (this.showLogoIcon && (this.selectedIcon || this.userInitials)) {
+      if (this.iconAlignment === 'left' || this.iconAlignment === 'right') {
+        // Reserve space for icon, margin, and spacing
+        const iconSpace = this.iconSize + this.iconMargin * 2 + 50; // Extra padding
+        adjustedMaxWidth = Math.max(200, maxWidth - iconSpace); // Minimum 200px for text
+      }
+    }
+
+    for (const word of words) {
+      const testLine = currentLine + (currentLine ? ' ' : '') + word;
+      const metrics = ctx.measureText(testLine);
+      
+      if (metrics.width > adjustedMaxWidth && currentLine) {
+        // Current line is too wide, push it and start a new line
+        lines.push(currentLine);
+        currentLine = word;
+      } else {
+        // Add word to current line
+        currentLine = testLine;
+      }
+    }
+
+    // Push the last line
+    if (currentLine) {
+      lines.push(currentLine);
+    }
+
+    return lines.length > 0 ? lines : [''];
   }
 
   // Font upload methods
@@ -751,6 +843,12 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     this.updateLogoPreview();
   }
 
+  // Direct toggle method for slogan click handling
+  toggleSlogan(): void {
+    this.enableSlogan = !this.enableSlogan;
+    this.updateLogoPreview();
+  }
+
   selectSloganFont(font: string): void {
     const oldFont = this.sloganFont;
     this.sloganFont = font;
@@ -789,7 +887,11 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   }
 
   onSloganLineHeightChange(): void {
+    // Ensure line height stays within reasonable bounds
+    this.sloganLineHeight = Math.max(0.5, Math.min(3, this.sloganLineHeight));
+    
     this.updateLogoPreview();
+    this.triggerAutosave();
   }
 
   toggleSloganBold(): void {
@@ -802,12 +904,14 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     this.updateLogoPreview();
   }
 
-  onSloganMultilineToggle(): void {
-    this.updateLogoPreview();
-  }
+  // Removed slogan multiline toggle methods since multiline toggle was removed from UI
 
   onSloganLineCountChange(): void {
+    // Ensure line count stays within reasonable bounds (matching slider range)
+    this.sloganLineCount = Math.max(1, Math.min(6, this.sloganLineCount));
+    
     this.updateLogoPreview();
+    this.triggerAutosave();
   }
 
   // Icons section methods
@@ -836,11 +940,16 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
 
   // New methods for enhanced icon functionality
   onLogoIconToggle(): void {
-    if (!this.showLogoIcon) {
-      this.selectedIcon = null;
-      this.userInitials = '';
-    }
+    // Trigger autosave when logo icon visibility changes
+    this.triggerAutosave();
+    
     this.updateLogoPreview();
+  }
+
+  // Direct toggle method for logo icon click handling
+  toggleLogoIcon(): void {
+    this.showLogoIcon = !this.showLogoIcon;
+    this.onLogoIconToggle();
   }
 
   setActiveIconType(type: 'symbol' | 'initials'): void {
@@ -1703,7 +1812,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     
     // Calculate text heights with proper line height consideration
     const brandHeight = this.isMultiline ? this.fontSize * this.lineHeight * 1.2 : this.fontSize;
-    const sloganHeight = this.sloganIsMultiline ? this.sloganFontSize * this.sloganLineHeight * 1.2 : this.sloganFontSize;
+    const sloganHeight = this.sloganIsMultiline ? this.sloganFontSize * this.sloganLineHeight : this.sloganFontSize;
     
     // Initialize positions
     let iconX = centerX;
@@ -1920,8 +2029,8 @@ let initalsStyle = '';
       }
     }
 
-    // Draw slogan
-    if (this.sloganText && this.enableSlogan) {
+    // Draw slogan text if enabled
+    if (this.enableSlogan && this.sloganText.trim() !== '') {
       // Create font string with fallbacks for slogan
       const fontFamily = this.getFontWithFallback(this.sloganFont);
       const fontWeight = this.sloganIsBold ? 'bold' : 'normal';
@@ -1950,46 +2059,132 @@ let initalsStyle = '';
         }
       }
       
-      if (this.sloganIsMultiline) {
-        // Multiline ON: Display slogan with line breaks
-        this.drawMultilineText(ctx, this.sloganText, x, sloganY, this.sloganFontSize * this.sloganLineHeight);
-      } else {
-        // Multiline OFF: Display slogan as single line
-        const singleLineSlogan = this.sloganText.replace(/\n/g, ' ');
-         if (this.sloganLetterSpacing !== 0) {
-
-          this.drawTextWithSpacing(ctx, singleLineSlogan, x, sloganY, this.sloganLetterSpacing);
-
-        } else {
-
-          ctx.fillText(singleLineSlogan, x, sloganY);
-
-        }
-        
-        // Only draw fill lines when icon is not on left/right (to avoid conflicts)
-        if (!this.showLogoIcon || this.iconAlignment === 'center') {
-          const textWidth = ctx.measureText(singleLineSlogan).width;
-          this.drawAlignmentFill(ctx, this.textAlignment, x, sloganY, textWidth, canvas.width);
-        }
-      }
+      // Always use multiline rendering for slogan to enable line count functionality
+      this.drawMultilineSloganText(ctx, this.sloganText, x, sloganY, this.sloganLineHeight);
     }
   }
 
   private drawMultilineText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, lineHeight: number): void {
-    const lines = text.split('\n').filter(line => line.trim() !== ''); // Remove empty lines
+    if (!text || text.trim() === '') return;
+    
+    // Calculate available width for text wrapping
+    // Leave margins on both sides for better appearance
+    const canvasWidth = ctx.canvas.width;
+    const margin = 100; // Margin from canvas edges
+    const availableWidth = canvasWidth - (margin * 2);
+    
+    // Use word wrapping with forced multiline when multiline toggle is ON
+    const lines = this.wrapText(ctx, text, availableWidth, this.isMultiline);
     
     if (lines.length === 0) return;
     
+    // Use the passed lineHeight parameter directly
+    const actualLineHeight = lineHeight;
+    
     // Calculate total height of all lines
-    const totalHeight = (lines.length - 1) * lineHeight;
+    const totalHeight = (lines.length - 1) * actualLineHeight;
     
     // Center the text block vertically
     const startY = y - totalHeight / 2;
     
     lines.forEach((line, index) => {
-      const lineY = startY + index * lineHeight;
+      const lineY = startY + index * actualLineHeight;
       if (this.letterSpacing !== 0) {
         this.drawTextWithSpacing(ctx, line.trim(), x, lineY, this.letterSpacing);
+      } else {
+        ctx.fillText(line.trim(), x, lineY);
+      }
+    });
+  }
+
+  private drawMultilineSloganText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, lineHeight: number): void {
+    if (!text || text.trim() === '') return;
+    
+    // Calculate available width for text wrapping
+    const canvasWidth = ctx.canvas.width;
+    const margin = 100; // Margin from canvas edges
+    const availableWidth = canvasWidth - (margin * 2);
+    
+    // Split text into words
+    const words = text.trim().split(/\s+/);
+    
+    let lines: string[] = [];
+    
+    if (this.sloganLineCount === 1) {
+      // Single line - join all words
+      lines = [words.join(' ')];
+    } else {
+      // Multiple lines - distribute words evenly across specified line count
+      const wordsPerLine = Math.ceil(words.length / this.sloganLineCount);
+      
+      for (let i = 0; i < this.sloganLineCount; i++) {
+        const startIndex = i * wordsPerLine;
+        const endIndex = Math.min(startIndex + wordsPerLine, words.length);
+        
+        if (startIndex < words.length) {
+          const lineWords = words.slice(startIndex, endIndex);
+          lines.push(lineWords.join(' '));
+        }
+      }
+      
+      // Remove any empty lines
+      lines = lines.filter(line => line.trim().length > 0);
+    }
+    
+    // If any line is too wide, fall back to natural word wrapping
+    let needsWrapping = false;
+    for (const line of lines) {
+      if (ctx.measureText(line).width > availableWidth) {
+        needsWrapping = true;
+        break;
+      }
+    }
+    
+    if (needsWrapping) {
+      // Fall back to natural word wrapping, then limit to line count
+      lines = this.wrapText(ctx, text, availableWidth, true);
+      
+      // Limit to specified line count
+      if (lines.length > this.sloganLineCount) {
+        lines = lines.slice(0, this.sloganLineCount);
+        
+        // Add ellipsis to last line if truncated
+        if (lines.length === this.sloganLineCount && lines.length > 0) {
+          const lastLineIndex = lines.length - 1;
+          const lastLine = lines[lastLineIndex];
+          const ellipsis = '...';
+          const ellipsisWidth = ctx.measureText(ellipsis).width;
+          const maxLineWidth = availableWidth - ellipsisWidth;
+          
+          if (ctx.measureText(lastLine).width > maxLineWidth) {
+            let truncatedLine = lastLine;
+            while (ctx.measureText(truncatedLine).width > maxLineWidth && truncatedLine.length > 0) {
+              truncatedLine = truncatedLine.slice(0, -1);
+            }
+            lines[lastLineIndex] = truncatedLine.trim() + ellipsis;
+          } else {
+            lines[lastLineIndex] = lastLine + ellipsis;
+          }
+        }
+      }
+    }
+    
+    if (lines.length === 0) return;
+    
+    // Calculate proportionate line height using font size and line height multiplier
+    const actualLineHeight = this.sloganFontSize * this.sloganLineHeight;
+    
+    // Calculate total height of all lines
+    const totalHeight = (lines.length - 1) * actualLineHeight;
+    
+    // Center the text block vertically
+    const startY = y - totalHeight / 2;
+    
+    lines.forEach((line, index) => {
+      const lineY = startY + index * actualLineHeight;
+      
+      if (this.sloganLetterSpacing !== 0) {
+        this.drawTextWithSpacingForSlogan(ctx, line.trim(), x, lineY, this.sloganLetterSpacing);
       } else {
         ctx.fillText(line.trim(), x, lineY);
       }
@@ -2173,8 +2368,8 @@ let initalsStyle = '';
         ctx.moveTo(centerX - lrLineWidth/2, centerY - lrLineHeight/3);
         ctx.lineTo(centerX - lrLineWidth/2, centerY + lrLineHeight/3);
         // Right line
-        ctx.moveTo(centerX + shapeSize/2, centerY - shapeSize/3);
-        ctx.lineTo(centerX + shapeSize/2, centerY + shapeSize/3);
+        ctx.moveTo(centerX + lrLineWidth/2, centerY - lrLineHeight/3);
+        ctx.lineTo(centerX + lrLineWidth/2, centerY + lrLineHeight/3);
         ctx.stroke();
         return;
         
@@ -2376,17 +2571,63 @@ let initalsStyle = '';
     
     const baseAlignment = this.getBaseAlignment(this.textAlignment);
     
+    // Improved proportionate letter spacing calculation
+    // Use percentage-based spacing relative to font size for better proportions
+    // This ensures letter spacing feels consistent regardless of font size
+    const percentageSpacing = spacing * 0.01; // Convert slider value to percentage
+    const scaledSpacing = this.fontSize * percentageSpacing; // Scale with font size
+    
+    // Add minimum spacing threshold for very small values
+    const finalSpacing = Math.abs(scaledSpacing) < 0.5 ? 0 : scaledSpacing;
+    
     if (baseAlignment === 'center') {
-      const totalWidth = chars.reduce((width, char) => width + ctx.measureText(char).width + spacing, 0) - spacing;
+      const totalWidth = chars.reduce((width, char) => width + ctx.measureText(char).width + finalSpacing, 0) - finalSpacing;
       currentX = x - totalWidth / 2;
     } else if (baseAlignment === 'right') {
-      const totalWidth = chars.reduce((width, char) => width + ctx.measureText(char).width + spacing, 0) - spacing;
+      const totalWidth = chars.reduce((width, char) => width + ctx.measureText(char).width + finalSpacing, 0) - finalSpacing;
       currentX = x - totalWidth;
     }
     
-    chars.forEach(char => {
+    chars.forEach((char, index) => {
       ctx.fillText(char, currentX, y);
-      currentX += ctx.measureText(char).width + spacing;
+      currentX += ctx.measureText(char).width;
+      // Add spacing except for the last character
+      if (index < chars.length - 1) {
+        currentX += finalSpacing;
+      }
+    });
+  }
+
+  private drawTextWithSpacingForSlogan(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, spacing: number): void {
+    const chars = text.split('');
+    let currentX = x;
+    
+    const baseAlignment = this.getBaseAlignment(this.textAlignment);
+    
+    // Improved proportionate letter spacing calculation (same as brand name)
+    // Use percentage-based spacing relative to font size for better proportions
+    // This ensures letter spacing feels consistent regardless of font size
+    const percentageSpacing = spacing * 0.01; // Convert slider value to percentage
+    const scaledSpacing = this.sloganFontSize * percentageSpacing; // Scale with slogan font size
+    
+    // Add minimum spacing threshold for very small values
+    const finalSpacing = Math.abs(scaledSpacing) < 0.5 ? 0 : scaledSpacing;
+    
+    if (baseAlignment === 'center') {
+      const totalWidth = chars.reduce((width, char) => width + ctx.measureText(char).width + finalSpacing, 0) - finalSpacing;
+      currentX = x - totalWidth / 2;
+    } else if (baseAlignment === 'right') {
+      const totalWidth = chars.reduce((width, char) => width + ctx.measureText(char).width + finalSpacing, 0) - finalSpacing;
+      currentX = x - totalWidth;
+    }
+    
+    chars.forEach((char, index) => {
+      ctx.fillText(char, currentX, y);
+      currentX += ctx.measureText(char).width;
+      // Add spacing except for the last character
+      if (index < chars.length - 1) {
+        currentX += finalSpacing;
+      }
     });
   }
 

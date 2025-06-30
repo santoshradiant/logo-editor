@@ -1160,13 +1160,20 @@
     .switch {
       position: relative;
       display: inline-block;
-      width: 48px;
-      height: 24px;
+      width: 36px;
+      height: 20px;
 
       input {
         opacity: 0;
         width: 0;
         height: 0;
+        position: absolute;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+        z-index: 1;
+        margin: 0;
       }
 
       .slider {
@@ -1183,10 +1190,10 @@
         &:before {
           position: absolute;
           content: "";
-          height: 18px;
-          width: 18px;
+          height: 15px;
+          width: 15px;
           left: 3px;
-          bottom: 3px;
+          bottom: 2px;
           background-color: white;
           transition: 0.3s;
           border-radius: 50%;
@@ -1206,7 +1213,7 @@
       }
 
       input:checked + .slider:before {
-        transform: translateX(24px);
+        transform: translateX(15px);
       }
     }
   }
@@ -1216,23 +1223,25 @@
   gap: 12px;
   max-width: 150px;
 
-  .tab-btn { 
+  .tab-buttn { 
     font-family:  'Inter', sans-serif;
     font-size: 12px;font-weight: 500;
     color: var(--ns-button-text-color);
     border-radius: 6px;
-    border-width: 1px;
-    padding: 6px; 
+    // border-width: 1px;
+    padding: 4px; 
     min-width: 72px;
     background: var(--ns-white);
-    border-color: var(--ns-dashed-border-color); 
+    // border-color: var(--ns-dashed-border-color); 
+    border: 1px solid var(--ns-dashed-border-color);
 
     &.active {
       background:var(--ns-primary-light);
       color: var(--ns-primary);
-      border-color: var(--ns-primary);
-      border-width: 2px;
+      // border-color: var(--ns-primary);
+      // border-width: 2px;
       font-weight: 600;
+       border: 2px solid var(--ns-primary);
     }
   }
 }
@@ -1246,7 +1255,8 @@
   .search-input-container {
     position: relative;
     display: flex;
-    align-items: center; 
+    align-items: center;
+    width: 299px;
 
     .search-icon {
       position: absolute;
@@ -1260,7 +1270,7 @@
       padding: 12px 16px 12px 44px;
       border: 1px solid #d1d5db;
       border-radius: 8px;
-      font-size: 14px;
+      font-size: 16px;
       outline: none;
       transition: all 0.2s ease;
 
@@ -1756,14 +1766,15 @@
 .shapes-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 15px 24px;
+  gap: 12px 24px;
   margin-bottom: 32px; // Increased spacing
  
   .shape-option {
+    width: 93px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px 16px; // Increased vertical padding
+    padding: 12px; // Increased vertical padding
     border: 1px solid #e5e7eb;
     border-radius: 8px; // Increased border radius
     background: #ffffff;
@@ -1777,7 +1788,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 12px; // Increased spacing
       color: #000000;
  
       svg {

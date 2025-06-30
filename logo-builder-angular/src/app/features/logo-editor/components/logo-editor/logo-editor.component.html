@@ -684,10 +684,10 @@
         <div class="toggle-wrapper">
           <label class="switch" (click)="toggleLogoIcon()">
             <input 
-              type="checkbox" 
+              type="checkbox"
+              class="icon-toggle-btn"
               [(ngModel)]="showLogoIcon" 
               (change)="onLogoIconToggle()"
-              style="position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; z-index: 1;"
             >
             <span class="slider"></span>
           </label>
@@ -697,14 +697,14 @@
       <!-- Symbol/Initials Tabs -->
       <div class="icon-type-tabs" >
         <button 
-          class="tab-btn" 
+          class="tab-buttn" 
           [class.active]="activeIconType === 'symbol'" 
           (click)="setActiveIconType('symbol')"
         >
           Symbol
         </button>
         <button 
-          class="tab-btn" 
+          class="tab-buttn" 
           [class.active]="activeIconType === 'initials'" 
           (click)="setActiveIconType('initials')"
         >
@@ -717,10 +717,9 @@
         <!-- Search Box with Pagination -->
         <div class="search-box-wrapper">
           <div class="search-input-container">
-            <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <circle cx="11" cy="11" r="8"></circle>
-              <path d="m21 21-4.35-4.35"></path>
-            </svg>
+            <svg class="search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M12.6006 11.184C13.665 9.76165 14.151 7.98886 13.9609 6.22254C13.7707 4.45622 12.9185 2.82751 11.5758 1.66427C10.233 0.50102 8.4995 -0.110394 6.72411 -0.0468985C4.94871 0.0165966 3.26328 0.750286 2.00709 2.00648C0.750896 3.26267 0.017207 4.9481 -0.0462882 6.7235C-0.109783 8.49889 0.50163 10.2324 1.66488 11.5751C2.82812 12.9179 4.45683 13.7701 6.22315 13.9602C7.98947 14.1504 9.76226 13.6644 11.1846 12.6L14.5846 16L16.0006 14.5867L12.6006 11.184ZM7.00065 12C6.01174 12 5.04504 11.7068 4.2228 11.1574C3.40055 10.608 2.75969 9.82709 2.38125 8.91346C2.00281 7.99983 1.9038 6.99449 2.09672 6.02459C2.28965 5.05468 2.76585 4.16377 3.46511 3.4645C4.16438 2.76524 5.05529 2.28904 6.0252 2.09611C6.9951 1.90319 8.00044 2.0022 8.91407 2.38064C9.8277 2.75908 10.6086 3.39994 11.158 4.22219C11.7074 5.04443 12.0006 6.01113 12.0006 7.00004C11.9994 8.32574 11.4722 9.59679 10.5348 10.5342C9.5974 11.4716 8.32635 11.9988 7.00065 12Z" fill="black"/>
+</svg>
             <input 
               type="text" 
               class="search-input" 
@@ -1153,63 +1152,128 @@
         >
           <div class="shape-icon">
             <!-- Circle -->
-            <svg *ngIf="shape.name === 'Circle'" width="40" height="40" viewBox="0 0 40 40" fill="currentColor">
+            <!-- <svg *ngIf="shape.name === 'Circle'" width="40" height="40" viewBox="0 0 40 40" fill="currentColor">
               <circle cx="20" cy="20" r="18" fill="currentColor"/>
-            </svg>
+            </svg> -->
             
+<svg *ngIf="shape.name === 'Circle'" width="69" height="69" viewBox="0 0 69 69" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="68.5664" height="68.57" rx="34.2832" fill="black"/>
+</svg>
+
             <!-- Rectangle -->
-            <svg *ngIf="shape.name === 'Rectangle'" width="40" height="40" viewBox="0 0 40 40" fill="currentColor">
+            <!-- <svg *ngIf="shape.name === 'Rectangle'" width="40" height="40" viewBox="0 0 40 40" fill="currentColor">
               <rect x="4" y="10" width="32" height="20" fill="currentColor"/>
-            </svg>
+            </svg> -->
+            
+<svg *ngIf="shape.name === 'Rectangle'" width="62" height="61" viewBox="0 0 62 61" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="0.566406" width="60.5664" height="60.57" fill="black"/>
+</svg>
+
+
             
             <!-- Diamond -->
-            <svg *ngIf="shape.name === 'Diamond'" width="40" height="40" viewBox="0 0 40 40" fill="currentColor">
+            <!-- <svg *ngIf="shape.name === 'Diamond'" width="40" height="40" viewBox="0 0 40 40" fill="currentColor">
               <path d="M20 4 L36 20 L20 36 L4 20 Z" fill="currentColor"/>
-            </svg>
+            </svg> -->
+            <svg *ngIf="shape.name === 'Diamond'" width="69" height="69" viewBox="0 0 69 69" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M34.416 0.00183105L68.6992 34.285L34.416 68.5682L0.132812 34.285L34.416 0.00183105Z" fill="black"/>
+</svg>
             
             <!-- Pentagon -->
-            <svg *ngIf="shape.name === 'Pentagon'" width="40" height="40" viewBox="0 0 40 40" fill="currentColor">
+            <!-- <svg *ngIf="shape.name === 'Pentagon'" width="40" height="40" viewBox="0 0 40 40" fill="currentColor">
               <path d="M20 4 L32 14 L26 30 L14 30 L8 14 Z" fill="currentColor"/>
-            </svg>
+            </svg> -->
             
+            <svg *ngIf="shape.name === 'Pentagon'" width="66" height="63" viewBox="0 0 66 63" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M33.2832 0.571838L65.8884 24.2609L53.4343 62.5907H13.132L0.677937 24.2609L33.2832 0.571838Z" fill="black"/>
+</svg>
             <!-- Hexagon -->
-            <svg *ngIf="shape.name === 'Hexagon'" width="40" height="40" viewBox="0 0 40 40" fill="currentColor">
+            <!-- <svg *ngIf="shape.name === 'Hexagon'" width="40" height="40" viewBox="0 0 40 40" fill="currentColor">
               <path d="M10 20 L15 8 L25 8 L30 20 L25 32 L15 32 Z" fill="currentColor"/>
-            </svg>
-            
+            </svg> -->
+            <svg *ngIf="shape.name === 'Hexagon'" width="60" height="70" viewBox="0 0 60 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M29.8496 0.571838L59.5397 17.7134V51.9966L29.8496 69.1382L0.159481 51.9966V17.7134L29.8496 0.571838Z" fill="black"/>
+</svg>
             <!-- Square Border -->
-            <svg *ngIf="shape.name === 'Square Border'" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2">
+            <!-- <svg *ngIf="shape.name === 'Square Border'" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="8" y="8" width="24" height="24"/>
-            </svg>
+            </svg> -->
+            
+<svg *ngIf="shape.name === 'Square Border'" width="61" height="62" viewBox="0 0 61 62" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="5.13281" y="5.57001" width="50.5664" height="50.57" stroke="black" stroke-width="10"/>
+</svg>
+
             
             <!-- Top Bottom Lines -->
-            <svg *ngIf="shape.name === 'Top Bottom Lines'" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2">
+            <!-- <svg *ngIf="shape.name === 'Top Bottom Lines'" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="6" y1="10" x2="34" y2="10"/>
               <line x1="6" y1="30" x2="34" y2="30"/>
-            </svg>
+            </svg> -->
+            <svg *ngIf="shape.name === 'Top Bottom Lines'" width="61" height="61" viewBox="0 0 61 61" fill="none" xmlns="http://www.w3.org/2000/svg">
+<mask id="path-1-inside-1_1050_13904" fill="white">
+<path d="M0 0.140015H60.5664V60.71H0V0.140015Z"/>
+</mask>
+<path d="M0 0.140015V10.14H60.5664V0.140015V-9.85999H0V0.140015ZM60.5664 60.71V50.71H0V60.71V70.71H60.5664V60.71Z" fill="black" mask="url(#path-1-inside-1_1050_13904)"/>
+</svg>
             
             <!-- Left Right Lines -->
-            <svg *ngIf="shape.name === 'Left Right Lines'" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2">
+            <!-- <svg *ngIf="shape.name === 'Left Right Lines'" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="10" y1="6" x2="10" y2="34"/>
               <line x1="30" y1="6" x2="30" y2="34"/>
-            </svg>
+            </svg> -->
+            
+<svg *ngIf="shape.name === 'Left Right Lines'" width="62" height="61" viewBox="0 0 62 61" fill="none" xmlns="http://www.w3.org/2000/svg">
+<mask id="path-1-inside-1_1050_13909" fill="white">
+<path d="M0.566406 0.140015H61.1328V60.71H0.566406V0.140015Z"/>
+</mask>
+<path d="M61.1328 0.140015H51.1328V60.71H61.1328H71.1328V0.140015H61.1328ZM0.566406 60.71H10.5664V0.140015H0.566406H-9.43359V60.71H0.566406Z" fill="black" mask="url(#path-1-inside-1_1050_13909)"/>
+</svg>
+
             
             <!-- Bottom Line -->
-            <svg *ngIf="shape.name === 'Bottom Line'" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2">
+            <!-- <svg *ngIf="shape.name === 'Bottom Line'" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="6" y1="30" x2="34" y2="30"/>
-            </svg>
+            </svg> -->
+            <svg *ngIf="shape.name === 'Bottom Line'" width="61" height="61" viewBox="0 0 61 61" fill="none" xmlns="http://www.w3.org/2000/svg">
+<mask id="path-1-inside-1_1050_13914" fill="white">
+<path d="M0.132812 0.140015H60.6992V60.71H0.132812V0.140015Z"/>
+</mask>
+<path d="M60.6992 60.71V50.71H0.132812V60.71V70.71H60.6992V60.71Z" fill="black" mask="url(#path-1-inside-1_1050_13914)"/>
+</svg>
+
             
             <!-- Corner Lines Left Top -->
-            <svg *ngIf="shape.name === 'Corner Lines Left Top'" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2">
+            <!-- <svg *ngIf="shape.name === 'Corner Lines Left Top'" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M8 8 L8 16 M8 8 L16 8"/>
               <path d="M32 32 L32 24 M32 32 L24 32"/>
-            </svg>
+            </svg> -->
+            <svg *ngIf="shape.name === 'Corner Lines Left Top'" width="61" height="62" viewBox="0 0 61 62" fill="none" xmlns="http://www.w3.org/2000/svg">
+<mask id="path-1-inside-1_1050_13920" fill="white">
+<path d="M0 0.709961H30.285V30.995H0V0.709961Z"/>
+</mask>
+<path d="M0 0.709961V-9.29004H-10V0.709961H0ZM0 0.709961V10.71H30.285V0.709961V-9.29004H0V0.709961ZM0 30.995H10V0.709961H0H-10V30.995H0Z" fill="black" mask="url(#path-1-inside-1_1050_13920)"/>
+<mask id="path-3-inside-2_1050_13920" fill="white">
+<path d="M30.2852 30.9949H60.5702V61.2799H30.2852V30.9949Z"/>
+</mask>
+<path d="M60.5702 61.2799V71.2799H70.5702V61.2799H60.5702ZM60.5702 30.9949H50.5702V61.2799H60.5702H70.5702V30.9949H60.5702ZM60.5702 61.2799V51.2799H30.2852V61.2799V71.2799H60.5702V61.2799Z" fill="black" mask="url(#path-3-inside-2_1050_13920)"/>
+</svg>
             
             <!-- Corner Lines Right Bottom -->
-            <svg *ngIf="shape.name === 'Corner Lines Right Bottom'" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2">
+            <!-- <svg *ngIf="shape.name === 'Corner Lines Right Bottom'" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M32 8 L32 16 M32 8 L24 8"/>
               <path d="M8 32 L8 24 M8 32 L16 32"/>
-            </svg>
+            </svg> -->
+            <svg *ngIf="shape.name === 'Corner Lines Right Bottom'" width="62" height="62" viewBox="0 0 62 62" fill="none" xmlns="http://www.w3.org/2000/svg">
+<mask id="path-1-inside-1_1050_13929" fill="white">
+<path d="M0.566406 61.28L0.566407 30.995L30.8514 30.995L30.8514 61.28L0.566406 61.28Z"/>
+</mask>
+<path d="M0.566406 61.28L-9.43359 61.28L-9.43359 71.28L0.566406 71.28L0.566406 61.28ZM0.566406 61.28L10.5664 61.28L10.5664 30.995L0.566407 30.995L-9.43359 30.995L-9.43359 61.28L0.566406 61.28ZM30.8514 61.28L30.8514 51.28L0.566406 51.28L0.566406 61.28L0.566406 71.28L30.8514 71.28L30.8514 61.28Z" fill="black" mask="url(#path-1-inside-1_1050_13929)"/>
+<mask id="path-3-inside-2_1050_13929" fill="white">
+<path d="M30.8516 30.995L30.8516 0.709995L61.1366 0.709996L61.1366 30.995L30.8516 30.995Z"/>
+</mask>
+<path d="M61.1366 0.709996L71.1366 0.709996L71.1366 -9.29L61.1366 -9.29L61.1366 0.709996ZM30.8516 0.709995L30.8516 10.71L61.1366 10.71L61.1366 0.709996L61.1366 -9.29L30.8516 -9.29L30.8516 0.709995ZM61.1366 0.709996L51.1366 0.709996L51.1366 30.995L61.1366 30.995L71.1366 30.995L71.1366 0.709996L61.1366 0.709996Z" fill="black" mask="url(#path-3-inside-2_1050_13929)"/>
+</svg>
+
           </div>
         </button>
       </div>

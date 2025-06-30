@@ -133,7 +133,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   showColorSection: boolean = false;
 
   // Brand section - updated per figma.md requirements
-  brandName: string = ''; // Will be auto-filled from previous step
+  brandName: string = 'My Brand Name'; // Will be auto-filled from previous step
   
   // Recommended fonts - exactly 6 fonts as per figma.md, first one selected by default
   recommendedFonts: Array<{ name: string; family: string; display: string }> = [
@@ -517,10 +517,24 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   }
 
   onLetterSpacingChange(): void {
+    // Ensure letter spacing is within reasonable bounds
+    this.letterSpacing = Math.max(-1, Math.min(5, this.letterSpacing));
+    this.updateLogoPreview();
+  }
+
+  resetLetterSpacing(): void {
+    this.letterSpacing = 0;
     this.updateLogoPreview();
   }
 
   onLineHeightChange(): void {
+    // Ensure line height is within reasonable bounds
+    this.lineHeight = Math.max(0.8, Math.min(2.5, this.lineHeight));
+    this.updateLogoPreview();
+  }
+
+  resetLineHeight(): void {
+    this.lineHeight = 1.2;
     this.updateLogoPreview();
   }
 
@@ -628,6 +642,26 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   }
 
   onMultilineToggle(): void {
+    if (!this.isMultiline) {
+      // Converting to single line - replace line breaks with spaces
+      this.brandName = this.brandName.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
+    } else {
+      // Converting to multiline - if brand name has multiple words, suggest line breaks
+      const words = this.brandName.trim().split(' ');
+      if (words.length > 1) {
+        // For 2 words, put each on separate lines
+        // For more words, try to balance the lines
+        if (words.length === 2) {
+          this.brandName = words.join('\n');
+        } else {
+          // For more than 2 words, try to split roughly in half
+          const midPoint = Math.ceil(words.length / 2);
+          const firstLine = words.slice(0, midPoint).join(' ');
+          const secondLine = words.slice(midPoint).join(' ');
+          this.brandName = `${firstLine}\n${secondLine}`;
+        }
+      }
+    }
     this.updateLogoPreview();
   }
 
@@ -1646,9 +1680,11 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     const iconSpacing = 60; // Spacing between icon and text
     const textSpacing = 50; // Spacing between brand name and slogan
     
-    // Calculate text heights (approximated)
-    const brandHeight = this.isMultiline ? this.fontSize * 1.5 : this.fontSize;
-    const sloganHeight = this.sloganIsMultiline ? this.sloganFontSize * 1.5 : this.sloganFontSize;
+    // Calculate text heights more accurately
+    const brandLineCount = this.isMultiline ? this.brandName.split('\n').length : 1;
+    const brandHeight = brandLineCount * this.fontSize * this.lineHeight;
+    const sloganLineCount = this.sloganIsMultiline ? this.sloganText.split('\n').length : 1;
+    const sloganHeight = sloganLineCount * this.sloganFontSize * this.sloganLineHeight;
     
     // Initialize positions
     let iconX = centerX;
@@ -1767,16 +1803,12 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
         }
         
         // Draw initials text
-
-
-      
-let initalsStyle = '';
-      if (this.initialsIsBold) initalsStyle += 'font-weight: bold; ';
-      if (this.initialsIsItalic) initalsStyle += 'font-style: italic; ';
-      
-
+        let initialsStyle = '';
+        if (this.initialsIsBold) initialsStyle += 'font-weight: bold; ';
+        if (this.initialsIsItalic) initialsStyle += 'font-style: italic; ';
+        
         ctx.fillStyle = this.customColors.icon;
-        ctx.font = initalsStyle+= ` ${this.iconSize }px ${this.getFontWithFallback(this.initialsFont)}`;
+        ctx.font = `${initialsStyle} ${this.iconSize}px ${this.getFontWithFallback(this.initialsFont)}`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(this.userInitials, iconX, iconY);
@@ -1815,11 +1847,11 @@ let initalsStyle = '';
       
       if (this.isMultiline) {
         // Multiline ON: Display text with line breaks
-        this.drawMultilineText(ctx, this.brandName, x, brandY, this.fontSize * this.lineHeight);
+        this.drawMultilineText(ctx, this.brandName, x, brandY, this.fontSize * this.lineHeight, this.letterSpacing);
       } else {
         // Multiline OFF: Display all text as single line (remove line breaks)
         const singleLineText = this.brandName.replace(/\n/g, ' ');
-        if (this.letterSpacing !== 0) {
+        if (Math.abs(this.letterSpacing) > 0.1) {
           this.drawTextWithSpacing(ctx, singleLineText, x, brandY, this.letterSpacing);
         } else {
           ctx.fillText(singleLineText, x, brandY);
@@ -1859,18 +1891,14 @@ let initalsStyle = '';
       
       if (this.sloganIsMultiline) {
         // Multiline ON: Display slogan with line breaks
-        this.drawMultilineText(ctx, this.sloganText, x, sloganY, this.sloganFontSize * this.sloganLineHeight);
+        this.drawMultilineText(ctx, this.sloganText, x, sloganY, this.sloganFontSize * this.sloganLineHeight, this.sloganLetterSpacing);
       } else {
         // Multiline OFF: Display slogan as single line
         const singleLineSlogan = this.sloganText.replace(/\n/g, ' ');
-         if (this.sloganLetterSpacing !== 0) {
-
+        if (Math.abs(this.sloganLetterSpacing) > 0.1) {
           this.drawTextWithSpacing(ctx, singleLineSlogan, x, sloganY, this.sloganLetterSpacing);
-
         } else {
-
           ctx.fillText(singleLineSlogan, x, sloganY);
-
         }
         
         // Only draw fill lines when icon is not on left/right (to avoid conflicts)
@@ -1882,7 +1910,7 @@ let initalsStyle = '';
     }
   }
 
-  private drawMultilineText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, lineHeight: number): void {
+  private drawMultilineText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, lineHeight: number, letterSpacing: number = 0): void {
     const lines = text.split('\n').filter(line => line.trim() !== ''); // Remove empty lines
     
     if (lines.length === 0) return;
@@ -1895,8 +1923,8 @@ let initalsStyle = '';
     
     lines.forEach((line, index) => {
       const lineY = startY + index * lineHeight;
-      if (this.letterSpacing !== 0) {
-        this.drawTextWithSpacing(ctx, line.trim(), x, lineY, this.letterSpacing);
+      if (Math.abs(letterSpacing) > 0.1) {
+        this.drawTextWithSpacing(ctx, line.trim(), x, lineY, letterSpacing);
       } else {
         ctx.fillText(line.trim(), x, lineY);
       }
@@ -2083,22 +2111,32 @@ let initalsStyle = '';
   }
 
   private drawTextWithSpacing(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, spacing: number): void {
+    // If spacing is 0 or very close to 0, use normal text rendering for better performance
+    if (Math.abs(spacing) < 0.1) {
+      ctx.fillText(text, x, y);
+      return;
+    }
+
     const chars = text.split('');
     let currentX = x;
+    
+    // Convert spacing to be proportional to font size
+    const fontSize = parseFloat(ctx.font.match(/\d+/)?.[0] || '16');
+    const proportionalSpacing = spacing * (fontSize / 16); // Scale based on 16px base
     
     const baseAlignment = this.getBaseAlignment(this.textAlignment);
     
     if (baseAlignment === 'center') {
-      const totalWidth = chars.reduce((width, char) => width + ctx.measureText(char).width + spacing, 0) - spacing;
+      const totalWidth = chars.reduce((width, char) => width + ctx.measureText(char).width + proportionalSpacing, 0) - proportionalSpacing;
       currentX = x - totalWidth / 2;
     } else if (baseAlignment === 'right') {
-      const totalWidth = chars.reduce((width, char) => width + ctx.measureText(char).width + spacing, 0) - spacing;
+      const totalWidth = chars.reduce((width, char) => width + ctx.measureText(char).width + proportionalSpacing, 0) - proportionalSpacing;
       currentX = x - totalWidth;
     }
     
     chars.forEach(char => {
       ctx.fillText(char, currentX, y);
-      currentX += ctx.measureText(char).width + spacing;
+      currentX += ctx.measureText(char).width + proportionalSpacing;
     });
   }
 

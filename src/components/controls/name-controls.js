@@ -71,8 +71,7 @@ const NameControls = () => {
             />
           </MultilineSwitchWrapper>
         </Controls.FieldWrapper>
-      )
-}
+      )}
       <Controls.Conditional condition={noCapitalsInFont()}>
         <Controls.FieldWrapper>
           <Controls.CapitalizeSwitchControl label={capitalizeLabel} templateKey='text.brandName' />

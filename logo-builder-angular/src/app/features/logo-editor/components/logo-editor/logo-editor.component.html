@@ -59,6 +59,7 @@
       <div class="form-group brand-text">
         <label class="form-label">Brand Name</label>
         <input          
+          *ngIf="!isMultiline"
           type="text"
           class="form-input"
           [class.hovered]="brandNameFieldHovered"
@@ -74,7 +75,7 @@
           placeholder="Enter your brand name"
           maxlength="40"
         />
-        <!-- <textarea
+        <textarea
           *ngIf="isMultiline"
           class="form-input multiline-input"
           [class.hovered]="brandNameFieldHovered"
@@ -88,8 +89,9 @@
           (blur)="onBrandNameFieldBlur()"
           (dblclick)="onBrandNameFieldDoubleClick($event)"
           placeholder="Enter your brand name (use Enter for new lines)"
+          maxlength="40"
           rows="3"
-        ></textarea> -->
+        ></textarea>
         
         <!-- Character counter - show at 30 characters as per figma.md -->
         <div class="character-counter" *ngIf="showCharacterCounter">
@@ -199,9 +201,6 @@
               <input type="checkbox" id="multiline" [(ngModel)]="isMultiline" (ngModelChange)="onMultilineToggle()" />
               <label for="multiline" class="toggle-slider"></label>
             </div>
-            <!-- <small class="helper-text">
-              {{ isMultiline ? 'Text will display on multiple lines' : 'Text will display on a single line' }}
-            </small> -->
           </div>
         </div>
 
@@ -233,12 +232,20 @@
                 class="range-slider"
                 [(ngModel)]="letterSpacing"
                 (ngModelChange)="onLetterSpacingChange()"
-                min="-2"
-                max="10"
+                min="-1"
+                max="5"
+                step="0.1"
                 [style.--val]="letterSpacing"
-                [style.--min]="-2 "
-                [style.--max]="10"
+                [style.--min]="-1"
+                [style.--max]="5"
               />
+              <button 
+                class="reset-btn" 
+                (click)="resetLetterSpacing()"
+                title="Reset to default"
+                [disabled]="letterSpacing === 0">
+                ↺
+              </button>
             </div>
           </div>
         </div>
@@ -253,13 +260,19 @@
                 [(ngModel)]="lineHeight"
                 (ngModelChange)="onLineHeightChange()"
                 min="0.8"
-                max="2"
+                max="2.5"
                 step="0.1"
                 [style.--val]="lineHeight"
                 [style.--min]="0.8"
-                [style.--max]="2"
-                
+                [style.--max]="2.5"
               />
+              <button 
+                class="reset-btn" 
+                (click)="resetLineHeight()"
+                title="Reset to default"
+                [disabled]="lineHeight === 1.2">
+                ↺
+              </button>
             </div>
           </div>
         </div>

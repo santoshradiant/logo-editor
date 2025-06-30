@@ -895,9 +895,12 @@
     .control-row-inner{
       margin-bottom: 16px;
     }
-    .slider-wrapper {
-      position: relative;
-      width: 60%;
+            .slider-wrapper {
+          position: relative;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          width: 60%;
 
       .range-slider {
         width: 100%;
@@ -968,6 +971,36 @@
         border-radius: 4px;
         min-width: 20px;
         text-align: center;
+      }
+
+      // Reset button for sliders
+      .reset-btn {
+        width: 24px;
+        height: 24px;
+        min-width: 24px;
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+        background: white;
+        color: #6b7280;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: bold;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+
+        &:hover:not(:disabled) {
+          border-color: var(--ns-primary);
+          color: var(--ns-primary);
+          background: #f8faff;
+        }
+
+        &:disabled {
+          opacity: 0.4;
+          cursor: not-allowed;
+        }
       }
     }
 

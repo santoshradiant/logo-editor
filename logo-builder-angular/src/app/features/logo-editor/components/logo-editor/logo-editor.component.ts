@@ -798,10 +798,24 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   }
 
   onSloganLetterSpacingChange(): void {
+    // Ensure slogan letter spacing is within reasonable bounds
+    this.sloganLetterSpacing = Math.max(-1, Math.min(5, this.sloganLetterSpacing));
+    this.updateLogoPreview();
+  }
+
+  resetSloganLetterSpacing(): void {
+    this.sloganLetterSpacing = 0;
     this.updateLogoPreview();
   }
 
   onSloganLineHeightChange(): void {
+    // Ensure slogan line height is within reasonable bounds
+    this.sloganLineHeight = Math.max(0.8, Math.min(2.5, this.sloganLineHeight));
+    this.updateLogoPreview();
+  }
+
+  resetSloganLineHeight(): void {
+    this.sloganLineHeight = 1.2;
     this.updateLogoPreview();
   }
 
@@ -820,6 +834,43 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   }
 
   onSloganLineCountChange(): void {
+    // Ensure line count is within bounds
+    this.sloganLineCount = Math.max(1, Math.min(4, this.sloganLineCount));
+    
+    // Intelligently split slogan text based on line count
+    if (this.sloganText && this.sloganLineCount > 1) {
+      const words = this.sloganText.split(' ').filter(word => word.trim() !== '');
+      if (words.length > 1) {
+        const lines: string[] = [];
+        const wordsPerLine = Math.ceil(words.length / this.sloganLineCount);
+        
+        for (let i = 0; i < this.sloganLineCount; i++) {
+          const startIndex = i * wordsPerLine;
+          const endIndex = Math.min(startIndex + wordsPerLine, words.length);
+          const lineWords = words.slice(startIndex, endIndex);
+          
+          if (lineWords.length > 0) {
+            lines.push(lineWords.join(' '));
+          }
+        }
+        
+        // Only update if we actually created multiple lines
+        if (lines.length > 1) {
+          this.sloganText = lines.join('\n');
+        }
+      }
+    } else if (this.sloganLineCount === 1) {
+      // Convert back to single line
+      this.sloganText = this.sloganText.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
+         }
+     
+    this.updateLogoPreview();
+  }
+
+  resetSloganLineCount(): void {
+    this.sloganLineCount = 1;
+    // Convert multiline text back to single line
+    this.sloganText = this.sloganText.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
     this.updateLogoPreview();
   }
 
@@ -1683,8 +1734,9 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     // Calculate text heights more accurately
     const brandLineCount = this.isMultiline ? this.brandName.split('\n').length : 1;
     const brandHeight = brandLineCount * this.fontSize * this.lineHeight;
-    const sloganLineCount = this.sloganIsMultiline ? this.sloganText.split('\n').length : 1;
-    const sloganHeight = sloganLineCount * this.sloganFontSize * this.sloganLineHeight;
+    // Use sloganLineCount slider value instead of just checking for line breaks
+    const actualSloganLineCount = this.sloganLineCount;
+    const sloganHeight = actualSloganLineCount * this.sloganFontSize * this.sloganLineHeight;
     
     // Initialize positions
     let iconX = centerX;
@@ -1889,25 +1941,62 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
         }
       }
       
-      if (this.sloganIsMultiline) {
-        // Multiline ON: Display slogan with line breaks
-        this.drawMultilineText(ctx, this.sloganText, x, sloganY, this.sloganFontSize * this.sloganLineHeight, this.sloganLetterSpacing);
+      if (this.sloganLineCount > 1) {
+        // Multiline: Split text into specified number of lines for rendering
+        const textToRender = this.splitTextIntoLines(this.sloganText, this.sloganLineCount);
+        this.drawMultilineText(ctx, textToRender, x, sloganY, this.sloganFontSize * this.sloganLineHeight, this.sloganLetterSpacing);
       } else {
-        // Multiline OFF: Display slogan as single line
-        const singleLineSlogan = this.sloganText.replace(/\n/g, ' ');
+        // Single line: Display slogan as single line (remove any existing line breaks)
+        const singleLineText = this.sloganText.replace(/\n/g, ' ').trim();
         if (Math.abs(this.sloganLetterSpacing) > 0.1) {
-          this.drawTextWithSpacing(ctx, singleLineSlogan, x, sloganY, this.sloganLetterSpacing);
+          this.drawTextWithSpacing(ctx, singleLineText, x, sloganY, this.sloganLetterSpacing);
         } else {
-          ctx.fillText(singleLineSlogan, x, sloganY);
+          ctx.fillText(singleLineText, x, sloganY);
         }
         
         // Only draw fill lines when icon is not on left/right (to avoid conflicts)
         if (!this.showLogoIcon || this.iconAlignment === 'center') {
-          const textWidth = ctx.measureText(singleLineSlogan).width;
+          const textWidth = ctx.measureText(singleLineText).width;
           this.drawAlignmentFill(ctx, this.textAlignment, x, sloganY, textWidth, canvas.width);
         }
       }
     }
+  }
+
+  private splitTextIntoLines(text: string, lineCount: number): string {
+    if (lineCount <= 1) {
+      return text.replace(/\n/g, ' ').trim();
+    }
+    
+    // Clean the text and split into words
+    const cleanText = text.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
+    const words = cleanText.split(' ').filter(word => word.trim() !== '');
+    
+    if (words.length <= lineCount) {
+      // If we have fewer words than lines, put one word per line
+      return words.join('\n');
+    }
+    
+    // Distribute words evenly across lines
+    const lines: string[] = [];
+    const wordsPerLine = Math.ceil(words.length / lineCount);
+    
+    for (let i = 0; i < lineCount; i++) {
+      const startIndex = i * wordsPerLine;
+      const endIndex = Math.min(startIndex + wordsPerLine, words.length);
+      const lineWords = words.slice(startIndex, endIndex);
+      
+      if (lineWords.length > 0) {
+        lines.push(lineWords.join(' '));
+      }
+    }
+    
+    // If we have fewer lines than expected, pad with empty lines
+    while (lines.length < lineCount && lines.length > 0) {
+      lines.push('');
+    }
+    
+    return lines.join('\n');
   }
 
   private drawMultilineText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, lineHeight: number, letterSpacing: number = 0): void {

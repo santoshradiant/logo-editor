@@ -14,7 +14,9 @@
   --ns-grey-light: #B2BEC3;
   --ns-grey-lighter: #DDD;
   --ns-grey-lightest: #F8F9FA;
-  
+  --ns-black: #000000;
+  --ns-white: #ffffff;
+
   /* Semantic Colors */
   --ns-primary: var(--ns-green-primary);
   --ns-primary-hover: var(--ns-green-dark);
@@ -32,15 +34,32 @@
   --ns-warning: #FDCB6E;
   --ns-error: #E84393;
   --ns-info: #0984E3;
+
+--ns-default-background:#F5F5F5;
+--ns-primary-background:#007a33;
+--ns-primary-button-default:#F5F5F5;
+--ns-primary-button-hover:#E5F2EB;
+--ns-primary-button-active:#E5F2EB;
+--ns-dashed-border-color:#cccccc; 
+--ns-dashed-border-hover-color:#006128
+--ns-dashed-border-disabled-color:#d1d5db
+--ns-defult-border-color:#d1d5db;
+--ns-default-border-hover-color:#007a33;
+--ns-description-text-color:#7c7c7c;
+--ns-button-text-color:#404040;
+--default-font-size:14px;
 }
 // Import Inter font from Google Fonts
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Pacifico&family=Playfair:ital,opsz,wght@0,5..1200,300..900;1,5..1200,300..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Quicksand:wght@300..700&family=Raleway:ital,wght@0,100..900;1,100..900&family=Space+Grotesk:wght@300..700&family=Syne:wght@400..800&display=swap');
 /* Global Network Solutions Theme Styles */
+html{
+    font-size: var(--default-font-size);
+}
 body {
   font-family:  'Inter', sans-serif;
-  color: var(--ns-text-primary);
+  color: var(--ns-black);
   background-color: var(--ns-background-light);
-  font-size:14px;
+  font-size: var(--default-font-size);
   padding:0;
   margin:0;
 }
@@ -69,6 +88,22 @@ h6 { @include heading(1rem); }     //14px
  padding: 8px 12px;
  @include heading(1rem, 400);
 }
+.form-input{
+  border-color: #404040;
+  &:focus,  &:hover{
+    border-color: var(--ns-primary);
+  }
+} 
+.d-flex{
+  display: flex;
+}
+.align-items-center{
+  align-items: center;
+}
+.justify-content-between{
+  justify-content: space-between;
+}
+
 
 /* Brand-themed buttons */
 .btn-primary {

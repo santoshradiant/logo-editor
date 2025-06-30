@@ -58,8 +58,7 @@
 
       <div class="form-group brand-text">
         <label class="form-label">Brand Name</label>
-        <input
-          *ngIf="!isMultiline"
+        <input          
           type="text"
           class="form-input"
           [class.hovered]="brandNameFieldHovered"
@@ -75,7 +74,7 @@
           placeholder="Enter your brand name"
           maxlength="40"
         />
-        <textarea
+        <!-- <textarea
           *ngIf="isMultiline"
           class="form-input multiline-input"
           [class.hovered]="brandNameFieldHovered"
@@ -90,7 +89,7 @@
           (dblclick)="onBrandNameFieldDoubleClick($event)"
           placeholder="Enter your brand name (use Enter for new lines)"
           rows="3"
-        ></textarea>
+        ></textarea> -->
         
         <!-- Character counter - show at 30 characters as per figma.md -->
         <div class="character-counter" *ngIf="showCharacterCounter">
@@ -215,11 +214,11 @@
                 class="range-slider"
                 [(ngModel)]="fontSize"
                 (ngModelChange)="onFontSizeChange()"
-                min="32"
-                max="96"
+                min="24"
+                max="120"
                 [style.--val]="fontSize"
-                [style.--min]="32"
-                [style.--max]="96"
+                [style.--min]="24"
+                [style.--max]="120"
               />
             </div>
           </div>
@@ -234,12 +233,11 @@
                 class="range-slider"
                 [(ngModel)]="letterSpacing"
                 (ngModelChange)="onLetterSpacingChange()"
-                min="-1"
-                max="5"
-                step="0.5"
+                min="-2"
+                max="10"
                 [style.--val]="letterSpacing"
-                [style.--min]="-1"
-                [style.--max]="5"
+                [style.--min]="-2 "
+                [style.--max]="10"
               />
             </div>
           </div>
@@ -254,12 +252,12 @@
                 class="range-slider"
                 [(ngModel)]="lineHeight"
                 (ngModelChange)="onLineHeightChange()"
-                min="0.9"
-                max="1.8"
+                min="0.8"
+                max="2"
                 step="0.1"
                 [style.--val]="lineHeight"
-                [style.--min]="0.9"
-                [style.--max]="1.8"
+                [style.--min]="0.8"
+                [style.--max]="2"
                 
               />
             </div>
@@ -276,8 +274,8 @@
       </div>
 
       <!-- Slogan Toggle -->
-      <div class="form-group slogan-toggle-container">
-        <label class="form-label">Slogan Text</label>
+      <div class="form-group slogan-container">
+        <label class="form-label">Slogan</label>
         <div class="toggle-group">
           <div class="toggle-switch">
             <input type="checkbox" id="sloganToggle" [(ngModel)]="enableSlogan" (ngModelChange)="onSloganToggle()" />
@@ -285,11 +283,10 @@
           </div>
         </div>
       </div>
-
-      <!-- Slogan Text Input -->
-      <div class="form-group slogan-text" *ngIf="enableSlogan">
-        <input
-          *ngIf="!sloganIsMultiline"
+<div class="slogan-toggle-container"  [style.opacity]="enableSlogan ? '1' : '0.3'" [style.pointer-events]="!enableSlogan ? 'none' : 'auto'">
+ <!-- Slogan Text Input -->
+      <div class="form-group slogan-text">
+        <input          
           type="text"
           class="form-input"
           [(ngModel)]="sloganText"
@@ -297,18 +294,27 @@
           placeholder="Enter your slogan"
           maxlength="40"
         />
-        <textarea
+        <!-- <input
+          *ngIf="!sloganIsMultiline"
+          type="text"
+          class="form-input"
+          [(ngModel)]="sloganText"
+          (ngModelChange)="onSloganChange()"
+          placeholder="Enter your slogan"
+          maxlength="40"
+        /> -->
+        <!-- <textarea
           *ngIf="sloganIsMultiline"
           class="form-input multiline-input"
           [(ngModel)]="sloganText"
           (ngModelChange)="onSloganChange()"
           placeholder="Enter your slogan (use Enter for new lines)"
           rows="3"
-        ></textarea>
+        ></textarea> -->
       </div>
 
       <!-- Recommended Fonts -->
-      <div class="fonts-section" *ngIf="enableSlogan">
+      <div class="fonts-section">
         <h3 class="subsection-title">Recommended Fonts</h3>
         <div class="fonts-grid">
           <button
@@ -416,7 +422,7 @@
 
 
   <div class="custom-font-section">
-        <h3 class="subsection-title">Custom Font2</h3>
+        <h3 class="subsection-title">Custom</h3>
 
 
 <div class="custom-font-button" (click)="toggleSloganFontSelection()" *ngIf="!showSloganFontSelection">
@@ -484,7 +490,7 @@
       </div>
 
       <!-- Alignment -->
-     <div class="text-alignment d-flex align-center justify-space-between" *ngIf="enableSlogan">
+     <div class="text-alignment d-flex align-center justify-space-between">
         <label class="form-label">Alignment</label>
         <div class="alignment-buttons">
           <button class="align-btn" [class.active]="textAlignment === 'left'" (click)="setAlignment('left')"
@@ -492,7 +498,7 @@
             <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
               <path
                 d="M11.9629 11.6646H0.462891V13.5812H11.9629V11.6646ZM11.9629 3.99788H0.462891V5.91455H11.9629V3.99788ZM0.462891 9.74788H17.7129V7.83122H0.462891V9.74788ZM0.462891 17.4146H17.7129V15.4979H0.462891V17.4146ZM0.462891 0.164551V2.08122H17.7129V0.164551H0.462891Z"
-                fill="black" />
+                [attr.fill] ="textAlignment === 'left' ? '#007A33' : '#000000'" />
             </svg>
 
           </button>
@@ -501,7 +507,7 @@
             <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
               <path
                 d="M4.56771 11.6646V13.5812H14.151V11.6646H4.56771ZM0.734375 17.4146H17.9844V15.4979H0.734375V17.4146ZM0.734375 9.74788H17.9844V7.83122H0.734375V9.74788ZM4.56771 3.99788V5.91455H14.151V3.99788H4.56771ZM0.734375 0.164551V2.08122H17.9844V0.164551H0.734375Z"
-                fill="black" />
+                [attr.fill] ="textAlignment === 'center' ? '#007A33' : '#000000'" />
             </svg>
 
           </button>
@@ -510,7 +516,7 @@
             <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
               <path
                 d="M0.00390625 17.4146H17.2539V15.4979H0.00390625V17.4146ZM5.75391 13.5812H17.2539V11.6646H5.75391V13.5812ZM0.00390625 9.74788H17.2539V7.83122H0.00390625V9.74788ZM5.75391 5.91455H17.2539V3.99788H5.75391V5.91455ZM0.00390625 0.164551V2.08122H17.2539V0.164551H0.00390625Z"
-                fill="black" />
+                [attr.fill] ="textAlignment === 'right' ? '#007A33' : '#000000'" />
             </svg>
 
           </button>
@@ -520,22 +526,26 @@
             <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
               <path
                 d="M11.9629 11.6646H0.462891V13.5812H11.9629V11.6646ZM11.9629 3.99788H0.462891V5.91455H11.9629V3.99788ZM0.462891 9.74788H17.7129V7.83122H0.462891V9.74788ZM0.462891 17.4146H17.7129V15.4979H0.462891V17.4146ZM0.462891 0.164551V2.08122H17.7129V0.164551H0.462891Z"
-                fill="black" />
+                [attr.fill] ="textAlignment === 'left-fill' ? '#007A33' : '#000000'" />
             </svg>
             <svg width="13" height="3" viewBox="0 0 13 3" fill="currentColor">
-              <path d="M12.0879 3.0083H0.587891V0.133301H12.0879V3.0083Z" fill="black" />
+              <path d="M12.0879 3.0083H0.587891V0.133301H12.0879V3.0083Z" [attr.fill] ="textAlignment === 'left-fill' ? '#007A33' : '#000000'" />
             </svg>
           </button>
           <button class="align-btn" [class.active]="textAlignment === 'center-fill'"
             (click)="setAlignment('center-fill')" title="Center Align with Fill">
 
-            <svg width="13" height="3" viewBox="0 0 13 3" fill="black" />
+            <svg width="13" height="3" viewBox="0 0 13 3" fill="currentColor">
+              <path d="M12.0879 3.0083H0.587891V0.133301H12.0879V3.0083Z" [attr.fill] ="textAlignment === 'center-fill' ? '#007A33' : '#000000'" />
+            </svg>
             <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
               <path
                 d="M4.56771 11.6646V13.5812H14.151V11.6646H4.56771ZM0.734375 17.4146H17.9844V15.4979H0.734375V17.4146ZM0.734375 9.74788H17.9844V7.83122H0.734375V9.74788ZM4.56771 3.99788V5.91455H14.151V3.99788H4.56771ZM0.734375 0.164551V2.08122H17.9844V0.164551H0.734375Z"
-                fill="black" />
+                 [attr.fill] ="textAlignment === 'center-fill' ? '#007A33' : '#000000'" />
             </svg>
-            <svg width="13" height="3" viewBox="0 0 13 3" fill="black" />
+            <svg width="13" height="3" viewBox="0 0 13 3" fill="currentColor">
+              <path d="M12.0879 3.0083H0.587891V0.133301H12.0879V3.0083Z"  [attr.fill] ="textAlignment === 'center-fill' ? '#007A33' : '#000000'" />
+            </svg>
 
           </button>
           <button class="align-btn" [class.active]="textAlignment === 'right-fill'" (click)="setAlignment('right-fill')"
@@ -545,16 +555,18 @@
             <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
               <path
                 d="M0.00390625 17.4146H17.2539V15.4979H0.00390625V17.4146ZM5.75391 13.5812H17.2539V11.6646H5.75391V13.5812ZM0.00390625 9.74788H17.2539V7.83122H0.00390625V9.74788ZM5.75391 5.91455H17.2539V3.99788H5.75391V5.91455ZM0.00390625 0.164551V2.08122H17.2539V0.164551H0.00390625Z"
-                fill="black" />
+                 [attr.fill] ="textAlignment === 'right-fill' ? '#007A33' : '#000000'" />
             </svg>
-            <svg width="13" height="3" viewBox="0 0 13 3" fill="black" />
+            <svg width="13" height="3" viewBox="0 0 13 3" fill="currentColor">
+              <path d="M12.0879 3.0083H0.587891V0.133301H12.0879V3.0083Z" [attr.fill] ="textAlignment === 'right-fill' ? '#007A33' : '#000000'" />
+            </svg>
 
           </button>
         </div>
       </div>
 
       <!-- Line Count -->
-      <div class=" controls-section line-count-section" *ngIf="enableSlogan">
+      <div class=" controls-section line-count-section">
         <div class="control-row">
           <div class="control-group">
             <label class="control-label">Line Count</label>
@@ -578,7 +590,7 @@
       </div>
 
       <!-- Controls Section -->
-      <div class="controls-section" *ngIf="enableSlogan">
+      <div class="controls-section">
         <div class="control-row">
           <div class="control-group">
             <label class="control-label">Font Size</label>
@@ -588,11 +600,11 @@
                 class="range-slider"
                 [(ngModel)]="sloganFontSize"
                 (ngModelChange)="onSloganFontSizeChange()"
-                min="14"
-                max="48"
+                min="12"
+                max="80"
                 [style.--val]="sloganFontSize"
-                [style.--min]="14"
-                [style.--max]="48"
+                [style.--min]="12"
+                [style.--max]="80"
               />
             </div>
           </div>
@@ -607,12 +619,11 @@
                 class="range-slider"
                 [(ngModel)]="sloganLetterSpacing"
                 (ngModelChange)="onSloganLetterSpacingChange()"
-                min="-0.5"
-                max="4"
-                step="0.5"
+                min="-2"
+                max="10"
                 [style.--val]="sloganLetterSpacing"
-                [style.--min]="-0.5"
-                [style.--max]="4"
+                [style.--min]="-2"
+                [style.--max]="10"
               />
             </div>
           </div>
@@ -627,17 +638,19 @@
                 class="range-slider"
                 [(ngModel)]="sloganLineHeight"
                 (ngModelChange)="onSloganLineHeightChange()"
-                min="0.9"
-                max="1.8"
+                min="0.8"
+                max="2"
                 step="0.1"
                 [style.--val]="sloganLineHeight"
-                [style.--min]="0.9"
-                [style.--max]="1.8"
+                [style.--min]="0.8"
+                [style.--max]="2"
               />
             </div>
           </div>
         </div>
       </div>
+</div>
+     
     </div>
 
     <!-- Icons Section -->
@@ -657,9 +670,9 @@
           </label>
         </div>
       </div>
-
+<div  [style.opacity]="showLogoIcon ? '1' : '0.3'" [style.pointer-events]="!showLogoIcon ? 'none' : 'auto'">
       <!-- Symbol/Initials Tabs -->
-      <div class="icon-type-tabs" *ngIf="showLogoIcon">
+      <div class="icon-type-tabs" >
         <button 
           class="tab-btn" 
           [class.active]="activeIconType === 'symbol'" 
@@ -677,7 +690,7 @@
       </div>
 
       <!-- Symbol Tab Content -->
-      <div *ngIf="showLogoIcon && activeIconType === 'symbol'">
+      <div *ngIf="activeIconType === 'symbol'">
         <!-- Search Box with Pagination -->
         <div class="search-box-wrapper">
           <div class="search-input-container">
@@ -729,7 +742,21 @@
               [disabled]="currentPage === 1"
               (click)="goToPage(currentPage - 1)"
             >
-              ←
+              <svg *ngIf="currentPage === 1" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M24 12C24 9.62662 23.2962 7.30655 21.9776 5.33315C20.6591 3.35976 18.7849 1.8217 16.5922 0.913445C14.3995 0.0051918 11.9867 -0.232449 9.65891 0.230576C7.33114 0.693598 5.19295 1.83649 3.51472 3.51472C1.83649 5.19295 0.693598 7.33114 0.230576 9.65891C-0.232449 11.9867 0.0051918 14.3995 0.913445 16.5922C1.8217 18.7849 3.35976 20.6591 5.33315 21.9776C7.30655 23.2962 9.62662 24 12 24C15.1815 23.9966 18.2318 22.7312 20.4815 20.4815C22.7312 18.2318 23.9966 15.1815 24 12ZM2 12C2 10.0222 2.58649 8.08879 3.6853 6.4443C4.78412 4.7998 6.3459 3.51808 8.17316 2.7612C10.0004 2.00432 12.0111 1.80629 13.9509 2.19214C15.8907 2.578 17.6725 3.53041 19.0711 4.92893C20.4696 6.32746 21.422 8.10929 21.8079 10.0491C22.1937 11.9889 21.9957 13.9996 21.2388 15.8268C20.4819 17.6541 19.2002 19.2159 17.5557 20.3147C15.9112 21.4135 13.9778 22 12 22C9.34873 21.9971 6.80688 20.9426 4.93215 19.0679C3.05741 17.1931 2.00291 14.6513 2 12ZM10.879 17.707C11.0665 17.5195 11.1718 17.2652 11.1718 17C11.1718 16.7348 11.0665 16.4805 10.879 16.293L7.587 13L18 12.993C18.2652 12.993 18.5196 12.8876 18.7071 12.7001C18.8946 12.5126 19 12.2582 19 11.993C19 11.7278 18.8946 11.4734 18.7071 11.2859C18.5196 11.0984 18.2652 10.993 18 10.993L7.586 11L10.879 7.707C10.9775 7.6168 11.0569 7.50778 11.1126 7.38637C11.1683 7.26497 11.1991 7.13364 11.2032 7.00014C11.2073 6.86664 11.1846 6.73368 11.1364 6.60909C11.0883 6.4845 11.0157 6.37082 10.9229 6.27476C10.8301 6.17869 10.719 6.10219 10.5962 6.04976C10.4733 5.99733 10.3412 5.97005 10.2077 5.96951C10.0741 5.96897 9.94179 5.9952 9.81853 6.04663C9.69527 6.09807 9.58356 6.17368 9.49 6.269L9.465 6.293L5.879 9.878C5.60037 10.1566 5.37934 10.4873 5.22855 10.8513C5.07775 11.2153 5.00014 11.6055 5.00014 11.9995C5.00014 12.3935 5.07775 12.7837 5.22855 13.1477C5.37934 13.5117 5.60037 13.8424 5.879 14.121L9.465 17.707C9.65253 17.8945 9.90683 17.9998 10.172 17.9998C10.4372 17.9998 10.6915 17.8945 10.879 17.707Z" fill="#CCCCCC"/>
+</svg>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_949_22173)">
+<path d="M24 12C24 9.62662 23.2962 7.30655 21.9776 5.33315C20.6591 3.35976 18.7849 1.8217 16.5922 0.913445C14.3995 0.0051918 11.9867 -0.232449 9.65891 0.230576C7.33114 0.693598 5.19295 1.83649 3.51472 3.51472C1.83649 5.19295 0.693598 7.33114 0.230576 9.65891C-0.232449 11.9867 0.0051918 14.3995 0.913445 16.5922C1.8217 18.7849 3.35976 20.6591 5.33315 21.9776C7.30655 23.2962 9.62662 24 12 24C15.1815 23.9966 18.2318 22.7312 20.4815 20.4815C22.7312 18.2318 23.9966 15.1815 24 12ZM9.465 17.707L5.879 14.121C5.60037 13.8424 5.37934 13.5117 5.22855 13.1477C5.07775 12.7837 5.00014 12.3935 5.00014 11.9995C5.00014 11.6055 5.07775 11.2153 5.22855 10.8513C5.37934 10.4873 5.60037 10.1566 5.879 9.878L9.465 6.293L9.49 6.269C9.58356 6.17368 9.69527 6.09807 9.81853 6.04663C9.94179 5.9952 10.0741 5.96897 10.2077 5.96951C10.3412 5.97005 10.4733 5.99733 10.5962 6.04976C10.719 6.10219 10.8301 6.17869 10.9229 6.27476C11.0157 6.37082 11.0883 6.4845 11.1364 6.60909C11.1846 6.73368 11.2073 6.86664 11.2032 7.00014C11.1991 7.13364 11.1683 7.26497 11.1126 7.38637C11.0569 7.50778 10.9775 7.6168 10.879 7.707L7.586 11L18 10.993C18.2652 10.993 18.5196 11.0984 18.7071 11.2859C18.8946 11.4734 19 11.7278 19 11.993C19 12.2582 18.8946 12.5126 18.7071 12.7001C18.5196 12.8876 18.2652 12.993 18 12.993L7.587 13L10.879 16.293C10.9745 16.3852 11.0507 16.4956 11.1031 16.6176C11.1555 16.7396 11.1831 16.8708 11.1842 17.0036C11.1854 17.1364 11.1601 17.2681 11.1098 17.391C11.0595 17.5138 10.9853 17.6255 10.8914 17.7194C10.7975 17.8133 10.6858 17.8875 10.563 17.9378C10.4401 17.9881 10.3084 18.0134 10.1756 18.0122C10.0428 18.0111 9.9116 17.9835 9.78959 17.9311C9.66759 17.8787 9.55725 17.8025 9.465 17.707Z" fill="#007A33"/>
+</g>
+<defs>
+<clipPath id="clip0_949_22173">
+<rect width="24" height="24" fill="white" transform="matrix(-1 0 0 -1 24 24)"/>
+</clipPath>
+</defs>
+</svg>
+
+
             </button>
             
             <button 
@@ -737,7 +764,18 @@
               [disabled]="currentPage === totalPages"
               (click)="goToPage(currentPage + 1)"
             >
-              →
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M0 12C0 14.3734 0.703788 16.6935 2.02236 18.6668C3.34094 20.6402 5.21509 22.1783 7.4078 23.0866C9.60051 23.9948 12.0133 24.2324 14.3411 23.7694C16.6689 23.3064 18.8071 22.1635 20.4853 20.4853C22.1635 18.8071 23.3064 16.6689 23.7694 14.3411C24.2324 12.0133 23.9948 9.60051 23.0866 7.4078C22.1783 5.21509 20.6402 3.34094 18.6668 2.02236C16.6935 0.703788 14.3734 0 12 0C8.81846 0.00344108 5.76821 1.26883 3.51852 3.51852C1.26883 5.76821 0.00344108 8.81846 0 12ZM14.535 6.293L18.121 9.879C18.3996 10.1576 18.6207 10.4883 18.7715 10.8523C18.9222 11.2163 18.9999 11.6065 18.9999 12.0005C18.9999 12.3945 18.9222 12.7847 18.7715 13.1487C18.6207 13.5127 18.3996 13.8434 18.121 14.122L14.535 17.707L14.51 17.731C14.4164 17.8263 14.3047 17.9019 14.1815 17.9534C14.0582 18.0048 13.9259 18.031 13.7923 18.0305C13.6588 18.03 13.5267 18.0027 13.4038 17.9502C13.281 17.8978 13.1699 17.8213 13.0771 17.7252C12.9843 17.6292 12.9117 17.5155 12.8636 17.3909C12.8154 17.2663 12.7927 17.1334 12.7968 16.9999C12.8009 16.8664 12.8317 16.735 12.8874 16.6136C12.9431 16.4922 13.0225 16.3832 13.121 16.293L16.414 13L6 13.007C5.73478 13.007 5.48043 12.9016 5.29289 12.7141C5.10536 12.5266 5 12.2722 5 12.007C5 11.7418 5.10536 11.4874 5.29289 11.2999C5.48043 11.1124 5.73478 11.007 6 11.007L16.413 11L13.121 7.707C13.0255 7.61475 12.9493 7.50441 12.8969 7.38241C12.8445 7.2604 12.8169 7.12918 12.8158 6.9964C12.8146 6.86362 12.8399 6.73194 12.8902 6.60905C12.9405 6.48615 13.0147 6.3745 13.1086 6.28061C13.2025 6.18671 13.3142 6.11246 13.437 6.06218C13.5599 6.0119 13.6916 5.9866 13.8244 5.98775C13.9572 5.9889 14.0884 6.01649 14.2104 6.0689C14.3324 6.12131 14.4428 6.19749 14.535 6.293Z" fill="#CCCCCC"/>
+</svg>
+
+
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M0 12C0 14.3734 0.703788 16.6935 2.02236 18.6668C3.34094 20.6402 5.21509 22.1783 7.4078 23.0866C9.60051 23.9948 12.0133 24.2324 14.3411 23.7694C16.6689 23.3064 18.8071 22.1635 20.4853 20.4853C22.1635 18.8071 23.3064 16.6689 23.7694 14.3411C24.2324 12.0133 23.9948 9.60051 23.0866 7.4078C22.1783 5.21509 20.6402 3.34094 18.6668 2.02236C16.6935 0.703788 14.3734 0 12 0C8.81846 0.00344108 5.76821 1.26883 3.51852 3.51852C1.26883 5.76821 0.00344108 8.81846 0 12ZM14.535 6.293L18.121 9.879C18.3996 10.1576 18.6207 10.4883 18.7715 10.8523C18.9222 11.2163 18.9999 11.6065 18.9999 12.0005C18.9999 12.3945 18.9222 12.7847 18.7715 13.1487C18.6207 13.5127 18.3996 13.8434 18.121 14.122L14.535 17.707L14.51 17.731C14.4164 17.8263 14.3047 17.9019 14.1815 17.9534C14.0582 18.0048 13.9259 18.031 13.7923 18.0305C13.6588 18.03 13.5267 18.0027 13.4038 17.9502C13.281 17.8978 13.1699 17.8213 13.0771 17.7252C12.9843 17.6292 12.9117 17.5155 12.8636 17.3909C12.8154 17.2663 12.7927 17.1334 12.7968 16.9999C12.8009 16.8664 12.8317 16.735 12.8874 16.6136C12.9431 16.4922 13.0225 16.3832 13.121 16.293L16.414 13L6 13.007C5.73478 13.007 5.48043 12.9016 5.29289 12.7141C5.10536 12.5266 5 12.2722 5 12.007C5 11.7418 5.10536 11.4874 5.29289 11.2999C5.48043 11.1124 5.73478 11.007 6 11.007L16.413 11L13.121 7.707C13.0255 7.61475 12.9493 7.50441 12.8969 7.38241C12.8445 7.2604 12.8169 7.12918 12.8158 6.9964C12.8146 6.86362 12.8399 6.73194 12.8902 6.60905C12.9405 6.48615 13.0147 6.3745 13.1086 6.28061C13.2025 6.18671 13.3142 6.11246 13.437 6.06218C13.5599 6.0119 13.6916 5.9866 13.8244 5.98775C13.9572 5.9889 14.0884 6.01649 14.2104 6.0689C14.3324 6.12131 14.4428 6.19749 14.535 6.293Z" fill="#007A33"/>
+</svg>
+
+
+
+              
             </button>
           </div>
         </div>
@@ -756,9 +794,10 @@
               class="icon-item"
               [class.selected]="selectedIcon?.id === icon.id"
               (click)="selectIcon(icon)"
-            >
+            ><div class="icon-outline-wrapper">
               <div class="icon-wrapper">
                 <img [src]="icon.thumbnailUrl" [alt]="icon.name || 'icon'" />
+              </div>
               </div>
             </button>
           </div>
@@ -774,7 +813,7 @@
       </div>
 
       <!-- Initials Tab Content -->
-      <div *ngIf="showLogoIcon && activeIconType === 'initials'" class="initials-content">
+      <div *ngIf="activeIconType === 'initials'" class="initials-content">
         <div class="initials-input-wrapper">
           <label class="control-label">Enter Initials</label>
           <input 
@@ -869,10 +908,11 @@
         </div>
       </div>
       </div>
-
+      
       <!-- Size Control -->
        <div class="controls-section">
-      <div class="control-row" *ngIf="showLogoIcon && (selectedIcon || userInitials)">
+        <!-- <div class="control-row" *ngIf="showLogoIcon && (selectedIcon || userInitials)"> -->
+      <div class="control-row">
         <div class="control-group">
           <label class="control-label">Size</label>
           <div class="slider-wrapper">
@@ -881,12 +921,11 @@
               class="range-slider"
               [(ngModel)]="iconSize"
               (ngModelChange)="onIconSizeChange()"
-              min="40"
-              max="160"
-              step="4"
+              min="200"
+              max="520"
               [style.--val]="iconSize"
-              [style.--min]="40"
-              [style.--max]="160"
+              [style.--min]="200"
+              [style.--max]="520"
             />
           </div>
         </div>
@@ -895,7 +934,8 @@
 
       <!-- Margin Control -->
        <div class="controls-section">
-      <div class="control-row" *ngIf="showLogoIcon && (selectedIcon || userInitials)">
+      <!-- <div class="control-row" *ngIf="showLogoIcon && (selectedIcon || userInitials)"> -->
+        <div class="control-row"  >
         <div class="control-group">
           <label class="control-label">Margin</label>
           <div class="slider-wrapper">
@@ -904,12 +944,11 @@
               class="range-slider"
               [(ngModel)]="iconMargin"
               (ngModelChange)="onIconMarginChange()"
-              min="8"
-              max="40"
-              step="2"
+              min="0"
+              max="50"
               [style.--val]="iconMargin"
-              [style.--min]="8"
-              [style.--max]="40"
+              [style.--min]="0"
+              [style.--max]="50"
             />
           </div>
         </div>
@@ -917,9 +956,10 @@
       </div>
 
       <!-- Background Toggle -->
-        <div class="controls-section">
-      <div class="control-row" *ngIf="showLogoIcon && (selectedIcon || userInitials)">
-        <div class="control-group">
+        <div class="controls-section ">
+      <!-- <div class="control-row" *ngIf="showLogoIcon && (selectedIcon || userInitials)"> -->
+        <div class="control-row control-row-inner">
+        <div class="control-group align-items-center">
           <label class="control-label">Background</label>
           <div class="toggle-wrapper">
             <label class="switch">
@@ -931,12 +971,31 @@
       </div>
 </div>
       <!-- Background Content Dropdown -->
-      <div class="background-controls" *ngIf="showLogoIcon && iconBackground && (selectedIcon || userInitials)">
-        
+      <!-- <div class="background-controls" *ngIf="showLogoIcon && iconBackground && (selectedIcon || userInitials)"> -->
+        <div class="background-controls controls-section" *ngIf="iconBackground">
         <!-- Background Type Selection -->
-        <div class="control-row">
-          <div class="control-group">
-            <label class="control-label">Background Type</label>
+       
+
+        <!-- Rounded Corners Toggle -->
+        <div class="control-row d-flex align-items-center justify-content-between">
+          <div class="control-group">            
+            <div class="checkbox-wrapper">
+              <label class="checkbox-option">
+                <input 
+                  type="checkbox" 
+                  [checked]="backgroundCorners === 'rounded'"
+                  (change)="toggleRoundedCorners()"
+                >
+                <span class="checkbox-custom">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" *ngIf="backgroundCorners === 'rounded'">
+                    <path d="M2 6L5 9L10 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+                <span class="checkbox-label">Rounded Corners</span>
+              </label>
+            </div>
+          </div>
+          <div class="control-group">            
             <div class="background-type-selection">
               <label class="radio-option">
                 <input 
@@ -962,35 +1021,16 @@
               </label>
             </div>
           </div>
-        </div>
 
-        <!-- Rounded Corners Toggle -->
-        <div class="control-row">
-          <div class="control-group">
-            <label class="control-label">Rounded Corners</label>
-            <div class="checkbox-wrapper">
-              <label class="checkbox-option">
-                <input 
-                  type="checkbox" 
-                  [checked]="backgroundCorners === 'rounded'"
-                  (change)="toggleRoundedCorners()"
-                >
-                <span class="checkbox-custom">
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" *ngIf="backgroundCorners === 'rounded'">
-                    <path d="M2 6L5 9L10 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </span>
-                <span class="checkbox-label">Enable rounded corners</span>
-              </label>
-            </div>
-          </div>
         </div>
 
       </div>
 
       <!-- Alignment Control -->
-      <div class="control-row" *ngIf="showLogoIcon && (selectedIcon || userInitials)">
-        <div class="control-group">
+      <!-- <div class="control-row" *ngIf="showLogoIcon && (selectedIcon || userInitials)"> -->
+        <div class="controls-section">
+<div class="control-row">
+        <div class="d-flex align-items-center justify-content-between control-group">
           <label class="control-label">Alignment</label>
           <div class="alignment-controls">
             <button 
@@ -999,12 +1039,9 @@
               (click)="setIconAlignment('left')"
               title="Left align"
             >
-              <img 
-                [src]="iconAlignment === 'left' ? 'assets/icons/selected-svg/alignment-left.svg' : 'assets/icons/unselected-svg/alignment-left.svg'"
-                alt="Left align"
-                width="20"
-                height="15"
-              />
+          <svg width="39" height="10" viewBox="0 0 40 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M13.9997 10.4923H39.4787V8.57566H13.9997V10.4923ZM13.9997 6.52502L39.4787 6.659V0.908998L13.9997 0.775024V6.52502ZM0.47849 0.77549L0.478516 10.4923H10.0618V0.77549H0.47849Z" [attr.fill] ="iconAlignment === 'left' ? '#007A33' : '#000000'"/>
+          </svg>              
             </button>
             <button 
               class="align-btn" 
@@ -1012,12 +1049,10 @@
               (click)="setIconAlignment('center')"
               title="Center align"
             >
-              <img 
-                [src]="iconAlignment === 'center' ? 'assets/icons/selected-svg/alignment-center.svg' : 'assets/icons/unselected-svg/alignment-center.svg'"
-                alt="Center align"
-                width="20"
-                height="15"
-              />
+            <svg width="39" height="20" viewBox="0 0 39 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 20.5262H39V18.6096H0V20.5262ZM0 16.5589L39 16.6929V10.9429L0 10.8089V16.5589ZM14.7083 0.633667V9.02625H24.2917V0.633667H14.7083Z" [attr.fill] ="iconAlignment === 'center' ? '#007A33' : '#000000'"/>
+            </svg>
+              
             </button>
             <button 
               class="align-btn" 
@@ -1025,19 +1060,18 @@
               (click)="setIconAlignment('right')"
               title="Right align"
             >
-              <img 
-                [src]="iconAlignment === 'right' ? 'assets/icons/selected-svg/alignment-right.svg' : 'assets/icons/unselected-svg/alignment-right.svg'"
-                alt="Right align"
-                width="20"
-                height="15"
-              />
+          <svg width="39" height="14" viewBox="0 0 40 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M39.2803 12.4799V14.3969H0.280273V12.4799H39.2803ZM9.86328 0.870483V10.5883H0.280273L0.279297 0.870483H9.86328ZM39.2803 7.37048V10.5638L13.8008 10.4291V7.23669L39.2803 7.37048ZM39.7598 5.12439H13.7598V0.87439H39.7598V5.12439Z"   [attr.fill] ="iconAlignment === 'right' ? '#007A33' : '#000000'"/>
+          </svg>
             </button>
           </div>
         </div>
       </div>
+      </div>
+</div>
     </div>
 
-    <!-- Shapes Section - Enhanced implementation per figma-shape.md -->
+  <!-- Shapes Section - Enhanced implementation per figma-shape.md -->
     <div class="editor-section shapes-section" *ngIf="activeTab === 'shapes'">
       <div class="section-header">
         <h2>Frame your logo</h2>
@@ -1273,7 +1307,37 @@
       <div class="custom-color-section">
         <h3 class="subsection-title">Custom Color</h3>
 
-        <div class="color-scheme-pill">
+        
+        
+        <!-- Custom Color Button -->
+        <div class="custom-color-toggle" *ngIf="!showCustomColorOptions">
+          <button
+            class="custom-color-btn"
+            (click)="toggleCustomColorOptions()"
+            (mouseenter)="hoverCustomButton = true"
+            (mouseleave)="hoverCustomButton = false"
+            [class.hovered]="hoverCustomButton"
+          >
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g clip-path="url(#clip0_40000031_18858)">
+              <path d="M10.7247 6.93199L6.38872 11.268C5.91949 11.7361 5.28376 11.999 4.62097 11.999C3.95818 11.999 3.32244 11.7361 2.85322 11.268L0.732216 9.14649C0.263386 8.67765 0 8.04177 0 7.37874C0 6.71571 0.263386 6.07983 0.732216 5.61099L3.68222 2.66099L2.25522 1.21449C2.20401 1.16902 2.1627 1.11351 2.13383 1.05141C2.10497 0.989315 2.08916 0.921949 2.0874 0.853492C2.08565 0.785034 2.09797 0.716946 2.12361 0.653446C2.14925 0.589947 2.18765 0.532392 2.23645 0.484348C2.28525 0.436305 2.3434 0.398797 2.40729 0.374151C2.47118 0.349506 2.53945 0.338247 2.60788 0.341073C2.6763 0.343899 2.74341 0.360751 2.80505 0.390582C2.86669 0.420413 2.92155 0.462588 2.96622 0.514493L7.45122 5.05499L7.45572 5.06149C7.55186 5.14751 7.67765 5.19281 7.80655 5.18786C7.93546 5.1829 8.0574 5.12807 8.14665 5.03493C8.2359 4.94178 8.28548 4.81762 8.28493 4.68862C8.28439 4.55962 8.23375 4.43587 8.14372 4.34349L4.53872 0.693493C4.49395 0.586663 4.48766 0.467604 4.52093 0.356653C4.55419 0.245701 4.62494 0.149741 4.7211 0.085163C4.81726 0.0205851 4.93286 -0.00860392 5.04815 0.00258179C5.16344 0.0137675 5.27127 0.064634 5.35322 0.146493L11.8532 6.64649C11.901 6.69262 11.9391 6.74779 11.9653 6.80879C11.9915 6.86979 12.0053 6.9354 12.0058 7.00179C12.0064 7.06818 11.9938 7.13402 11.9686 7.19547C11.9435 7.25692 11.9064 7.31274 11.8594 7.35969C11.8125 7.40664 11.7566 7.44376 11.6952 7.4689C11.6337 7.49404 11.5679 7.50669 11.5015 7.50612C11.4351 7.50554 11.3695 7.49175 11.3085 7.46554C11.2475 7.43934 11.1923 7.40125 11.1462 7.35349L10.7247 6.93199ZM10.3457 9.21549C9.98022 9.74599 9.49972 10.3625 9.49972 10.75C9.49972 11.0815 9.63141 11.3995 9.86583 11.6339C10.1003 11.8683 10.4182 12 10.7497 12C11.0812 12 11.3992 11.8683 11.6336 11.6339C11.868 11.3995 11.9997 11.0815 11.9997 10.75C11.9997 10.3255 11.5272 9.72799 11.1632 9.21099C11.1167 9.14573 11.0552 9.09261 10.9838 9.0561C10.9125 9.01959 10.8334 9.00076 10.7533 9.0012C10.6732 9.00164 10.5943 9.02134 10.5234 9.05863C10.4524 9.09593 10.3915 9.14972 10.3457 9.21549Z" fill="#007A33"/>
+              </g>
+              <defs>
+              <clipPath id="clip0_40000031_18858">
+              <rect width="12" height="12" fill="white"/>
+              </clipPath>
+              </defs>
+            </svg>
+            <span class="text-underline">Custom</span>
+          </button>
+        </div>
+ 
+
+        <!-- Custom Color Options -->
+        <div class="custom-controls" *ngIf="showCustomColorOptions">
+
+          
+        <div class="color-scheme-pill color-scheme-pill-large">
              
             <div
               class="color-dot cicon"
@@ -1292,26 +1356,6 @@
               [style.backgroundColor]="customColors.shape"
             ></div>
           </div>
-        
-        
-        <!-- Custom Color Button -->
-        <div class="custom-color-toggle" *ngIf="!showCustomColorOptions">
-          <button 
-            class="custom-color-btn"
-            (click)="toggleCustomColorOptions()"
-            (mouseenter)="hoverCustomButton = true"
-            (mouseleave)="hoverCustomButton = false"
-            [class.hovered]="hoverCustomButton"
-          >
-            <svg class="custom-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10,-4.48 10,-10S17.52,2 12,2zM17,13h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
-            </svg>
-            <span>Custom</span>
-          </button>
-        </div>
-
-        <!-- Custom Color Options -->
-        <div class="custom-controls" *ngIf="showCustomColorOptions">
           <div class="color-controls-grid">
             <!-- Icon Color -->
             <div class="color-control-item" [class.disabled]="!componentStates.icon">
@@ -1394,9 +1438,7 @@
             </div>
           </div>
         </div>
-      </div>
-
-      <!-- Color Picker Modal -->
+              <!-- Color Picker Modal -->
       <div class="color-picker-overlay" *ngIf="showColorPicker">
         <div class="color-picker-modal" (click)="$event.stopPropagation()">
           <app-color-picker
@@ -1405,6 +1447,9 @@
           ></app-color-picker>
         </div>
       </div>
+      </div>
+
+
     </div>
   </div>
 

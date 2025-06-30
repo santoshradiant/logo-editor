@@ -1757,15 +1757,15 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 15px 24px;
-  margin-bottom: 24px;
+  margin-bottom: 32px; // Increased spacing
  
   .shape-option {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 16px;
+    padding: 20px 16px; // Increased vertical padding
     border: 1px solid #e5e7eb;
-    border-radius: 3px;
+    border-radius: 8px; // Increased border radius
     background: #ffffff;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -1777,7 +1777,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 8px;
+      margin-bottom: 12px; // Increased spacing
       color: #000000;
  
       svg {
@@ -1797,32 +1797,34 @@
     &:hover {
       border-color: var(--ns-primary);
       border-width: 2px;
-      background: rgba(0, 122, 51, 0.33);
-      // border-color: #3b82f6;
-      // background: #f8faff;
+      background: rgba(0, 122, 51, 0.08); // Lighter background
+      transform: translateY(-2px); // Subtle lift effect
+      box-shadow: 0 4px 12px rgba(0, 122, 51, 0.15);
     }
  
     &.active {
       border-color: var(--ns-primary);
       border-width: 2px;
-      background: rgba(0, 122, 51, 0.33);
-      // border-color: #3b82f6;
-      // background: #eff6ff;
+      background: rgba(0, 122, 51, 0.08); // Lighter background
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0, 122, 51, 0.15);
+      
       &:after{
         content: "\2713";
         position: absolute;
-        top: 4px;
-        right: 4px;
-        width: 16px;
-        height: 16px;
+        top: 8px; // Better positioning
+        right: 8px;
+        width: 18px; // Slightly larger
+        height: 18px;
         background: var(--ns-primary);
         color: white;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 10px;
+        font-size: 11px; // Slightly larger
         font-weight: bold;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
  
       .shape-icon {
@@ -1832,6 +1834,292 @@
       .shape-name {
         // color: #1d4ed8;
         // font-weight: 600;
+      }
+    }
+  }
+}
+
+// Shape Controls Specific Styles - Enhanced with proper theme colors and spacing
+.shape-controls {
+  margin-top: 32px; // Increased spacing from previous section
+  padding: 24px;
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  
+  .control-row {
+    margin-bottom: 28px; // Increased spacing between controls
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    // Add subtle hover effect for better interactivity
+    &:hover {
+      background: rgba(0, 184, 148, 0.02);
+      border-radius: 6px;
+      padding: 8px;
+      margin: -8px;
+      margin-bottom: 20px;
+    }
+  }
+  
+  .control-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ns-black);
+    margin-bottom: 12px; // Better spacing below labels
+    display: block;
+    transition: color 0.2s ease;
+    
+    &.hovered {
+      color: var(--ns-primary);
+    }
+  }
+  
+  // Updated slider styles with consistent theming and better spacing
+  .slider-container {
+    position: relative;
+    width: 100%;
+    margin-top: 16px; // Better spacing above sliders
+    
+    input[type="range"] {
+      width: 100%;
+      height: 10px; // Slightly thicker track for better visibility
+      border-radius: 5px;
+      background: #e5e7eb;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin: 12px 0; // Better vertical spacing
+      
+      // Track styling
+      &::-webkit-slider-track {
+        height: 10px;
+        background: #e5e7eb;
+        border-radius: 5px;
+      }
+      
+      &::-moz-range-track {
+        height: 10px;
+        background: #e5e7eb;
+        border-radius: 5px;
+        border: none;
+      }
+      
+      // Thumb styling with theme colors
+      &::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 22px; // Larger thumb for better accessibility
+        height: 22px;
+        border-radius: 50%;
+        background: #d1d5db; // Default grey color
+        border: 3px solid #ffffff;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        transition: all 0.2s ease;
+        margin-top: -6px; // Center on track
+        
+        &:hover {
+          background: var(--ns-primary); // Use theme color on hover
+          box-shadow: 0 3px 10px rgba(0, 184, 148, 0.3);
+          transform: scale(1.1);
+        }
+      }
+      
+      &::-moz-range-thumb {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: #d1d5db;
+        border: 3px solid #ffffff;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        transition: all 0.2s ease;
+        
+        &:hover {
+          background: var(--ns-primary);
+          box-shadow: 0 3px 10px rgba(0, 184, 148, 0.3);
+          transform: scale(1.1);
+        }
+      }
+      
+      // Active state with theme colors
+      &.active {
+        background: linear-gradient(to right, var(--ns-primary) 0%, var(--ns-primary) 50%, #e5e7eb 50%);
+        
+        &::-webkit-slider-thumb {
+          background: var(--ns-primary);
+          border-color: #ffffff;
+          
+          &:hover {
+            background: var(--ns-primary-hover);
+            box-shadow: 0 4px 12px rgba(0, 184, 148, 0.4);
+          }
+        }
+        
+        &::-moz-range-thumb {
+          background: var(--ns-primary);
+          border-color: #ffffff;
+          
+          &:hover {
+            background: var(--ns-primary-hover);
+            box-shadow: 0 4px 12px rgba(0, 184, 148, 0.4);
+          }
+        }
+      }
+      
+      // Hovered state
+      &.hovered {
+        &::-webkit-slider-thumb {
+          background: var(--ns-primary);
+          box-shadow: 0 3px 10px rgba(0, 184, 148, 0.3);
+          
+          &:hover {
+            background: var(--ns-primary-hover);
+          }
+        }
+        
+        &::-moz-range-thumb {
+          background: var(--ns-primary);
+          box-shadow: 0 3px 10px rgba(0, 184, 148, 0.3);
+          
+          &:hover {
+            background: var(--ns-primary-hover);
+          }
+        }
+      }
+    }
+  }
+  
+  // Toggle switch improvements with better spacing and theming
+  .toggle-switch {
+    position: relative;
+    margin-top: 16px;
+    
+    input[type="checkbox"] {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute;
+    }
+    
+    .toggle-slider {
+      position: relative;
+      display: inline-block;
+      width: 52px; // Slightly larger for better usability
+      height: 28px;
+      background-color: #e5e7eb;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+      
+      &:before {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 24px;
+        height: 24px;
+        background-color: #ffffff;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      }
+      
+      &:hover {
+        background-color: #d1d5db;
+        
+        &:before {
+          box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+        }
+      }
+      
+      &.hovered {
+        background-color: #d1d5db;
+      }
+      
+      &.inactive-hover {
+        background-color: #9ca3af; // grey-light-1 equivalent
+      }
+      
+      &.active-hover {
+        background-color: var(--ns-primary-hover);
+      }
+    }
+    
+    input[type="checkbox"]:checked + .toggle-slider {
+      background-color: var(--ns-primary);
+      
+      &:before {
+        transform: translateX(24px);
+      }
+      
+      &:hover {
+        background-color: var(--ns-primary-hover);
+      }
+    }
+  }
+  
+  // Shape selection grid improvements
+  .shapes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 16px;
+    
+    .shape-option {
+      padding: 12px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: #ffffff;
+      
+      &:hover {
+        border-color: var(--ns-primary);
+        background: rgba(0, 184, 148, 0.05);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 184, 148, 0.15);
+      }
+      
+      &.selected {
+        border-color: var(--ns-primary);
+        background: rgba(0, 184, 148, 0.1);
+        box-shadow: 0 2px 8px rgba(0, 184, 148, 0.2);
+      }
+      
+      .shape-icon {
+        width: 32px;
+        height: 32px;
+        margin: 0 auto 8px;
+        display: block;
+        fill: currentColor;
+        color: #6b7280;
+        transition: color 0.2s ease;
+      }
+      
+      &:hover .shape-icon,
+      &.selected .shape-icon {
+        color: var(--ns-primary);
+      }
+      
+      .shape-name {
+        font-size: 12px;
+        font-weight: 500;
+        text-align: center;
+        color: #6b7280;
+        transition: color 0.2s ease;
+      }
+      
+      &:hover .shape-name,
+      &.selected .shape-name {
+        color: var(--ns-primary);
       }
     }
   }

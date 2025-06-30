@@ -2217,25 +2217,39 @@ let initalsStyle = '';
     let shapeHeight = canvasHeight * 0.6; // Reasonable default
     
     if (contentDimensions) {
-      // Calculate content-aware dimensions with proper padding
-      const padding = 40; // Base padding around content
-      const edgeMargin = 100; // Larger margin from canvas edges to prevent clipping
-      const contentMultiplier = 1.4; // 40% larger than content for good visual balance
+      // Enhanced shape calculation to ensure icons are always contained
+      const basePadding = 60; // Increased base padding around content
+      const edgeMargin = 80; // Margin from canvas edges to prevent clipping
       
-      // Calculate total content width (icon + spacing + text)
-      const totalContentWidth = contentDimensions.iconSize + 
-                               (contentDimensions.iconSize > 0 ? contentDimensions.iconSpacing + contentDimensions.iconMargin * 2 : 0) + 
-                               contentDimensions.maxTextWidth;
+      // Dynamic content multiplier based on icon size to ensure proper containment
+      const iconSizeRatio = contentDimensions.iconSize / 160; // Normalize against max icon size (160)
+      const dynamicMultiplier = Math.max(1.4, 1.2 + (iconSizeRatio * 0.6)); // Scale multiplier with icon size
       
-      // Calculate total content height (icon or text + spacing)
-      const totalContentHeight = Math.max(
-        contentDimensions.iconSize,
-        contentDimensions.brandHeight + (contentDimensions.sloganHeight > 0 ? contentDimensions.textSpacing + contentDimensions.sloganHeight : 0)
-      );
+      // Calculate total content dimensions with proper icon consideration
+      let totalContentWidth = contentDimensions.maxTextWidth;
+      let totalContentHeight = contentDimensions.brandHeight + (contentDimensions.sloganHeight > 0 ? contentDimensions.textSpacing + contentDimensions.sloganHeight : 0);
       
-      // Calculate desired shape dimensions
-      const desiredWidth = (totalContentWidth + padding * 2) * contentMultiplier;
-      const desiredHeight = (totalContentHeight + padding * 2) * contentMultiplier;
+      // Add icon dimensions based on alignment
+      if (contentDimensions.iconSize > 0) {
+        if (this.iconAlignment === 'center') {
+          // Icon above text - add to height, use max width
+          totalContentHeight += contentDimensions.iconSize + this.iconMargin + contentDimensions.textSpacing;
+          totalContentWidth = Math.max(totalContentWidth, contentDimensions.iconSize);
+        } else {
+          // Icon beside text - add to width, use max height
+          totalContentWidth += contentDimensions.iconSize + contentDimensions.iconSpacing + contentDimensions.iconMargin * 2;
+          totalContentHeight = Math.max(totalContentHeight, contentDimensions.iconSize);
+        }
+        
+        // Add extra padding for large icons to ensure they never touch shape edges
+        const iconPadding = Math.max(40, contentDimensions.iconSize * 0.3);
+        totalContentWidth += iconPadding;
+        totalContentHeight += iconPadding;
+      }
+      
+      // Calculate desired shape dimensions with enhanced padding
+      const desiredWidth = (totalContentWidth + basePadding * 2) * dynamicMultiplier;
+      const desiredHeight = (totalContentHeight + basePadding * 2) * dynamicMultiplier;
       
       // Calculate maximum allowed dimensions (canvas size minus edge margins)
       const maxAllowedWidth = canvasWidth - (edgeMargin * 2);
@@ -2245,19 +2259,34 @@ let initalsStyle = '';
       shapeWidth = Math.min(desiredWidth, maxAllowedWidth);
       shapeHeight = Math.min(desiredHeight, maxAllowedHeight);
       
-      // Ensure minimum size for visibility
-      const minWidth = Math.min(totalContentWidth + padding, maxAllowedWidth);
-      const minHeight = Math.min(totalContentHeight + padding, maxAllowedHeight);
+      // Enhanced minimum size calculation to guarantee icon containment
+      const minIconWidth = contentDimensions.iconSize > 0 ? contentDimensions.iconSize + basePadding * 2 : 0;
+      const minIconHeight = contentDimensions.iconSize > 0 ? contentDimensions.iconSize + basePadding * 2 : 0;
+      const minTextWidth = totalContentWidth + basePadding;
+      const minTextHeight = totalContentHeight + basePadding;
       
-      shapeWidth = Math.max(shapeWidth, minWidth);
-      shapeHeight = Math.max(shapeHeight, minHeight);
+      const absoluteMinWidth = Math.max(minIconWidth, minTextWidth);
+      const absoluteMinHeight = Math.max(minIconHeight, minTextHeight);
+      
+      shapeWidth = Math.max(shapeWidth, Math.min(absoluteMinWidth, maxAllowedWidth));
+      shapeHeight = Math.max(shapeHeight, Math.min(absoluteMinHeight, maxAllowedHeight));
     }
     
-    // For uniform shapes (circle, square, etc.), use appropriate dimension
-    const shapeSize = this.selectedShape.name === 'Circle' || this.selectedShape.name === 'Diamond' || 
-                     this.selectedShape.name === 'Pentagon' || this.selectedShape.name === 'Hexagon' || 
-                     this.selectedShape.name === 'Square Border' ? 
-                     Math.min(shapeWidth, shapeHeight) : Math.max(shapeWidth, shapeHeight);
+    // For uniform shapes (circle, square, etc.), ensure they're large enough to contain all content
+    const isUniformShape = ['Circle', 'Diamond', 'Pentagon', 'Hexagon', 'Square Border'].includes(this.selectedShape.name);
+    let shapeSize = shapeWidth;
+    
+    if (isUniformShape) {
+      // For uniform shapes, use the larger dimension to ensure content fits
+      shapeSize = Math.max(shapeWidth, shapeHeight);
+      
+      // For circular shapes, ensure diagonal space is sufficient for icon positioning
+      if (this.selectedShape.name === 'Circle' && contentDimensions && contentDimensions.iconSize > 0) {
+        // Calculate diagonal space needed for icon + text layout
+        const diagonalSpace = Math.sqrt(Math.pow(shapeWidth, 2) + Math.pow(shapeHeight, 2));
+        shapeSize = Math.max(shapeSize, diagonalSpace * 0.8); // 80% of diagonal for safe positioning
+      }
+    }
     
     // Set shape styling
     if (this.shapeFilled) {
@@ -2273,19 +2302,71 @@ let initalsStyle = '';
     // Calculate corner radius for shapes with corners
     const cornerRadius = this.selectedShape.hasCorners ? (this.cornerRoundness / 100) * 40 : 0;
     
+    // Calculate content bounds for line positioning (shared across line shapes)
+    const iconRadius = this.iconSize / 2;
+    const textSpacing = Math.max(32, Math.ceil((this.fontSize * 0.8 + this.sloganFontSize * 0.4) / 16) * 16);
+    const brandHeight = this.isMultiline ? this.fontSize * this.lineHeight * 1.2 : this.fontSize;
+    const sloganHeight = this.sloganIsMultiline ? this.sloganFontSize * this.sloganLineHeight : this.sloganFontSize;
+    
+    let contentTop = centerY;
+    let contentBottom = centerY;
+    
+    // Calculate content bounds based on actual logo layout
+    if (this.showLogoIcon && (this.selectedIcon || this.userInitials)) {
+      if (this.iconAlignment === 'center') {
+        // Icon above text - calculate total height
+        const totalElementsHeight = (iconRadius * 2) + this.iconMargin + textSpacing + brandHeight + (this.enableSlogan ? textSpacing + sloganHeight : 0);
+        contentTop = centerY - totalElementsHeight / 2 - 20; // Extra margin
+        contentBottom = centerY + totalElementsHeight / 2 + 20; // Extra margin
+      } else {
+        // Icon beside text - calculate height based on taller element
+        const iconHeight = iconRadius * 2;
+        const textHeight = brandHeight + (this.enableSlogan ? textSpacing + sloganHeight : 0);
+        const totalHeight = Math.max(iconHeight, textHeight);
+        contentTop = centerY - totalHeight / 2 - 20; // Extra margin
+        contentBottom = centerY + totalHeight / 2 + 20; // Extra margin
+      }
+    } else {
+      // No icon - just text
+      const totalTextHeight = brandHeight + (this.enableSlogan ? textSpacing + sloganHeight : 0);
+      contentTop = centerY - totalTextHeight / 2 - 20; // Extra margin
+      contentBottom = centerY + totalTextHeight / 2 + 20; // Extra margin
+    }
+    
     ctx.beginPath();
     
     switch (this.selectedShape.name) {
       case 'Circle':
-        // Ensure circle fits within canvas with proper margins
-        const circleRadius = Math.min(shapeSize / 2, (canvasHeight - 120) / 2, (canvasWidth - 120) / 2);
+        // Enhanced circle calculation to ensure icon containment
+        let circleRadius = shapeSize / 2;
+        
+        // Apply canvas boundary constraints
+        const maxCanvasRadius = Math.min((canvasHeight - 120) / 2, (canvasWidth - 120) / 2);
+        circleRadius = Math.min(circleRadius, maxCanvasRadius);
+        
+        // Ensure minimum radius for icon containment if icon is present
+        if (contentDimensions && contentDimensions.iconSize > 0) {
+          const minRadiusForIcon = (contentDimensions.iconSize + 80) / 2; // Icon + padding
+          circleRadius = Math.max(circleRadius, Math.min(minRadiusForIcon, maxCanvasRadius));
+        }
+        
         ctx.arc(centerX, centerY, circleRadius, 0, 2 * Math.PI);
         break;
         
       case 'Rectangle':
-        // Ensure rectangle fits within canvas with proper margins
-        const rectWidth = Math.min(shapeWidth, canvasWidth - 120);
-        const rectHeight = Math.min(shapeHeight, canvasHeight - 120);
+        // Enhanced rectangle calculation to ensure icon containment
+        let rectWidth = Math.min(shapeWidth, canvasWidth - 120);
+        let rectHeight = Math.min(shapeHeight, canvasHeight - 120);
+        
+        // Ensure minimum dimensions for icon containment if icon is present
+        if (contentDimensions && contentDimensions.iconSize > 0) {
+          const minWidthForIcon = contentDimensions.iconSize + 120; // Icon + generous padding
+          const minHeightForIcon = contentDimensions.iconSize + 120; // Icon + generous padding
+          
+          rectWidth = Math.max(rectWidth, Math.min(minWidthForIcon, canvasWidth - 120));
+          rectHeight = Math.max(rectHeight, Math.min(minHeightForIcon, canvasHeight - 120));
+        }
+        
         if (cornerRadius > 0) {
           this.drawRoundedRect(ctx, centerX - rectWidth/2, centerY - rectHeight/2, rectWidth, rectHeight, cornerRadius);
         } else {
@@ -2294,8 +2375,19 @@ let initalsStyle = '';
         break;
         
       case 'Diamond':
-        // Ensure diamond fits within canvas with proper margins
-        const diamondRadius = Math.min(shapeSize / 2, (canvasHeight - 120) / 2, (canvasWidth - 120) / 2);
+        // Enhanced diamond calculation to ensure icon containment
+        let diamondRadius = shapeSize / 2;
+        
+        // Apply canvas boundary constraints
+        const maxDiamondRadius = Math.min((canvasHeight - 120) / 2, (canvasWidth - 120) / 2);
+        diamondRadius = Math.min(diamondRadius, maxDiamondRadius);
+        
+        // Ensure minimum radius for icon containment if icon is present
+        if (contentDimensions && contentDimensions.iconSize > 0) {
+          const minRadiusForIcon = (contentDimensions.iconSize + 80) / 2; // Icon + padding
+          diamondRadius = Math.max(diamondRadius, Math.min(minRadiusForIcon, maxDiamondRadius));
+        }
+        
         ctx.moveTo(centerX, centerY - diamondRadius);
         ctx.lineTo(centerX + diamondRadius, centerY);
         ctx.lineTo(centerX, centerY + diamondRadius);
@@ -2304,8 +2396,19 @@ let initalsStyle = '';
         break;
         
       case 'Pentagon':
-        // Ensure pentagon fits within canvas with proper margins
-        const pentagonRadius = Math.min(shapeSize / 2, (canvasHeight - 120) / 2, (canvasWidth - 120) / 2);
+        // Enhanced pentagon calculation to ensure icon containment
+        let pentagonRadius = shapeSize / 2;
+        
+        // Apply canvas boundary constraints
+        const maxPentagonRadius = Math.min((canvasHeight - 120) / 2, (canvasWidth - 120) / 2);
+        pentagonRadius = Math.min(pentagonRadius, maxPentagonRadius);
+        
+        // Ensure minimum radius for icon containment if icon is present
+        if (contentDimensions && contentDimensions.iconSize > 0) {
+          const minRadiusForIcon = (contentDimensions.iconSize + 80) / 2; // Icon + padding
+          pentagonRadius = Math.max(pentagonRadius, Math.min(minRadiusForIcon, maxPentagonRadius));
+        }
+        
         for (let i = 0; i < 5; i++) {
           const angle = (i * 2 * Math.PI / 5) - Math.PI / 2;
           const x = centerX + pentagonRadius * Math.cos(angle);
@@ -2317,8 +2420,19 @@ let initalsStyle = '';
         break;
         
       case 'Hexagon':
-        // Ensure hexagon fits within canvas with proper margins
-        const hexRadius = Math.min(shapeSize / 2, (canvasHeight - 120) / 2, (canvasWidth - 120) / 2);
+        // Enhanced hexagon calculation to ensure icon containment
+        let hexRadius = shapeSize / 2;
+        
+        // Apply canvas boundary constraints
+        const maxHexRadius = Math.min((canvasHeight - 120) / 2, (canvasWidth - 120) / 2);
+        hexRadius = Math.min(hexRadius, maxHexRadius);
+        
+        // Ensure minimum radius for icon containment if icon is present
+        if (contentDimensions && contentDimensions.iconSize > 0) {
+          const minRadiusForIcon = (contentDimensions.iconSize + 80) / 2; // Icon + padding
+          hexRadius = Math.max(hexRadius, Math.min(minRadiusForIcon, maxHexRadius));
+        }
+        
         for (let i = 0; i < 6; i++) {
           const angle = i * Math.PI / 3;
           const x = centerX + hexRadius * Math.cos(angle);
@@ -2333,8 +2447,17 @@ let initalsStyle = '';
         // Square border is always stroke, ignore filled setting
         ctx.strokeStyle = this.customColors.shape;
         ctx.lineWidth = this.shapeLineWidth;
-        // Ensure square fits within canvas with proper margins
-        const squareSize = Math.min(shapeWidth, shapeHeight, canvasWidth - 120, canvasHeight - 120);
+        
+        // Enhanced square calculation to ensure icon containment
+        let squareSize = Math.min(shapeWidth, shapeHeight, canvasWidth - 120, canvasHeight - 120);
+        
+        // Ensure minimum size for icon containment if icon is present
+        if (contentDimensions && contentDimensions.iconSize > 0) {
+          const minSizeForIcon = contentDimensions.iconSize + 120; // Icon + generous padding
+          const maxAllowedSize = Math.min(canvasWidth - 120, canvasHeight - 120);
+          squareSize = Math.max(squareSize, Math.min(minSizeForIcon, maxAllowedSize));
+        }
+        
         if (cornerRadius > 0) {
           this.drawRoundedRect(ctx, centerX - squareSize/2, centerY - squareSize/2, squareSize, squareSize, cornerRadius);
         } else {
@@ -2346,15 +2469,26 @@ let initalsStyle = '';
       case 'Top Bottom Lines':
         ctx.strokeStyle = this.customColors.shape;
         ctx.lineWidth = this.shapeLineWidth;
-        // Ensure lines fit within canvas with proper margins
+        
+        // Calculate line width based on content or minimum width
         const lineWidth = Math.min(shapeWidth, canvasWidth - 120);
-        const lineHeight = Math.min(shapeHeight, canvasHeight - 120);
-        // Top line
-        ctx.moveTo(centerX - lineWidth/2, centerY - lineHeight/4);
-        ctx.lineTo(centerX + lineWidth/2, centerY - lineHeight/4);
-        // Bottom line
-        ctx.moveTo(centerX - lineWidth/2, centerY + lineHeight/4);
-        ctx.lineTo(centerX + lineWidth/2, centerY + lineHeight/4);
+        
+        // Position lines relative to actual content bounds
+        // Top line should be above all content (slogan, icon, brand name)
+        const topLineYPos = contentTop - 15; // 15px above content top
+        // Bottom line should be below all content (tagline/slogan)
+        const bottomLineYPos = contentBottom + 15; // 15px below content bottom
+        
+        // Ensure lines don't go outside canvas bounds
+        const safeTopLineYPos = Math.max(50, topLineYPos);
+        const safeBottomLineYPos = Math.min(canvasHeight - 50, bottomLineYPos);
+        
+        // Draw top line
+        ctx.moveTo(centerX - lineWidth/2, safeTopLineYPos);
+        ctx.lineTo(centerX + lineWidth/2, safeTopLineYPos);
+        // Draw bottom line  
+        ctx.moveTo(centerX - lineWidth/2, safeBottomLineYPos);
+        ctx.lineTo(centerX + lineWidth/2, safeBottomLineYPos);
         ctx.stroke();
         return;
         
@@ -2376,11 +2510,25 @@ let initalsStyle = '';
       case 'Bottom Line':
         ctx.strokeStyle = this.customColors.shape;
         ctx.lineWidth = this.shapeLineWidth;
-        // Ensure line fits within canvas with proper margins
-        const bottomLineWidth = Math.min(shapeWidth, canvasWidth - 120);
-        const bottomLineHeight = Math.min(shapeHeight, canvasHeight - 120);
-        ctx.moveTo(centerX - bottomLineWidth/2, centerY + bottomLineHeight/4);
-        ctx.lineTo(centerX + bottomLineWidth/2, centerY + bottomLineHeight/4);
+        
+        // Use shared variables already calculated above
+        let bottomLineContentBottom = centerY;
+        
+        // Use shared content bounds calculation
+        bottomLineContentBottom = contentBottom;
+        
+        // Calculate line width based on content or minimum width
+        const singleBottomLineWidth = Math.min(shapeWidth, canvasWidth - 120);
+        
+        // Position line below all content (at bottom of tagline/slogan)
+        const singleBottomLineY = bottomLineContentBottom + 15; // 15px below content bottom
+        
+        // Ensure line doesn't go outside canvas bounds
+        const safeSingleBottomLineY = Math.min(canvasHeight - 50, singleBottomLineY);
+        
+        // Draw bottom line
+        ctx.moveTo(centerX - singleBottomLineWidth/2, safeSingleBottomLineY);
+        ctx.lineTo(centerX + singleBottomLineWidth/2, safeSingleBottomLineY);
         ctx.stroke();
         return;
         

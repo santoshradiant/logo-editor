@@ -1321,21 +1321,24 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    gap: 8px;
-
+    gap: 10px;
+    button {
+      all: unset;
+      cursor: pointer;
+    }
     .page-btn-inline {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 28px;
-      height: 28px;
-      border: 1px solid #d1d5db;
-      background: #ffffff;
-      color: #6b7280;
-      border-radius: 6px;
+      // width: 28px;
+      // height: 28px;
+      // border: 1px solid #d1d5db;
+      // background: #ffffff;
+      // color: #6b7280;
+      // border-radius: 6px;
       cursor: pointer;
-      transition: all 0.2s ease;
-      font-size: 14px;
+      // transition: all 0.2s ease;
+      // font-size: 14px;
 
       &:hover:not(:disabled) {
         border-color: #059669; // primary-dark-1 as per figma

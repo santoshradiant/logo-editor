@@ -155,10 +155,10 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       // { name: 'Chamge', family: 'Chamge', display: 'Chamge' }
   ];
   
-  // First font selected by default as per figma.md
+  // First font selected by default as per figma.md - Improved sizing ranges
   selectedFont: string = 'DM Serif Display';
-  fontSize: number = 48;
-  letterSpacing: number = 0;
+  fontSize: number = 56; // Better default size
+  letterSpacing: number = 0; // Better default spacing
   lineHeight: number = 1.2;
   isMultiline: boolean = false;
   
@@ -185,15 +185,15 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   isUploadingFont: boolean = false;
   showSloganCustomFontDropdown: boolean = false;
 
-  // Slogan section
+  // Slogan section - Improved defaults
   sloganText: string = 'CUSTOM DESIGNER TOYS';
   textAlignment: 'left' | 'center' | 'right' | 'left-fill' | 'center-fill' | 'right-fill' = 'center';
   
-  // Slogan-specific properties
+  // Slogan-specific properties - Better sizing ranges
   enableSlogan: boolean = true; // Toggle for "Custom Designer Toys"
   sloganFont: string = 'Arial';
-  sloganFontSize: number = 16;
-  sloganLetterSpacing: number = 0;
+  sloganFontSize: number = 18; // Better default size
+  sloganLetterSpacing: number = 0; // Better default spacing
   sloganLineHeight: number = 1.2;
   sloganIsBold: boolean = false;
   initialsIsBold: boolean = false;
@@ -202,28 +202,31 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   sloganIsMultiline: boolean = false;
   sloganLineCount: number = 1;
 
-  // Icons section
+  // Icon section - Improved sizing ranges
   availableIcons: Array<{ name: string; url: string }> = [
+    { name: 'Building', url: 'assets/icons/building.svg' },
     { name: 'Star', url: 'assets/icons/star.svg' },
     { name: 'Heart', url: 'assets/icons/heart.svg' },
-    { name: 'Shield', url: 'assets/icons/shield.svg' },
-    { name: 'Crown', url: 'assets/icons/crown.svg' },
+    { name: 'Circle', url: 'assets/icons/circle.svg' },
+    { name: 'Square', url: 'assets/icons/square.svg' },
+    { name: 'Triangle', url: 'assets/icons/triangle.svg' },
     { name: 'Diamond', url: 'assets/icons/diamond.svg' },
-    { name: 'Lightning', url: 'assets/icons/lightning.svg' },
-    { name: 'Leaf', url: 'assets/icons/leaf.svg' },
-    { name: 'Globe', url: 'assets/icons/globe.svg' }
+    { name: 'Arrow', url: 'assets/icons/arrow.svg' },
+    { name: 'Shield', url: 'assets/icons/shield.svg' },
+    { name: 'Leaf', url: 'assets/icons/leaf.svg' }
   ];
+  
   selectedIcon: NounIconItem | null = null;
-  iconSize: number = 48;
+  iconSize: number = 80; // Better default size (reduced from 200-520 to 40-160 range)
   iconRotation: number = 0;
   availableNounIcons: NounIconItem[] = [];
   
-  // New icon properties for matching the screenshot design
+  // Icon controls - Improved spacing
   showLogoIcon: boolean = true;
   activeIconType: 'symbol' | 'initials' = 'symbol';
   iconSearchTerm: string = '';
   userInitials: string = '';
-  iconMargin: number = 20;
+  iconMargin: number = 16; // Better default margin (will use 8-40 range)
   iconBackground: boolean = false;
   backgroundType: 'fill' | 'border' = 'fill';
   backgroundCorners: 'none' | 'rounded' | 'circle' = 'none';
@@ -1659,11 +1662,6 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw shape frame (if enabled and selected) - Enhanced per figma-shape.md
-    if (this.shapeEnabled && this.selectedShape) {
-      this.drawShapeFrame(ctx, canvas.width, canvas.height);
-    }
-
     // Calculate text dimensions first to determine overall layout
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
@@ -1691,14 +1689,21 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       maxTextWidth = Math.max(maxTextWidth, sloganTextWidth);
     }
 
-    // Calculate element dimensions and layout
+    // Calculate element dimensions and layout with dynamic spacing
     const iconRadius = this.iconSize / 2;
-    const iconSpacing = 60; // Spacing between icon and text
-    const textSpacing = 50; // Spacing between brand name and slogan
     
-    // Calculate text heights (approximated)
-    const brandHeight = this.isMultiline ? this.fontSize * 1.5 : this.fontSize;
-    const sloganHeight = this.sloganIsMultiline ? this.sloganFontSize * 1.5 : this.sloganFontSize;
+    // Dynamic spacing calculations based on element sizes and canvas grid
+    const canvasGrid = 24; // 24px grid system for alignment
+    const baseSpacing = Math.max(canvasGrid, this.iconSize * 0.3); // Minimum spacing based on icon size
+    const iconSpacing = Math.ceil(baseSpacing / canvasGrid) * canvasGrid; // Snap to grid
+    
+    // Text spacing should be proportional to font sizes
+    const fontSizeRatio = this.sloganFontSize / this.fontSize;
+    const textSpacing = Math.max(32, Math.ceil((this.fontSize * 0.8 + this.sloganFontSize * 0.4) / canvasGrid) * canvasGrid);
+    
+    // Calculate text heights with proper line height consideration
+    const brandHeight = this.isMultiline ? this.fontSize * this.lineHeight * 1.2 : this.fontSize;
+    const sloganHeight = this.sloganIsMultiline ? this.sloganFontSize * this.sloganLineHeight * 1.2 : this.sloganFontSize;
     
     // Initialize positions
     let iconX = centerX;
@@ -1706,76 +1711,114 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     let brandY = centerY;
     let sloganY = centerY + textSpacing;
 
-    // Calculate layout based on icon alignment
+    // Calculate layout based on icon alignment with improved spacing
     if (this.showLogoIcon && (this.selectedIcon || this.userInitials)) {
       
       if (this.iconAlignment === 'left') {
-        // Icon on the left side
-        iconX = iconRadius + 60; // 60px margin from left edge
+        // Icon on the left side with grid-aligned positioning
+        const leftMargin = Math.ceil(48 / canvasGrid) * canvasGrid; // 48px minimum margin snapped to grid
+        iconX = leftMargin + iconRadius;
         iconY = centerY;
         
-        // Position text to the right of icon
-        const textStartX = iconX + iconRadius + iconSpacing;
-        brandY = centerY - (textSpacing / 2);
-        sloganY = brandY + textSpacing;
+        // Position text to the right of icon with proper spacing including icon margin
+        const textStartX = iconX + iconRadius + iconSpacing + this.iconMargin;
         
-        // Ensure text doesn't go off canvas
-        if (textStartX + maxTextWidth > canvas.width - 30) {
-          iconX = Math.max(iconRadius + 30, canvas.width - maxTextWidth - iconRadius - iconSpacing - 60);
+        // Calculate if text will fit, adjust icon position if needed
+        const availableTextWidth = canvas.width - textStartX - leftMargin;
+        if (maxTextWidth > availableTextWidth) {
+          // Recalculate icon position to accommodate text with proper margin
+          iconX = Math.max(leftMargin + iconRadius, canvas.width - leftMargin - maxTextWidth - iconRadius - iconSpacing - (this.iconMargin * 2));
+        }
+        
+        // Vertically center text relative to icon when both elements are present
+        if (this.enableSlogan && this.sloganText) {
+          const totalTextHeight = brandHeight + textSpacing + sloganHeight;
+          brandY = centerY - (totalTextHeight / 2) + (brandHeight / 2);
+          sloganY = brandY + textSpacing;
+        } else {
+          brandY = centerY;
         }
         
       } else if (this.iconAlignment === 'right') {
-        // Icon on the right side
-        iconX = canvas.width - iconRadius - 60; // 60px margin from right edge
+        // Icon on the right side with grid-aligned positioning
+        const rightMargin = Math.ceil(48 / canvasGrid) * canvasGrid; // 48px minimum margin snapped to grid
+        iconX = canvas.width - rightMargin - iconRadius;
         iconY = centerY;
         
-        // Position text to the left of icon
-        const textEndX = iconX - iconRadius - iconSpacing;
-        brandY = centerY - (textSpacing / 2);
-        sloganY = brandY + textSpacing;
+        // Position text to the left of icon with proper spacing including icon margin
+        const textEndX = iconX - iconRadius - iconSpacing - this.iconMargin;
         
-        // Ensure text doesn't go off canvas
-        if (textEndX - maxTextWidth < 30) {
-          iconX = Math.min(canvas.width - iconRadius - 30, maxTextWidth + iconRadius + iconSpacing + 60);
+        // Calculate if text will fit, adjust icon position if needed
+        if (textEndX - maxTextWidth < rightMargin) {
+          // Recalculate icon position to accommodate text with proper margin
+          iconX = Math.min(canvas.width - rightMargin - iconRadius, rightMargin + maxTextWidth + iconRadius + iconSpacing + (this.iconMargin * 2));
+        }
+        
+        // Vertically center text relative to icon when both elements are present
+        if (this.enableSlogan && this.sloganText) {
+          const totalTextHeight = brandHeight + textSpacing + sloganHeight;
+          brandY = centerY - (totalTextHeight / 2) + (brandHeight / 2);
+          sloganY = brandY + textSpacing;
+        } else {
+          brandY = centerY;
         }
         
       } else {
-        // Center alignment - icon above text
+        // Center alignment - icon above text with improved vertical spacing
         iconX = centerX;
         
-        // Calculate total height needed
-        const totalHeight = (iconRadius * 2) + iconSpacing + brandHeight + textSpacing + sloganHeight;
+        // Calculate total height needed with proper margins
+        const topMargin = Math.ceil(40 / canvasGrid) * canvasGrid;
+        const bottomMargin = topMargin;
+        const availableHeight = canvas.height - topMargin - bottomMargin;
         
-        // Position icon and text to fit within canvas
-        const startY = Math.max(iconRadius + 40, centerY - totalHeight / 2);
+        const totalElementsHeight = (iconRadius * 2) + this.iconMargin + iconSpacing + brandHeight + textSpacing + sloganHeight;
         
-        iconY = startY + iconRadius;
-        brandY = iconY + iconRadius + iconSpacing;
-        sloganY = brandY + textSpacing;
-        
-        // Ensure everything fits within canvas bounds
-        if (sloganY + sloganHeight > canvas.height - 40) {
-          // Compress spacing if needed
-          const availableHeight = canvas.height - 80;
-          const compressedSpacing = Math.max(30, iconSpacing * 0.7);
-          const compressedTextSpacing = Math.max(35, textSpacing * 0.7);
+        if (totalElementsHeight <= availableHeight) {
+          // All elements fit comfortably
+          const startY = topMargin + Math.max(0, (availableHeight - totalElementsHeight) / 2);
+          iconY = startY + iconRadius;
+          brandY = iconY + iconRadius + this.iconMargin + iconSpacing;
+          sloganY = brandY + textSpacing;
+        } else {
+          // Compress spacing proportionally to fit
+          const compressionRatio = availableHeight / totalElementsHeight;
+          const compressedIconSpacing = Math.max(canvasGrid, iconSpacing * compressionRatio);
+          const compressedTextSpacing = Math.max(canvasGrid, textSpacing * compressionRatio);
           
-          iconY = 40 + iconRadius;
-          brandY = iconY + iconRadius + compressedSpacing;
+          iconY = topMargin + iconRadius;
+          brandY = iconY + iconRadius + this.iconMargin + compressedIconSpacing;
           sloganY = brandY + compressedTextSpacing;
         }
       }
     } else {
-      // No icon - center the text
+      // No icon - center the text with proper vertical spacing
       if (this.enableSlogan && this.sloganText) {
-        // Both brand name and slogan
+        // Both brand name and slogan - center the group
         const totalTextHeight = brandHeight + textSpacing + sloganHeight;
-        brandY = centerY - (totalTextHeight / 2) + (brandHeight / 2);
+        const startY = centerY - (totalTextHeight / 2);
+        brandY = startY + (brandHeight / 2);
         sloganY = brandY + textSpacing;
       } else {
-        // Only brand name
+        // Only brand name - center it
         brandY = centerY;
       }
+    }
+
+    // Draw shape frame (if enabled and selected) - Enhanced per figma-shape.md
+    // Position after all variables are calculated to avoid linter errors
+    if (this.shapeEnabled && this.selectedShape) {
+      // Calculate content dimensions for dynamic shape sizing
+      const contentDimensions = {
+        maxTextWidth,
+        iconSize: this.showLogoIcon ? this.iconSize : 0,
+        iconSpacing: this.showLogoIcon ? iconSpacing : 0,
+        iconMargin: this.showLogoIcon ? this.iconMargin : 0,
+        textSpacing,
+        brandHeight,
+        sloganHeight: this.enableSlogan ? sloganHeight : 0
+      };
+      this.drawShapeFrame(ctx, canvas.width, canvas.height, contentDimensions);
     }
 
     // Draw selected icon or initials (if enabled)
@@ -1849,12 +1892,12 @@ let initalsStyle = '';
       // Adjust text position based on icon alignment to prevent overlapping
       if (this.showLogoIcon && (this.selectedIcon || this.userInitials)) {
         if (this.iconAlignment === 'left') {
-          // Text positioned to the right of icon - force left alignment
-          x = iconX + iconRadius + iconSpacing;
+          // Text positioned to the right of icon - force left alignment with proper margin
+          x = iconX + iconRadius + iconSpacing + this.iconMargin;
           ctx.textAlign = 'left';
         } else if (this.iconAlignment === 'right') {
-          // Text positioned to the left of icon - force right alignment
-          x = iconX - iconRadius - iconSpacing;
+          // Text positioned to the left of icon - force right alignment with proper margin
+          x = iconX - iconRadius - iconSpacing - this.iconMargin;
           ctx.textAlign = 'right';
         } else {
           // Center alignment - keep text centered below icon
@@ -1893,12 +1936,12 @@ let initalsStyle = '';
       // Adjust text position based on icon alignment to prevent overlapping
       if (this.showLogoIcon && (this.selectedIcon || this.userInitials)) {
         if (this.iconAlignment === 'left') {
-          // Text positioned to the right of icon - force left alignment
-          x = iconX + iconRadius + iconSpacing;
+          // Text positioned to the right of icon - force left alignment with proper margin
+          x = iconX + iconRadius + iconSpacing + this.iconMargin;
           ctx.textAlign = 'left';
         } else if (this.iconAlignment === 'right') {
-          // Text positioned to the left of icon - force right alignment
-          x = iconX - iconRadius - iconSpacing;
+          // Text positioned to the left of icon - force right alignment with proper margin
+          x = iconX - iconRadius - iconSpacing - this.iconMargin;
           ctx.textAlign = 'right';
         } else {
           // Center alignment - keep text centered below icon
@@ -1968,12 +2011,58 @@ let initalsStyle = '';
   }
 
   // Enhanced shape drawing method per figma-shape.md requirements
-  private drawShapeFrame(ctx: CanvasRenderingContext2D, canvasWidth: number, canvasHeight: number): void {
+  private drawShapeFrame(ctx: CanvasRenderingContext2D, canvasWidth: number, canvasHeight: number, contentDimensions?: any): void {
     if (!this.selectedShape) return;
 
     const centerX = canvasWidth / 2;
     const centerY = canvasHeight / 2;
-    const shapeSize = 200; // Base size for shapes
+    
+    // Calculate dynamic shape size based on content dimensions
+    let shapeWidth = canvasWidth * 0.6; // Reasonable default
+    let shapeHeight = canvasHeight * 0.6; // Reasonable default
+    
+    if (contentDimensions) {
+      // Calculate content-aware dimensions with proper padding
+      const padding = 40; // Base padding around content
+      const edgeMargin = 100; // Larger margin from canvas edges to prevent clipping
+      const contentMultiplier = 1.4; // 40% larger than content for good visual balance
+      
+      // Calculate total content width (icon + spacing + text)
+      const totalContentWidth = contentDimensions.iconSize + 
+                               (contentDimensions.iconSize > 0 ? contentDimensions.iconSpacing + contentDimensions.iconMargin * 2 : 0) + 
+                               contentDimensions.maxTextWidth;
+      
+      // Calculate total content height (icon or text + spacing)
+      const totalContentHeight = Math.max(
+        contentDimensions.iconSize,
+        contentDimensions.brandHeight + (contentDimensions.sloganHeight > 0 ? contentDimensions.textSpacing + contentDimensions.sloganHeight : 0)
+      );
+      
+      // Calculate desired shape dimensions
+      const desiredWidth = (totalContentWidth + padding * 2) * contentMultiplier;
+      const desiredHeight = (totalContentHeight + padding * 2) * contentMultiplier;
+      
+      // Calculate maximum allowed dimensions (canvas size minus edge margins)
+      const maxAllowedWidth = canvasWidth - (edgeMargin * 2);
+      const maxAllowedHeight = canvasHeight - (edgeMargin * 2);
+      
+      // Ensure shape doesn't exceed canvas boundaries
+      shapeWidth = Math.min(desiredWidth, maxAllowedWidth);
+      shapeHeight = Math.min(desiredHeight, maxAllowedHeight);
+      
+      // Ensure minimum size for visibility
+      const minWidth = Math.min(totalContentWidth + padding, maxAllowedWidth);
+      const minHeight = Math.min(totalContentHeight + padding, maxAllowedHeight);
+      
+      shapeWidth = Math.max(shapeWidth, minWidth);
+      shapeHeight = Math.max(shapeHeight, minHeight);
+    }
+    
+    // For uniform shapes (circle, square, etc.), use appropriate dimension
+    const shapeSize = this.selectedShape.name === 'Circle' || this.selectedShape.name === 'Diamond' || 
+                     this.selectedShape.name === 'Pentagon' || this.selectedShape.name === 'Hexagon' || 
+                     this.selectedShape.name === 'Square Border' ? 
+                     Math.min(shapeWidth, shapeHeight) : Math.max(shapeWidth, shapeHeight);
     
     // Set shape styling
     if (this.shapeFilled) {
@@ -1993,27 +2082,35 @@ let initalsStyle = '';
     
     switch (this.selectedShape.name) {
       case 'Circle':
-        ctx.arc(centerX, centerY, shapeSize / 2, 0, 2 * Math.PI);
+        // Ensure circle fits within canvas with proper margins
+        const circleRadius = Math.min(shapeSize / 2, (canvasHeight - 120) / 2, (canvasWidth - 120) / 2);
+        ctx.arc(centerX, centerY, circleRadius, 0, 2 * Math.PI);
         break;
         
       case 'Rectangle':
+        // Ensure rectangle fits within canvas with proper margins
+        const rectWidth = Math.min(shapeWidth, canvasWidth - 120);
+        const rectHeight = Math.min(shapeHeight, canvasHeight - 120);
         if (cornerRadius > 0) {
-          this.drawRoundedRect(ctx, centerX - shapeSize/2, centerY - shapeSize/3, shapeSize, shapeSize * 2/3, cornerRadius);
+          this.drawRoundedRect(ctx, centerX - rectWidth/2, centerY - rectHeight/2, rectWidth, rectHeight, cornerRadius);
         } else {
-          ctx.rect(centerX - shapeSize/2, centerY - shapeSize/3, shapeSize, shapeSize * 2/3);
+          ctx.rect(centerX - rectWidth/2, centerY - rectHeight/2, rectWidth, rectHeight);
         }
         break;
         
       case 'Diamond':
-        ctx.moveTo(centerX, centerY - shapeSize/2);
-        ctx.lineTo(centerX + shapeSize/2, centerY);
-        ctx.lineTo(centerX, centerY + shapeSize/2);
-        ctx.lineTo(centerX - shapeSize/2, centerY);
+        // Ensure diamond fits within canvas with proper margins
+        const diamondRadius = Math.min(shapeSize / 2, (canvasHeight - 120) / 2, (canvasWidth - 120) / 2);
+        ctx.moveTo(centerX, centerY - diamondRadius);
+        ctx.lineTo(centerX + diamondRadius, centerY);
+        ctx.lineTo(centerX, centerY + diamondRadius);
+        ctx.lineTo(centerX - diamondRadius, centerY);
         ctx.closePath();
         break;
         
       case 'Pentagon':
-        const pentagonRadius = shapeSize / 2;
+        // Ensure pentagon fits within canvas with proper margins
+        const pentagonRadius = Math.min(shapeSize / 2, (canvasHeight - 120) / 2, (canvasWidth - 120) / 2);
         for (let i = 0; i < 5; i++) {
           const angle = (i * 2 * Math.PI / 5) - Math.PI / 2;
           const x = centerX + pentagonRadius * Math.cos(angle);
@@ -2025,7 +2122,8 @@ let initalsStyle = '';
         break;
         
       case 'Hexagon':
-        const hexRadius = shapeSize / 2;
+        // Ensure hexagon fits within canvas with proper margins
+        const hexRadius = Math.min(shapeSize / 2, (canvasHeight - 120) / 2, (canvasWidth - 120) / 2);
         for (let i = 0; i < 6; i++) {
           const angle = i * Math.PI / 3;
           const x = centerX + hexRadius * Math.cos(angle);
@@ -2040,10 +2138,12 @@ let initalsStyle = '';
         // Square border is always stroke, ignore filled setting
         ctx.strokeStyle = this.customColors.shape;
         ctx.lineWidth = this.shapeLineWidth;
+        // Ensure square fits within canvas with proper margins
+        const squareSize = Math.min(shapeWidth, shapeHeight, canvasWidth - 120, canvasHeight - 120);
         if (cornerRadius > 0) {
-          this.drawRoundedRect(ctx, centerX - shapeSize/2, centerY - shapeSize/2, shapeSize, shapeSize, cornerRadius);
+          this.drawRoundedRect(ctx, centerX - squareSize/2, centerY - squareSize/2, squareSize, squareSize, cornerRadius);
         } else {
-          ctx.rect(centerX - shapeSize/2, centerY - shapeSize/2, shapeSize, shapeSize);
+          ctx.rect(centerX - squareSize/2, centerY - squareSize/2, squareSize, squareSize);
         }
         ctx.stroke();
         return; // Skip the fill/stroke logic below
@@ -2051,21 +2151,27 @@ let initalsStyle = '';
       case 'Top Bottom Lines':
         ctx.strokeStyle = this.customColors.shape;
         ctx.lineWidth = this.shapeLineWidth;
+        // Ensure lines fit within canvas with proper margins
+        const lineWidth = Math.min(shapeWidth, canvasWidth - 120);
+        const lineHeight = Math.min(shapeHeight, canvasHeight - 120);
         // Top line
-        ctx.moveTo(centerX - shapeSize/2, centerY - shapeSize/4);
-        ctx.lineTo(centerX + shapeSize/2, centerY - shapeSize/4);
+        ctx.moveTo(centerX - lineWidth/2, centerY - lineHeight/4);
+        ctx.lineTo(centerX + lineWidth/2, centerY - lineHeight/4);
         // Bottom line
-        ctx.moveTo(centerX - shapeSize/2, centerY + shapeSize/4);
-        ctx.lineTo(centerX + shapeSize/2, centerY + shapeSize/4);
+        ctx.moveTo(centerX - lineWidth/2, centerY + lineHeight/4);
+        ctx.lineTo(centerX + lineWidth/2, centerY + lineHeight/4);
         ctx.stroke();
         return;
         
       case 'Left Right Lines':
         ctx.strokeStyle = this.customColors.shape;
         ctx.lineWidth = this.shapeLineWidth;
+        // Ensure lines fit within canvas with proper margins
+        const lrLineWidth = Math.min(shapeWidth, canvasWidth - 120);
+        const lrLineHeight = Math.min(shapeHeight, canvasHeight - 120);
         // Left line
-        ctx.moveTo(centerX - shapeSize/2, centerY - shapeSize/3);
-        ctx.lineTo(centerX - shapeSize/2, centerY + shapeSize/3);
+        ctx.moveTo(centerX - lrLineWidth/2, centerY - lrLineHeight/3);
+        ctx.lineTo(centerX - lrLineWidth/2, centerY + lrLineHeight/3);
         // Right line
         ctx.moveTo(centerX + shapeSize/2, centerY - shapeSize/3);
         ctx.lineTo(centerX + shapeSize/2, centerY + shapeSize/3);
@@ -2075,36 +2181,45 @@ let initalsStyle = '';
       case 'Bottom Line':
         ctx.strokeStyle = this.customColors.shape;
         ctx.lineWidth = this.shapeLineWidth;
-        ctx.moveTo(centerX - shapeSize/2, centerY + shapeSize/4);
-        ctx.lineTo(centerX + shapeSize/2, centerY + shapeSize/4);
+        // Ensure line fits within canvas with proper margins
+        const bottomLineWidth = Math.min(shapeWidth, canvasWidth - 120);
+        const bottomLineHeight = Math.min(shapeHeight, canvasHeight - 120);
+        ctx.moveTo(centerX - bottomLineWidth/2, centerY + bottomLineHeight/4);
+        ctx.lineTo(centerX + bottomLineWidth/2, centerY + bottomLineHeight/4);
         ctx.stroke();
         return;
         
       case 'Corner Lines Left Top':
         ctx.strokeStyle = this.customColors.shape;
         ctx.lineWidth = this.shapeLineWidth;
+        // Ensure corner lines fit within canvas with proper margins
+        const cornerLTWidth = Math.min(shapeWidth, canvasWidth - 120);
+        const cornerLTHeight = Math.min(shapeHeight, canvasHeight - 120);
         // Top left corner
-        ctx.moveTo(centerX - shapeSize/2, centerY - shapeSize/3);
-        ctx.lineTo(centerX - shapeSize/2, centerY - shapeSize/2);
-        ctx.lineTo(centerX - shapeSize/3, centerY - shapeSize/2);
+        ctx.moveTo(centerX - cornerLTWidth/2, centerY - cornerLTHeight/3);
+        ctx.lineTo(centerX - cornerLTWidth/2, centerY - cornerLTHeight/2);
+        ctx.lineTo(centerX - cornerLTWidth/3, centerY - cornerLTHeight/2);
         // Bottom right corner
-        ctx.moveTo(centerX + shapeSize/3, centerY + shapeSize/2);
-        ctx.lineTo(centerX + shapeSize/2, centerY + shapeSize/2);
-        ctx.lineTo(centerX + shapeSize/2, centerY + shapeSize/3);
+        ctx.moveTo(centerX + cornerLTWidth/3, centerY + cornerLTHeight/2);
+        ctx.lineTo(centerX + cornerLTWidth/2, centerY + cornerLTHeight/2);
+        ctx.lineTo(centerX + cornerLTWidth/2, centerY + cornerLTHeight/3);
         ctx.stroke();
         return;
         
       case 'Corner Lines Right Bottom':
         ctx.strokeStyle = this.customColors.shape;
         ctx.lineWidth = this.shapeLineWidth;
+        // Ensure corner lines fit within canvas with proper margins
+        const cornerRBWidth = Math.min(shapeWidth, canvasWidth - 120);
+        const cornerRBHeight = Math.min(shapeHeight, canvasHeight - 120);
         // Top right corner
-        ctx.moveTo(centerX + shapeSize/3, centerY - shapeSize/2);
-        ctx.lineTo(centerX + shapeSize/2, centerY - shapeSize/2);
-        ctx.lineTo(centerX + shapeSize/2, centerY - shapeSize/3);
+        ctx.moveTo(centerX + cornerRBWidth/3, centerY - cornerRBHeight/2);
+        ctx.lineTo(centerX + cornerRBWidth/2, centerY - cornerRBHeight/2);
+        ctx.lineTo(centerX + cornerRBWidth/2, centerY - cornerRBHeight/3);
         // Bottom left corner
-        ctx.moveTo(centerX - shapeSize/2, centerY + shapeSize/3);
-        ctx.lineTo(centerX - shapeSize/2, centerY + shapeSize/2);
-        ctx.lineTo(centerX - shapeSize/3, centerY + shapeSize/2);
+        ctx.moveTo(centerX - cornerRBWidth/2, centerY + cornerRBHeight/3);
+        ctx.lineTo(centerX - cornerRBWidth/2, centerY + cornerRBHeight/2);
+        ctx.lineTo(centerX - cornerRBWidth/3, centerY + cornerRBHeight/2);
         ctx.stroke();
         return;
     }

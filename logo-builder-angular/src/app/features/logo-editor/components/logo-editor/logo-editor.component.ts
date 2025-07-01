@@ -2613,9 +2613,10 @@ let initalsStyle = '';
               // Save the current context state
               ctx.save();
               
-              // Create a clip path for the icon area to contain any overflow
+              // Create a rectangular clip path for the icon area to contain any overflow
+              // This allows full icon display without circular masking
               ctx.beginPath();
-              ctx.arc(x, y, size / 2, 0, 2 * Math.PI);
+              ctx.rect(drawX, drawY, size, size);
               ctx.clip();
               
               // Draw the image

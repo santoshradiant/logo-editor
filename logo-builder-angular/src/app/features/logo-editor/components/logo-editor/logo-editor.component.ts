@@ -200,7 +200,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   initialsIsItalic: boolean= false;
   sloganIsItalic: boolean = false;
   sloganIsMultiline: boolean = false;
-  sloganLineCount: number = 2;
+  sloganLineCount: number = 1;
 
   // Icon section - Improved sizing ranges
   availableIcons: Array<{ name: string; url: string }> = [

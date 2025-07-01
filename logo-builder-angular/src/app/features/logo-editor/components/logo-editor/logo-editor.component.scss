@@ -1359,6 +1359,8 @@
     button {
       all: unset;
       cursor: pointer;
+      user-select: auto;
+      pointer-events: auto;
     }
     .page-btn-inline {
       display: flex;
@@ -2594,37 +2596,36 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 24px;
+    padding: 16px 24px 16px 40px;
     background: var(--ns-default-background); ;
 
     .preview-actions {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 24px;
 
       .action-btn {
+        all: unset;
+        width: 40px;
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 40px;
-        height: 40px;
-        border-radius: 8px;
+        // width: 40px;
+        // height: 40px;
+        // border-radius: 8px;
         cursor: pointer;
-        transition: all 0.15s ease;
+        // transition: all 0.15s ease;
         color: #6b7280;
-
-        svg {
-          width: 16px;
-          height: 16px;
-        }
+        user-select: auto;
+        pointer-events: auto;
 
         &.secondary {
-          border: 1px solid var(--ns-default-background); ;
-          background: var(--ns-default-background); ;
+          // border: 1px solid var(--ns-default-background);
+          // background: var(--ns-default-background);
 
           &:hover:not(:disabled) {
-            border-color: var(--ns-primary-background);
-            background: var(--ns-default-background); ;
+            // border-color: var(--ns-primary-background);
+            background: var(--ns-default-background);
             color: var(--ns-primary-background);
           }
 

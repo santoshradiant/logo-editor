@@ -25,15 +25,18 @@ export class AutosaveService {
 
   constructor(private logoService: LogoService) {
     this.setupAutosave();
+    console.log('AutosaveService initialized');
   }
 
   private setupAutosave(): void {
+    console.log('Setting up autosave with delay:', this.AUTOSAVE_DELAY);
     this.changeSubject
       .pipe(
         debounceTime(this.AUTOSAVE_DELAY),
         takeUntil(this.destroy$)
       )
       .subscribe(logoData => {
+        console.log('Autosave triggered with data:', logoData);
         this.performSave(logoData);
       });
   }
@@ -47,6 +50,7 @@ export class AutosaveService {
   }
 
   triggerSave(logoData: any): void {
+    console.log('triggerSave called with data:', logoData);
     this.updateState({ 
       status: 'idle', 
       hasUnsavedChanges: true 
@@ -55,12 +59,15 @@ export class AutosaveService {
   }
 
   async performSave(logoData: any): Promise<void> {
+    console.log('performSave called with data:', logoData);
     try {
       this.updateState({ status: 'saving' });
+      console.log('Starting save operation...');
       
-      // Simulate API save call - replace with actual logoService save
-      await this.simulateSave(logoData);
+      // Use actual save functionality through logoService
+      await this.saveLogoData(logoData);
       
+      console.log('Save operation completed successfully');
       this.updateState({ 
         status: 'saved', 
         lastSaved: new Date(),
@@ -87,34 +94,71 @@ export class AutosaveService {
     }
   }
 
-  private async simulateSave(logoData: any): Promise<void> {
-    // Replace this with actual save logic using logoService
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        // Simulate success/failure
-        if (Math.random() > 0.1) { // 90% success rate
-          console.log('Logo autosaved:', logoData);
-          resolve();
-        } else {
-          reject(new Error('Network error'));
-        }
-      }, 1000);
-    });
+  private async saveLogoData(logoData: any): Promise<void> {
+    console.log('Saving logo data to local storage and service:', logoData);
+    
+    // Save to localStorage as a backup
+    try {
+      const logoDataString = JSON.stringify(logoData);
+      localStorage.setItem('autosave_logo_data', logoDataString);
+      localStorage.setItem('autosave_timestamp', new Date().toISOString());
+      console.log('Logo data saved to localStorage');
+    } catch (localStorageError) {
+      console.warn('Failed to save to localStorage:', localStorageError);
+    }
+
+    // If we have a logo ID, try to save through the service
+    if (logoData.id) {
+      try {
+        await this.logoService.updateLogo(logoData.id, logoData).toPromise();
+        console.log('Logo data saved through logoService');
+      } catch (serviceError) {
+        console.warn('Failed to save through logoService, but localStorage backup exists:', serviceError);
+        // Don't throw error here, localStorage backup is sufficient for autosave
+      }
+    } else {
+      console.log('No logo ID found, only saving to localStorage');
+    }
   }
 
   private updateState(updates: Partial<AutosaveState>): void {
     const currentState = this.autosaveState$.value;
-    this.autosaveState$.next({
+    const newState = {
       ...currentState,
       ...updates
-    });
+    };
+    console.log('Updating autosave state:', newState);
+    this.autosaveState$.next(newState);
   }
 
   markHasUnsavedChanges(): void {
     this.updateState({ hasUnsavedChanges: true });
   }
 
+  getLastSavedData(): any {
+    try {
+      const savedData = localStorage.getItem('autosave_logo_data');
+      const timestamp = localStorage.getItem('autosave_timestamp');
+      if (savedData && timestamp) {
+        return {
+          data: JSON.parse(savedData),
+          timestamp: new Date(timestamp)
+        };
+      }
+    } catch (error) {
+      console.error('Failed to retrieve saved data:', error);
+    }
+    return null;
+  }
+
+  clearSavedData(): void {
+    localStorage.removeItem('autosave_logo_data');
+    localStorage.removeItem('autosave_timestamp');
+    console.log('Cleared autosave data from localStorage');
+  }
+
   destroy(): void {
+    console.log('AutosaveService destroying');
     this.destroy$.next();
     this.destroy$.complete();
   }

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core'
+import { Component, Input, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { Observable, Subscription } from 'rxjs'
 import { AutosaveService, AutosaveState } from '../../../../core/services/autosave.service'
@@ -21,15 +21,23 @@ export class CloudSaveStatusComponent implements OnInit, OnDestroy {
 
   private subscription?: Subscription
 
-  constructor(private autosaveService: AutosaveService) {}
+  constructor(
+    private autosaveService: AutosaveService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
+    console.log('CloudSaveStatusComponent initialized');
     this.subscription = this.autosaveService.getAutosaveState().subscribe((state) => {
+      console.log('CloudSaveStatusComponent received state update:', state);
       this.autosaveState = state
+      // Force change detection to ensure UI updates
+      this.cdr.detectChanges();
     })
   }
 
   ngOnDestroy(): void {
+    console.log('CloudSaveStatusComponent destroying');
     if (this.subscription) {
       this.subscription.unsubscribe()
     }
@@ -53,6 +61,24 @@ export class CloudSaveStatusComponent implements OnInit, OnDestroy {
       case 'idle':
       default:
         return this.autosaveState.hasUnsavedChanges ? 'Unsaved changes' : 'All changes saved'
+    }
+  }
+
+  getStatusClass(): string {
+    return `status-${this.autosaveState.status}`;
+  }
+
+  getStatusText(): string {
+    switch (this.autosaveState.status) {
+      case 'saving':
+        return 'Saving...'
+      case 'saved':
+        return 'Saved'
+      case 'error':
+        return 'Save failed'
+      case 'idle':
+      default:
+        return this.autosaveState.hasUnsavedChanges ? 'Unsaved changes' : 'All saved'
     }
   }
 }

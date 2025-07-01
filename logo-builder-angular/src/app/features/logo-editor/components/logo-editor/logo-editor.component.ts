@@ -1358,7 +1358,14 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
 
   private triggerAutosave(): void {
     const logoData = this.getLogoData();
+    console.log('LogoEditorComponent: triggerAutosave called with data:', logoData);
+    console.log('LogoEditorComponent: Autosave service state before trigger:', this.autosaveService.getCurrentState());
     this.autosaveService.triggerSave(logoData);
+    
+    // Log state after trigger
+    setTimeout(() => {
+      console.log('LogoEditorComponent: Autosave service state after trigger:', this.autosaveService.getCurrentState());
+    }, 100);
   }
 
   // Enhanced download functionality with multiple formats
@@ -3361,7 +3368,11 @@ let initalsStyle = '';
   }
 
   private getLogoData(): any {
+    // Get logo ID from route or current logo
+    const logoId = this.route.snapshot.paramMap.get('id') || (this.logo?.id);
+    
     return {
+      id: logoId,
       brandName: this.brandName,
       selectedFont: this.selectedFont,
       fontSize: this.fontSize,

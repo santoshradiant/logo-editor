@@ -384,11 +384,20 @@ export class LogoEditorContainerComponent implements OnInit, OnDestroy, LogoEdit
   }
 
   private setupAutosave(): void {
-    this.autosaveService.initialize(
-      () => this.buildLogoData(),
-      (data) => this.saveChanges(),
-      this.destroy$
-    );
+    // Set up autosave to trigger when logo data changes
+    // The autosave service will handle debouncing and saving
+    console.log('Setting up autosave for logo editor container');
+    
+    // Monitor state changes and trigger autosave
+    this.stateSubject
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(state => {
+        if (state.hasUnsavedChanges) {
+          const logoData = this.buildLogoData();
+          console.log('State changed, triggering autosave:', logoData);
+          this.autosaveService.triggerSave(logoData);
+        }
+      });
   }
 
   private executeCommand(command: UndoRedoCommand): void {

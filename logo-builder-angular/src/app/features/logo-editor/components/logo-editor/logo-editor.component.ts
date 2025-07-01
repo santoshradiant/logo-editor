@@ -2583,7 +2583,7 @@ let initalsStyle = '';
   }
 
   private async drawIconImage(ctx: CanvasRenderingContext2D, x: number, y: number, icon: NounIconItem): Promise<void> {
-    if (!icon || !icon.thumbnailUrl) {
+    if (!icon) {
       // Fallback: draw a placeholder circle
       ctx.beginPath();
       ctx.arc(x, y, this.iconSize / 2, 0, 2 * Math.PI);
@@ -2593,102 +2593,355 @@ let initalsStyle = '';
     }
 
     try {
+      // Try to fetch SVG content first for dynamic coloring
+      if (icon.svgUrl) {
+        await this.drawSVGIconWithColor(ctx, x, y, icon);
+        return;
+      }
+      
+      // Fallback to image rendering if SVG is not available
+      if (icon.thumbnailUrl) {
+        await this.drawImageIcon(ctx, x, y, icon);
+        return;
+      }
+      
+      throw new Error('No icon URL available');
+      
+    } catch (error) {
+      console.error('Error loading icon:', error);
+      // Fallback: draw a placeholder with icon styling
+      this.drawIconPlaceholder(ctx, x, y);
+    }
+  }
+
+  private async drawSVGIconWithColor(ctx: CanvasRenderingContext2D, x: number, y: number, icon: NounIconItem): Promise<void> {
+    try {
+      // Try to fetch SVG content with CORS handling
+      const response = await fetch(icon.svgUrl!, {
+        mode: 'cors',
+        headers: {
+          'Accept': 'image/svg+xml,*/*'
+        }
+      });
+      
+      if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      
+      let svgContent = await response.text();
+      
+      // Apply custom icon color to SVG
+      svgContent = this.applySVGColorization(svgContent, this.customColors.icon);
+      
+      // Create a data URL from the modified SVG
+      const svgDataUrl = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgContent)));
+      
+      // Load and render the modified SVG
       const img = new Image();
-      
-      // Try without CORS first, then with CORS if that fails
-      const loadImage = (useCors: boolean = false): Promise<void> => {
-        return new Promise((resolve, reject) => {
-          const newImg = new Image();
-          if (useCors) {
-            newImg.crossOrigin = 'anonymous';
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => {
+          try {
+            const size = this.iconSize;
+            const drawX = x - size / 2;
+            const drawY = y - size / 2;
+            
+            ctx.save();
+            
+            // Create a rectangular clip path for the icon area
+            ctx.beginPath();
+            ctx.rect(drawX, drawY, size, size);
+            ctx.clip();
+            
+            // Draw the SVG image
+            ctx.drawImage(img, drawX, drawY, size, size);
+            
+            ctx.restore();
+            resolve();
+          } catch (error) {
+            console.error('Error drawing SVG icon:', error);
+            reject(error);
           }
-          
-          newImg.onload = () => {
-            try {
-              // Calculate the drawing size and position
-              const size = this.iconSize;
-              const drawX = x - size / 2;
-              const drawY = y - size / 2;
-              
-              // Save the current context state
-              ctx.save();
-              
-              // Create a rectangular clip path for the icon area to contain any overflow
-              // This allows full icon display without circular masking
-              ctx.beginPath();
-              ctx.rect(drawX, drawY, size, size);
-              ctx.clip();
-              
-              // Draw the image
-              ctx.drawImage(newImg, drawX, drawY, size, size);
-              
-              // Restore the context state
-              ctx.restore();
-              resolve();
-            } catch (error) {
-              console.error('Error drawing icon:', error);
-              reject(error);
-            }
-          };
-          
-          newImg.onerror = () => {
-            reject(new Error('Failed to load icon'));
-          };
-          
-          newImg.src = icon.thumbnailUrl;
-        });
-      };
+        };
+        
+        img.onerror = () => reject(new Error('Failed to load SVG image'));
+        img.src = svgDataUrl;
+      });
       
-      // Try loading without CORS first
+    } catch (error) {
+      console.error('CORS/Fetch error in drawSVGIconWithColor:', error);
+      // CORS prevented SVG fetch, fall back to image with color filter approach
+      await this.drawImageIconWithColorFilter(ctx, x, y, icon);
+    }
+  }
+
+  private applySVGColorization(svgContent: string, color: string): string {
+    // Remove any existing fill and stroke attributes that would override our color
+    svgContent = svgContent.replace(/fill="[^"]*"/g, '');
+    svgContent = svgContent.replace(/stroke="[^"]*"/g, '');
+    svgContent = svgContent.replace(/fill:\s*[^;"]*/g, '');
+    svgContent = svgContent.replace(/stroke:\s*[^;"]*/g, '');
+    
+    // Remove style attributes that contain fill or stroke
+    svgContent = svgContent.replace(/style="([^"]*)"/g, (match, styleContent) => {
+      // Remove fill and stroke from inline styles, preserve other styles
+      let cleanStyle = styleContent
+        .replace(/fill:[^;"]*/g, '')
+        .replace(/stroke:[^;"]*/g, '')
+        .replace(/;;+/g, ';') // Remove double semicolons
+        .replace(/^;|;$/g, ''); // Remove leading/trailing semicolons
+      
+      return cleanStyle ? `style="${cleanStyle}"` : '';
+    });
+    
+    // Add our custom color as the default fill to the SVG root element
+    if (svgContent.includes('<svg')) {
+      svgContent = svgContent.replace(
+        /<svg([^>]*)>/,
+        `<svg$1 fill="${color}" stroke="none">`
+      );
+    }
+    
+    // Apply to all shape elements, including groups
+    const elements = ['path', 'circle', 'rect', 'polygon', 'polyline', 'ellipse', 'line', 'g'];
+    elements.forEach(element => {
+      const regex = new RegExp(`<${element}([^>]*?)(\\/?>|>)`, 'g');
+      svgContent = svgContent.replace(regex, (match, attributes, closing) => {
+        // Always add fill attribute to ensure color is applied
+        const cleanAttributes = attributes.replace(/fill="[^"]*"/g, '').replace(/stroke="[^"]*"/g, '');
+        return `<${element}${cleanAttributes} fill="${color}" stroke="none"${closing}`;
+      });
+    });
+    
+    // Force color by adding a style block
+    if (svgContent.includes('<svg') && !svgContent.includes('<style>')) {
+      const styleBlock = `<style>* { fill: ${color} !important; stroke: none !important; }</style>`;
+      svgContent = svgContent.replace('<svg', `<svg>${styleBlock}<g`);
+      svgContent = svgContent.replace('</svg>', '</g></svg>');
+    }
+    
+    return svgContent;
+  }
+
+  private async drawImageIcon(ctx: CanvasRenderingContext2D, x: number, y: number, icon: NounIconItem): Promise<void> {
+    const img = new Image();
+    
+    // Try without CORS first, then with CORS if that fails
+    const loadImage = (useCors: boolean = false): Promise<void> => {
+      return new Promise((resolve, reject) => {
+        const newImg = new Image();
+        if (useCors) {
+          newImg.crossOrigin = 'anonymous';
+        }
+        
+        newImg.onload = () => {
+          try {
+            const size = this.iconSize;
+            const drawX = x - size / 2;
+            const drawY = y - size / 2;
+            
+            ctx.save();
+            
+            // Create a rectangular clip path for the icon area
+            ctx.beginPath();
+            ctx.rect(drawX, drawY, size, size);
+            ctx.clip();
+            
+            // Draw the image
+            ctx.drawImage(newImg, drawX, drawY, size, size);
+            
+            ctx.restore();
+            resolve();
+          } catch (error) {
+            console.error('Error drawing icon:', error);
+            reject(error);
+          }
+        };
+        
+        newImg.onerror = () => {
+          reject(new Error('Failed to load icon'));
+        };
+        
+        newImg.src = icon.thumbnailUrl!;
+      });
+    };
+    
+    // Try loading without CORS first
+    try {
+      await Promise.race([
+        loadImage(false),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 3000))
+      ]);
+    } catch (firstAttemptError) {
+      // If first attempt fails, try with CORS
+      await Promise.race([
+        loadImage(true),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 3000))
+      ]);
+    }
+  }
+
+  private async drawImageIconWithColorFilter(ctx: CanvasRenderingContext2D, x: number, y: number, icon: NounIconItem): Promise<void> {
+    if (!icon.thumbnailUrl) {
+      this.drawIconPlaceholder(ctx, x, y);
+      return;
+    }
+
+    const img = new Image();
+    
+    // Try to load image with CORS enabled for color manipulation
+    const loadImage = (useCors: boolean = false): Promise<void> => {
+      return new Promise((resolve, reject) => {
+        const newImg = new Image();
+        if (useCors) {
+          newImg.crossOrigin = 'anonymous';
+        }
+        
+        newImg.onload = () => {
+          try {
+            const size = this.iconSize;
+            const drawX = x - size / 2;
+            const drawY = y - size / 2;
+            
+            ctx.save();
+            
+            // Create a rectangular clip path for the icon area
+            ctx.beginPath();
+            ctx.rect(drawX, drawY, size, size);
+            ctx.clip();
+            
+            if (useCors) {
+              // Apply color overlay using canvas compositing
+              this.applyColorOverlay(ctx, newImg, drawX, drawY, size, size, this.customColors.icon);
+            } else {
+              // Just draw the image normally if CORS is not available
+              ctx.drawImage(newImg, drawX, drawY, size, size);
+            }
+            
+            ctx.restore();
+            resolve();
+          } catch (error) {
+            console.error('Error drawing icon with color filter:', error);
+            reject(error);
+          }
+        };
+        
+        newImg.onerror = () => {
+          reject(new Error('Failed to load icon'));
+        };
+        
+        newImg.src = icon.thumbnailUrl!;
+      });
+    };
+    
+    // Try with CORS first for color manipulation, then without CORS as fallback
+    try {
+      await Promise.race([
+        loadImage(true),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 3000))
+      ]);
+    } catch (corsError) {
+      console.log('CORS not available for color manipulation, using original image');
       try {
         await Promise.race([
           loadImage(false),
           new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 3000))
         ]);
-      } catch (firstAttemptError) {
-        // If first attempt fails, try with CORS
-        try {
-          await Promise.race([
-            loadImage(true),
-            new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 3000))
-          ]);
-        } catch (secondAttemptError) {
-          // If both attempts fail, use placeholder
-          throw secondAttemptError;
-        }
+      } catch (fallbackError) {
+        console.error('Failed to load icon image:', fallbackError);
+        this.drawIconPlaceholder(ctx, x, y);
       }
-      
-    } catch (error) {
-      console.error('Error loading icon image:', error);
-      // Fallback: draw a placeholder with icon styling
-      ctx.save();
-      
-      // Draw a styled placeholder that indicates it's an icon
-      const size = this.iconSize;
-      const radius = size / 2;
-      
-      // Draw background circle
-      ctx.beginPath();
-      ctx.arc(x, y, radius, 0, 2 * Math.PI);
-      ctx.fillStyle = this.customColors.icon + '20'; // Semi-transparent background
-      ctx.fill();
-      
-      // Draw icon border
-      ctx.beginPath();
-      ctx.arc(x, y, radius - 2, 0, 2 * Math.PI);
-      ctx.strokeStyle = this.customColors.icon;
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      
-      // Draw a simple icon symbol (generic icon placeholder)
-      ctx.fillStyle = this.customColors.icon;
-      ctx.font = `${size * 0.4}px Arial`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('🖼', x, y);
-      
-      ctx.restore();
     }
+  }
+
+  private applyColorOverlay(ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: number, y: number, width: number, height: number, color: string): void {
+    // Create an off-screen canvas to manipulate the image
+    const tempCanvas = document.createElement('canvas');
+    const tempCtx = tempCanvas.getContext('2d')!;
+    tempCanvas.width = width;
+    tempCanvas.height = height;
+    
+    // Draw the original image to temp canvas
+    tempCtx.drawImage(img, 0, 0, width, height);
+    
+    // Get image data for pixel manipulation
+    const imageData = tempCtx.getImageData(0, 0, width, height);
+    const data = imageData.data;
+    
+    // Parse the target color
+    const targetColor = this.hexToRgb(color);
+    if (!targetColor) return;
+    
+    // Process each pixel
+    for (let i = 0; i < data.length; i += 4) {
+      const alpha = data[i + 3];
+      
+      // Only modify non-transparent pixels
+      if (alpha > 0) {
+        // For exact color replacement, we'll use the target color directly
+        // but still preserve some luminance variation for depth
+        const originalLuminance = (data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114) / 255;
+        
+        // Use original luminance but with a much smaller range for better color accuracy
+        // This gives us exact color while preserving subtle details
+        const luminanceMultiplier = 0.8 + (originalLuminance * 0.2); // Range: 0.8 to 1.0
+        
+        data[i] = Math.round(targetColor.r * luminanceMultiplier);     // Red
+        data[i + 1] = Math.round(targetColor.g * luminanceMultiplier); // Green  
+        data[i + 2] = Math.round(targetColor.b * luminanceMultiplier); // Blue
+        // Alpha stays the same (data[i + 3])
+      }
+    }
+    
+    // Put the modified image data back
+    tempCtx.putImageData(imageData, 0, 0);
+    
+    // Draw the recolored image to the main canvas
+    ctx.drawImage(tempCanvas, x, y);
+  }
+
+  private hexToRgb(hex: string): {r: number, g: number, b: number} | null {
+    // Remove # if present
+    hex = hex.replace('#', '');
+    
+    // Handle 3-digit hex
+    if (hex.length === 3) {
+      hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+    }
+    
+    const result = /^([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : null;
+  }
+
+  private drawIconPlaceholder(ctx: CanvasRenderingContext2D, x: number, y: number): void {
+    ctx.save();
+    
+    // Draw a styled placeholder that indicates it's an icon
+    const size = this.iconSize;
+    const radius = size / 2;
+    
+    // Draw background circle
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, 2 * Math.PI);
+    ctx.fillStyle = this.customColors.icon + '20'; // Semi-transparent background
+    ctx.fill();
+    
+    // Draw icon border
+    ctx.beginPath();
+    ctx.arc(x, y, radius - 2, 0, 2 * Math.PI);
+    ctx.strokeStyle = this.customColors.icon;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    // Draw a simple icon symbol (generic icon placeholder)
+    ctx.fillStyle = this.customColors.icon;
+    ctx.font = `${size * 0.4}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('🖼', x, y);
+    
+    ctx.restore();
   }
 
   private getFontWithFallback(fontName: string): string {

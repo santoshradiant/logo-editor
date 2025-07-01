@@ -244,12 +244,12 @@
                 class="range-slider"
                 [(ngModel)]="letterSpacing"
                 (ngModelChange)="onLetterSpacingChange()"
-                min="-5"
-                max="20"
-                step="0.5"
+                min="0"
+                max="2"
+                step="0.1"
                 [style.--val]="letterSpacing"
-                [style.--min]="-5"
-                [style.--max]="20"
+                [style.--min]="0"
+                [style.--max]="2"
               />
             </div>
           </div>
@@ -636,12 +636,12 @@
                 class="range-slider"
                 [(ngModel)]="sloganLetterSpacing"
                 (ngModelChange)="onSloganLetterSpacingChange()"
-                min="-5"
-                max="20"
-                step="0.5"
+                min="0"
+                max="2"
+                step="0.1"
                 [style.--val]="sloganLetterSpacing"
-                [style.--min]="-5"
-                [style.--max]="20"
+                [style.--min]="0"
+                [style.--max]="2"
               />
             </div>
           </div>

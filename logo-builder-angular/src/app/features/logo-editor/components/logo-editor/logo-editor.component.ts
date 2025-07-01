@@ -2990,7 +2990,7 @@ let initalsStyle = '';
     // Improved proportionate letter spacing calculation
     // Use percentage-based spacing relative to font size for better proportions
     // This ensures letter spacing feels consistent regardless of font size
-    const percentageSpacing = spacing * 0.01; // Convert slider value to percentage
+    const percentageSpacing = spacing; // Convert slider value to percentage
     const scaledSpacing = this.fontSize * percentageSpacing; // Scale with font size
     
     // Add minimum spacing threshold for very small values
@@ -3023,7 +3023,7 @@ let initalsStyle = '';
     // Improved proportionate letter spacing calculation (same as brand name)
     // Use percentage-based spacing relative to font size for better proportions
     // This ensures letter spacing feels consistent regardless of font size
-    const percentageSpacing = spacing * 0.01; // Convert slider value to percentage
+    const percentageSpacing = spacing; // Convert slider value to percentage
     const scaledSpacing = this.sloganFontSize * percentageSpacing; // Scale with slogan font size
     
     // Add minimum spacing threshold for very small values

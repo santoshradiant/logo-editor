@@ -2061,6 +2061,13 @@ let initalsStyle = '';
       
       // Always use multiline rendering for slogan to enable line count functionality
       this.drawMultilineSloganText(ctx, this.sloganText, x, sloganY, this.sloganLineHeight);
+      
+      // Draw alignment fill lines for fill alignments
+      if (this.textAlignment.includes('-fill')) {
+        // Calculate accurate text width for fill line calculation
+        const textWidth = this.calculateSloganTextWidth(ctx, this.sloganText);
+        this.drawAlignmentFill(ctx, this.textAlignment, x, sloganY, textWidth, canvas.width);
+      }
     }
   }
 
@@ -2808,38 +2815,92 @@ let initalsStyle = '';
     }
   }
 
+  private calculateSloganTextWidth(ctx: CanvasRenderingContext2D, text: string): number {
+    if (!text || text.trim() === '') return 0;
+    
+    // Save current context state
+    ctx.save();
+    
+    // Set font to match slogan rendering
+    const fontFamily = this.getFontWithFallback(this.sloganFont);
+    const fontWeight = this.sloganIsBold ? 'bold' : 'normal';
+    const fontStyle = this.sloganIsItalic ? 'italic' : 'normal';
+    ctx.font = `${fontStyle} ${fontWeight} ${this.sloganFontSize}px ${fontFamily}`;
+    
+    let maxWidth = 0;
+    
+    if (this.sloganLineCount === 1) {
+      // Single line - measure the full text
+      maxWidth = ctx.measureText(text.trim()).width;
+    } else {
+      // Multiple lines - find the widest line
+      const words = text.trim().split(/\s+/);
+      const wordsPerLine = Math.ceil(words.length / this.sloganLineCount);
+      
+      for (let i = 0; i < this.sloganLineCount; i++) {
+        const startIndex = i * wordsPerLine;
+        const endIndex = Math.min(startIndex + wordsPerLine, words.length);
+        
+        if (startIndex < words.length) {
+          const lineWords = words.slice(startIndex, endIndex);
+          const lineText = lineWords.join(' ');
+          const lineWidth = ctx.measureText(lineText).width;
+          maxWidth = Math.max(maxWidth, lineWidth);
+        }
+      }
+    }
+    
+    // Restore context state
+    ctx.restore();
+    
+    return maxWidth;
+  }
+
   private drawAlignmentFill(ctx: CanvasRenderingContext2D, alignment: 'left' | 'center' | 'right' | 'left-fill' | 'center-fill' | 'right-fill', 
                            textX: number, textY: number, textWidth: number, canvasWidth: number): void {
     if (!alignment.includes('-fill')) return;
     
+    // Save current context state
+    ctx.save();
+    
     ctx.strokeStyle = ctx.fillStyle; // Use the same color as text
-    ctx.lineWidth = 1;
-    const lineY = textY + 5; // Position line slightly below text
+    ctx.lineWidth = 2; // Slightly thicker line for better visibility
+    const lineY = textY + 8; // Position line slightly below text baseline
+    const margin = 50; // Canvas margin
+    const spacing = 15; // Space between text and line
     
     if (alignment === 'left-fill') {
       // Draw line from right edge of text to right side
       ctx.beginPath();
-      ctx.moveTo(textX + textWidth + 10, lineY);
-      ctx.lineTo(canvasWidth - 50, lineY);
+      ctx.moveTo(textX + textWidth + spacing, lineY);
+      ctx.lineTo(canvasWidth - margin, lineY);
       ctx.stroke();
     } else if (alignment === 'right-fill') {
       // Draw line from left side to left edge of text
       ctx.beginPath();
-      ctx.moveTo(50, lineY);
-      ctx.lineTo(textX - 10, lineY);
+      ctx.moveTo(margin, lineY);
+      ctx.lineTo(textX - spacing, lineY);
       ctx.stroke();
     } else if (alignment === 'center-fill') {
-      // Draw lines on both sides
+      // Draw lines on both sides of centered text
+      const textLeftEdge = textX - textWidth / 2;
+      const textRightEdge = textX + textWidth / 2;
+      
+      // Left side line
       ctx.beginPath();
-      ctx.moveTo(50, lineY);
-      ctx.lineTo(textX - textWidth/2 - 10, lineY);
+      ctx.moveTo(margin, lineY);
+      ctx.lineTo(textLeftEdge - spacing, lineY);
       ctx.stroke();
       
+      // Right side line
       ctx.beginPath();
-      ctx.moveTo(textX + textWidth/2 + 10, lineY);
-      ctx.lineTo(canvasWidth - 50, lineY);
+      ctx.moveTo(textRightEdge + spacing, lineY);
+      ctx.lineTo(canvasWidth - margin, lineY);
       ctx.stroke();
     }
+    
+    // Restore context state
+    ctx.restore();
   }
 
   // Font Management

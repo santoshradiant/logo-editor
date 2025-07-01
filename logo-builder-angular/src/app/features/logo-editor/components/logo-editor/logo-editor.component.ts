@@ -298,7 +298,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   // Shape controls
   cornerRoundness: number = 0; // 0-100 range
   shapeFilled: boolean = true; // Filled by default when shape is enabled
-  shapeLineWidth: number = 2; // Line width for stroke shapes (1-10 range)
+  shapeLineWidth: number = 2; // Line width for stroke shapes (1-30 range)
   
   // Shape interaction states
   shapeToggleHovered: boolean = false;

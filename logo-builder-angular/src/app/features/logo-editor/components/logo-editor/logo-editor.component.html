@@ -1437,7 +1437,7 @@
         </div>
 
        <!-- Line Width Control (only when not filled) -->
-        <div class="control-row" [style.opacity]="shapeFilled ? '1' : '0.3'" [style.pointer-events]="!shapeFilled ? 'none' : 'auto'" >
+        <div class="control-row" [style.opacity]="!shapeFilled ? '1' : '0.3'" [style.pointer-events]="shapeFilled ? 'none' : 'auto'" >
           <!-- <div class="control-group">
             <label 
               class="control-label"

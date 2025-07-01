@@ -2623,9 +2623,9 @@
           background: var(--ns-default-background); ;
 
           &:hover:not(:disabled) {
-            border-color: #007a33;
+            border-color: var(--ns-primary-background);
             background: var(--ns-default-background); ;
-            color: #007a33;
+            color: var(--ns-primary-background);
           }
 
           &:disabled {
@@ -2657,43 +2657,42 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 15px;
+      gap: 12px;
       .download-btn {
         display: flex;
         align-items: center;
         gap: 8px;
-        padding: 10px 20px;
+        padding: 10px 16px;
         border: 1px solid var(--ns-primary);
         border-radius: 8px;
-        background: var(--ns-default-background); ;
-        color: #007a33;
-        font-weight: 700;
+        background: var(--ns-default-background);
+        color: var(--ns-primary-background);
+        font-weight: 500;
         font-size: 14px;
         cursor: pointer;
-        transition: all 0.15s ease;
-        line-height: 24px;
+        // transition: all 0.15s ease;
+        line-height: 20px;
 
-        // &:hover {
-        //   background: #059669;
-        //   border-color: #059669;
-        //   transform: translateY(-1px);
-        //   box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
-        // }
+        &:hover {
+          background: var(--ns-primary-background);
+        color: #ffffff;
+          
+        }
       }
       .publish-btn {
         display: flex;
         align-items: center;
         gap: 8px;
-        padding: 10px 20px;
+        padding: 10px 16px;
         border: 1px solid var(--ns-primary);
         border-radius: 8px;
-        background: #007a33;
+        background: var(--ns-primary-background);
         color: #ffffff;
-        font-weight: 700;
+        font-weight: 500;
         font-size: 14px;
         cursor: pointer;
-        transition: all 0.15s ease;
-        line-height: 24px;
+        // transition: all 0.15s ease;
+        line-height: 20px;
       }
     }
   }
@@ -3175,21 +3174,21 @@
 }
 
 // Download button styling
-.download-btn {
-  display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
+// .download-btn {
+//   display: flex !important;
+//   align-items: center !important;
+//   gap: 8px !important;
 
-  svg {
-    width: 16px !important;
-    height: 16px !important;
-  }
+//   svg {
+//     width: 16px !important;
+//     height: 16px !important;
+//   }
 
-  &:hover {
-    transform: translateY(-1px) !important;
-    box-shadow: 0 4px 12px rgba(0, 184, 148, 0.3) !important;
-  }
-}
+//   &:hover {
+//     transform: translateY(-1px) !important;
+//     box-shadow: 0 4px 12px rgba(0, 184, 148, 0.3) !important;
+//   }
+// }
 
 // Preview panel styling
 .preview-buttons {
@@ -3206,7 +3205,7 @@
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
+    // transition: all 0.2s ease;
 
     &.primary {
       background: var(--ns-primary);

@@ -534,14 +534,21 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   }
 
   onFontSizeChange(): void {
+    // Validate and adjust all slider values when font size changes
+    this.validateAndAdjustSliderValues();
     this.updateLogoPreview();
   }
 
   onLetterSpacingChange(): void {
+    // Validate spacing values to ensure they don't exceed reasonable limits
+    this.validateSpacingValues();
     this.updateLogoPreview();
   }
 
   onLineHeightChange(): void {
+    // Validate spacing values and recalculate layout
+    this.validateSpacingValues();
+    this.validateAndAdjustSliderValues();
     this.updateLogoPreview();
   }
 
@@ -563,6 +570,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
         const command = new BrandNameChangeCommand(this, this.brandName, this.brandNamePreviousValue);
         this.undoRedoService.executeCommand(command);
         this.brandNamePreviousValue = this.brandName;
+        this.validateAndAdjustSliderValues();
         this.updateLogoPreview();
         this.triggerAutosave();
       }
@@ -879,19 +887,22 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   }
 
   onSloganFontSizeChange(): void {
+    // Validate and adjust all slider values when slogan font size changes
+    this.validateAndAdjustSliderValues();
     this.updateLogoPreview();
   }
 
   onSloganLetterSpacingChange(): void {
+    // Validate spacing values
+    this.validateSpacingValues();
     this.updateLogoPreview();
   }
 
   onSloganLineHeightChange(): void {
-    // Ensure line height stays within reasonable bounds
-    this.sloganLineHeight = Math.max(0.5, Math.min(3, this.sloganLineHeight));
-    
+    // Validate spacing values and recalculate layout
+    this.validateSpacingValues();
+    this.validateAndAdjustSliderValues();
     this.updateLogoPreview();
-    this.triggerAutosave();
   }
 
   toggleSloganBold(): void {
@@ -931,6 +942,8 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   }
 
   onIconSizeChange(): void {
+    // Validate icon size and adjust other values if needed
+    this.validateAndAdjustSliderValues();
     this.updateLogoPreview();
   }
 
@@ -1073,6 +1086,9 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   }
 
   onIconMarginChange(): void {
+    // Validate margin and adjust layout
+    this.validateSpacingValues();
+    this.validateAndAdjustSliderValues();
     this.updateLogoPreview();
   }
 
@@ -1148,9 +1164,11 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   }
 
   onShapeLineWidthChange(): void {
-    if (!this.shapeFilled) {
-      this.updateLogoPreview();
-    }
+    // Validate shape dimensions
+    const canvas = { width: 859, height: 720 };
+    const safeMargin = 60;
+    this.validateShapeDimensions(canvas.width - (safeMargin * 2), canvas.height - (safeMargin * 2));
+    this.updateLogoPreview();
   }
 
   // Shape interaction states
@@ -1778,161 +1796,34 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Calculate text dimensions first to determine overall layout
+    // Validate all slider values before rendering
+    this.validateAndAdjustSliderValues();
+
+    // Calculate dynamic layout with proper bounds checking
+    const layout = this.calculateDynamicLayout({ width: canvas.width, height: canvas.height });
     const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
     
-    // Measure text dimensions
-    let brandTextWidth = 0;
-    let sloganTextWidth = 0;
-    let maxTextWidth = 0;
-    
-    if (this.brandName) {
-      const fontFamily = this.getFontWithFallback(this.selectedFont);
-      const fontWeight = this.isBold ? 'bold' : 'normal';
-      const fontStyle = this.isItalic ? 'italic' : 'normal';
-      ctx.font = `${fontStyle} ${fontWeight} ${this.fontSize}px ${fontFamily}`;
-      brandTextWidth = ctx.measureText(this.brandName.replace(/\n/g, ' ')).width;
-      maxTextWidth = Math.max(maxTextWidth, brandTextWidth);
-    }
-    
-    if (this.sloganText && this.enableSlogan) {
-      const fontFamily = this.getFontWithFallback(this.sloganFont);
-      const fontWeight = this.sloganIsBold ? 'bold' : 'normal';
-      const fontStyle = this.sloganIsItalic ? 'italic' : 'normal';
-      ctx.font = `${fontStyle} ${fontWeight} ${this.sloganFontSize}px ${fontFamily}`;
-      sloganTextWidth = ctx.measureText(this.sloganText.replace(/\n/g, ' ')).width;
-      maxTextWidth = Math.max(maxTextWidth, sloganTextWidth);
-    }
-
-    // Calculate element dimensions and layout with dynamic spacing
-    const iconRadius = this.iconSize / 2;
-    
-    // Dynamic spacing calculations based on element sizes and canvas grid
-    const canvasGrid = 24; // 24px grid system for alignment
-    const baseSpacing = Math.max(canvasGrid, this.iconSize * 0.3); // Minimum spacing based on icon size
-    const iconSpacing = Math.ceil(baseSpacing / canvasGrid) * canvasGrid; // Snap to grid
-    
-    // Text spacing should be proportional to font sizes
-    const fontSizeRatio = this.sloganFontSize / this.fontSize;
-    const textSpacing = Math.max(32, Math.ceil((this.fontSize * 0.8 + this.sloganFontSize * 0.4) / canvasGrid) * canvasGrid);
-    
-    // Calculate text heights with proper line height consideration
-    const brandHeight = this.isMultiline ? this.fontSize * this.lineHeight * 1.2 : this.fontSize;
-    const sloganHeight = this.sloganIsMultiline ? this.sloganFontSize * this.sloganLineHeight : this.sloganFontSize;
-    
-    // Initialize positions
-    let iconX = centerX;
-    let iconY = centerY;
-    let brandY = centerY;
-    let sloganY = centerY + textSpacing;
-
-    // Calculate layout based on icon alignment with improved spacing
-    if (this.showLogoIcon && (this.selectedIcon || this.userInitials)) {
-      
-      if (this.iconAlignment === 'left') {
-        // Icon on the left side with grid-aligned positioning
-        const leftMargin = Math.ceil(48 / canvasGrid) * canvasGrid; // 48px minimum margin snapped to grid
-        iconX = leftMargin + iconRadius;
-        iconY = centerY;
-        
-        // Position text to the right of icon with proper spacing including icon margin
-        const textStartX = iconX + iconRadius + iconSpacing + this.iconMargin;
-        
-        // Calculate if text will fit, adjust icon position if needed
-        const availableTextWidth = canvas.width - textStartX - leftMargin;
-        if (maxTextWidth > availableTextWidth) {
-          // Recalculate icon position to accommodate text with proper margin
-          iconX = Math.max(leftMargin + iconRadius, canvas.width - leftMargin - maxTextWidth - iconRadius - iconSpacing - (this.iconMargin * 2));
-        }
-        
-        // Vertically center text relative to icon when both elements are present
-        if (this.enableSlogan && this.sloganText) {
-          const totalTextHeight = brandHeight + textSpacing + sloganHeight;
-          brandY = centerY - (totalTextHeight / 2) + (brandHeight / 2);
-          sloganY = brandY + textSpacing;
-        } else {
-          brandY = centerY;
-        }
-        
-      } else if (this.iconAlignment === 'right') {
-        // Icon on the right side with grid-aligned positioning
-        const rightMargin = Math.ceil(48 / canvasGrid) * canvasGrid; // 48px minimum margin snapped to grid
-        iconX = canvas.width - rightMargin - iconRadius;
-        iconY = centerY;
-        
-        // Position text to the left of icon with proper spacing including icon margin
-        const textEndX = iconX - iconRadius - iconSpacing - this.iconMargin;
-        
-        // Calculate if text will fit, adjust icon position if needed
-        if (textEndX - maxTextWidth < rightMargin) {
-          // Recalculate icon position to accommodate text with proper margin
-          iconX = Math.min(canvas.width - rightMargin - iconRadius, rightMargin + maxTextWidth + iconRadius + iconSpacing + (this.iconMargin * 2));
-        }
-        
-        // Vertically center text relative to icon when both elements are present
-        if (this.enableSlogan && this.sloganText) {
-          const totalTextHeight = brandHeight + textSpacing + sloganHeight;
-          brandY = centerY - (totalTextHeight / 2) + (brandHeight / 2);
-          sloganY = brandY + textSpacing;
-        } else {
-          brandY = centerY;
-        }
-        
-      } else {
-        // Center alignment - icon above text with improved vertical spacing
-        iconX = centerX;
-        
-        // Calculate total height needed with proper margins
-        const topMargin = Math.ceil(40 / canvasGrid) * canvasGrid;
-        const bottomMargin = topMargin;
-        const availableHeight = canvas.height - topMargin - bottomMargin;
-        
-        const totalElementsHeight = (iconRadius * 2) + this.iconMargin + iconSpacing + brandHeight + textSpacing + sloganHeight;
-        
-        if (totalElementsHeight <= availableHeight) {
-          // All elements fit comfortably
-          const startY = topMargin + Math.max(0, (availableHeight - totalElementsHeight) / 2);
-          iconY = startY + iconRadius;
-          brandY = iconY + iconRadius + this.iconMargin + iconSpacing;
-          sloganY = brandY + textSpacing;
-        } else {
-          // Compress spacing proportionally to fit
-          const compressionRatio = availableHeight / totalElementsHeight;
-          const compressedIconSpacing = Math.max(canvasGrid, iconSpacing * compressionRatio);
-          const compressedTextSpacing = Math.max(canvasGrid, textSpacing * compressionRatio);
-          
-          iconY = topMargin + iconRadius;
-          brandY = iconY + iconRadius + this.iconMargin + compressedIconSpacing;
-          sloganY = brandY + compressedTextSpacing;
-        }
-      }
-    } else {
-      // No icon - center the text with proper vertical spacing
-      if (this.enableSlogan && this.sloganText) {
-        // Both brand name and slogan - center the group
-        const totalTextHeight = brandHeight + textSpacing + sloganHeight;
-        const startY = centerY - (totalTextHeight / 2);
-        brandY = startY + (brandHeight / 2);
-        sloganY = brandY + textSpacing;
-      } else {
-        // Only brand name - center it
-        brandY = centerY;
-      }
-    }
+    // Use the calculated layout positions
+    const iconX = layout.iconX;
+    const iconY = layout.iconY;
+    const brandY = layout.brandY;
+    const sloganY = layout.sloganY;
+    const textX = layout.textX !== centerX ? layout.textX : centerX; // Use centerX instead of centerY
 
     // Draw shape frame (if enabled and selected) - Enhanced per figma-shape.md
-    // Position after all variables are calculated to avoid linter errors
     if (this.shapeEnabled && this.selectedShape) {
       // Calculate content dimensions for dynamic shape sizing
       const contentDimensions = {
-        maxTextWidth,
+        maxTextWidth: Math.max(
+          this.brandName ? this.estimateTextWidth() * 0.7 : 0,
+          this.enableSlogan && this.sloganText ? this.estimateTextWidth() * 0.5 : 0
+        ),
         iconSize: this.showLogoIcon ? this.iconSize : 0,
-        iconSpacing: this.showLogoIcon ? iconSpacing : 0,
+        iconSpacing: this.showLogoIcon ? Math.max(24, this.iconSize * 0.2) : 0,
         iconMargin: this.showLogoIcon ? this.iconMargin : 0,
-        textSpacing,
-        brandHeight,
-        sloganHeight: this.enableSlogan ? sloganHeight : 0
+        textSpacing: Math.max(16, this.fontSize * 0.4),
+        brandHeight: this.brandName ? this.fontSize * this.lineHeight * (this.isMultiline ? 1.5 : 1) : 0,
+        sloganHeight: this.enableSlogan && this.sloganText ? this.sloganFontSize * this.sloganLineHeight : 0
       };
       this.drawShapeFrame(ctx, canvas.width, canvas.height, contentDimensions);
     }
@@ -1976,16 +1867,12 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
         }
         
         // Draw initials text
-
-
-      
-let initalsStyle = '';
-      if (this.initialsIsBold) initalsStyle += 'font-weight: bold; ';
-      if (this.initialsIsItalic) initalsStyle += 'font-style: italic; ';
-      
-
+        const fontWeight = this.initialsIsBold ? 'bold' : 'normal';
+        const fontStyle = this.initialsIsItalic ? 'italic' : 'normal';
+        const fontFamily = this.getFontWithFallback(this.initialsFont);
+        
         ctx.fillStyle = this.customColors.icon;
-        ctx.font = initalsStyle+= ` ${this.iconSize }px ${this.getFontWithFallback(this.initialsFont)}`;
+        ctx.font = `${fontStyle} ${fontWeight} ${this.iconSize}px ${fontFamily}`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(this.userInitials, iconX, iconY);
@@ -2001,25 +1888,21 @@ let initalsStyle = '';
       
       ctx.font = `${fontStyle} ${fontWeight} ${this.fontSize}px ${fontFamily}`;
       ctx.fillStyle = this.customColors.name;
-      ctx.textAlign = this.getCanvasAlignment(this.textAlignment);
       
-      let x = this.getTextX(this.textAlignment, canvas.width, centerX);
+      // Use layout-calculated position for brand name
+      let x = layout.textX;
       
-      // Adjust text position based on icon alignment to prevent overlapping
+      // Set appropriate text alignment based on icon alignment
       if (this.showLogoIcon && (this.selectedIcon || this.userInitials)) {
         if (this.iconAlignment === 'left') {
-          // Text positioned to the right of icon - force left alignment with proper margin
-          x = iconX + iconRadius + iconSpacing + this.iconMargin;
           ctx.textAlign = 'left';
         } else if (this.iconAlignment === 'right') {
-          // Text positioned to the left of icon - force right alignment with proper margin
-          x = iconX - iconRadius - iconSpacing - this.iconMargin;
-          ctx.textAlign = 'right';
+          ctx.textAlign = 'left'; // Brand name is to the right of icon in right alignment
         } else {
-          // Center alignment - keep text centered below icon
-          x = centerX;
           ctx.textAlign = 'center';
         }
+      } else {
+        ctx.textAlign = this.getCanvasAlignment(this.textAlignment);
       }
       
       if (this.isMultiline) {
@@ -2045,25 +1928,21 @@ let initalsStyle = '';
       
       ctx.font = `${fontStyle} ${fontWeight} ${this.sloganFontSize}px ${fontFamily}`;
       ctx.fillStyle = this.customColors.slogan;
-      ctx.textAlign = this.getCanvasAlignment(this.textAlignment);
       
-      let x = this.getTextX(this.textAlignment, canvas.width, centerX);
+      // Use layout-calculated position for slogan
+      let x = (layout as any).sloganCenterX || layout.textX;
       
-      // Adjust text position based on icon alignment to prevent overlapping
+      // Set appropriate text alignment based on icon alignment
       if (this.showLogoIcon && (this.selectedIcon || this.userInitials)) {
         if (this.iconAlignment === 'left') {
-          // Text positioned to the right of icon - force left alignment with proper margin
-          x = iconX + iconRadius + iconSpacing + this.iconMargin;
           ctx.textAlign = 'left';
         } else if (this.iconAlignment === 'right') {
-          // Text positioned to the left of icon - force right alignment with proper margin
-          x = iconX - iconRadius - iconSpacing - this.iconMargin;
-          ctx.textAlign = 'right';
+          ctx.textAlign = 'center'; // Slogan is centered under the group in right alignment
         } else {
-          // Center alignment - keep text centered below icon
-          x = centerX;
           ctx.textAlign = 'center';
         }
+      } else {
+        ctx.textAlign = this.getCanvasAlignment(this.textAlignment);
       }
       
       // Always use multiline rendering for slogan to enable line count functionality
@@ -3480,4 +3359,358 @@ let initalsStyle = '';
   toggleInitialsFontSelection() {
     this.showInitialsFontSelection = !this.showInitialsFontSelection;
   }
+
+  // Enhanced bounds checking and validation methods
+  private validateAndAdjustSliderValues(): void {
+    const canvas = { width: 859, height: 720 };
+    const safeMargin = 60; // Minimum margin from canvas edges
+    
+    // Calculate available space considering all elements
+    const availableWidth = canvas.width - (safeMargin * 2);
+    const availableHeight = canvas.height - (safeMargin * 2);
+    
+    // Validate font sizes based on available space and other elements
+    this.validateFontSizes(availableWidth, availableHeight);
+    
+    // Validate icon size based on available space and alignment
+    this.validateIconSize(availableWidth, availableHeight);
+    
+    // Validate spacing values
+    this.validateSpacingValues();
+    
+    // Validate shape dimensions
+    this.validateShapeDimensions(availableWidth, availableHeight);
+  }
+
+  private validateFontSizes(availableWidth: number, availableHeight: number): void {
+    // Calculate space consumed by icon
+    let iconSpaceWidth = 0;
+    let iconSpaceHeight = 0;
+    
+    if (this.showLogoIcon && (this.selectedIcon || this.userInitials)) {
+      const iconSize = this.iconSize;
+      const iconMargin = this.iconMargin;
+      
+      if (this.iconAlignment === 'center') {
+        iconSpaceHeight = iconSize + iconMargin + 32; // Extra spacing
+        iconSpaceWidth = Math.max(iconSize, 0);
+      } else {
+        iconSpaceWidth = iconSize + iconMargin + 32; // Side by side
+        iconSpaceHeight = Math.max(iconSize, 0);
+      }
+    }
+    
+    // Calculate available space for text
+    const textSpaceWidth = availableWidth - iconSpaceWidth;
+    const textSpaceHeight = availableHeight - iconSpaceHeight;
+    
+    // Estimate text width and adjust font size if needed
+    if (this.brandName) {
+      const maxBrandFontSize = this.calculateMaxFontSize(this.brandName, textSpaceWidth, textSpaceHeight, true);
+      if (this.fontSize > maxBrandFontSize) {
+        this.fontSize = Math.max(24, maxBrandFontSize); // Ensure minimum readable size
+      }
+    }
+    
+    if (this.enableSlogan && this.sloganText) {
+      const remainingHeight = textSpaceHeight - (this.fontSize * this.lineHeight * 1.2) - 32; // Space after brand name
+      const maxSloganFontSize = this.calculateMaxFontSize(this.sloganText, textSpaceWidth, remainingHeight, false);
+      if (this.sloganFontSize > maxSloganFontSize) {
+        this.sloganFontSize = Math.max(12, maxSloganFontSize); // Ensure minimum readable size
+      }
+    }
+  }
+
+  private calculateMaxFontSize(text: string, maxWidth: number, maxHeight: number, isBrandName: boolean): number {
+    // Create temporary canvas context for measurement
+    const tempCanvas = document.createElement('canvas');
+    const ctx = tempCanvas.getContext('2d');
+    if (!ctx) return isBrandName ? 56 : 18; // Default values
+    
+    const isMultiline = isBrandName ? this.isMultiline : this.sloganIsMultiline;
+    const lineHeight = isBrandName ? this.lineHeight : this.sloganLineHeight;
+    const letterSpacing = isBrandName ? this.letterSpacing : this.sloganLetterSpacing;
+    
+    // Binary search for optimal font size
+    let minSize = 12;
+    let maxSize = isBrandName ? 120 : 80;
+    let optimalSize = minSize;
+    
+    while (minSize <= maxSize) {
+      const testSize = Math.floor((minSize + maxSize) / 2);
+      ctx.font = `${testSize}px Arial`; // Use basic font for measurement
+      
+      // Calculate text dimensions with current test size
+      const lines = isMultiline ? this.wrapText(ctx, text, maxWidth, true) : [text];
+      const textWidth = Math.max(...lines.map(line => ctx.measureText(line).width + (letterSpacing * line.length)));
+      const textHeight = lines.length * testSize * lineHeight;
+      
+      if (textWidth <= maxWidth && textHeight <= maxHeight) {
+        optimalSize = testSize;
+        minSize = testSize + 1;
+      } else {
+        maxSize = testSize - 1;
+      }
+    }
+    
+    return optimalSize;
+  }
+
+  private validateIconSize(availableWidth: number, availableHeight: number): void {
+    if (!this.showLogoIcon || (!this.selectedIcon && !this.userInitials)) return;
+    
+    // Calculate space needed for text
+    let textSpaceNeeded = 0;
+    if (this.brandName || (this.enableSlogan && this.sloganText)) {
+      const brandHeight = this.fontSize * this.lineHeight * 1.2;
+      const sloganHeight = this.enableSlogan ? this.sloganFontSize * this.sloganLineHeight : 0;
+      const spacing = this.enableSlogan ? 32 : 0;
+      textSpaceNeeded = brandHeight + sloganHeight + spacing;
+    }
+    
+    let maxIconSize: number;
+    
+    if (this.iconAlignment === 'center') {
+      // Icon above/below text
+      const availableIconHeight = availableHeight - textSpaceNeeded - this.iconMargin - 32;
+      maxIconSize = Math.min(availableWidth - this.iconMargin * 2, availableIconHeight);
+    } else {
+      // Icon beside text
+      const estimatedTextWidth = this.estimateTextWidth();
+      const availableIconWidth = availableWidth - estimatedTextWidth - this.iconMargin - 32;
+      maxIconSize = Math.min(availableIconWidth, availableHeight - this.iconMargin * 2);
+    }
+    
+    // Ensure icon doesn't exceed reasonable bounds
+    maxIconSize = Math.max(32, Math.min(maxIconSize, 520));
+    
+    if (this.iconSize > maxIconSize) {
+      this.iconSize = maxIconSize;
+    }
+  }
+
+  private estimateTextWidth(): number {
+    // Rough estimation of text width
+    const brandWidth = this.brandName ? this.brandName.length * this.fontSize * 0.6 : 0;
+    const sloganWidth = (this.enableSlogan && this.sloganText) ? this.sloganText.length * this.sloganFontSize * 0.6 : 0;
+    return Math.max(brandWidth, sloganWidth);
+  }
+
+  private validateSpacingValues(): void {
+    // Ensure line heights don't make text too tall
+    const maxLineHeight = 2.5; // Reasonable maximum
+    this.lineHeight = Math.min(this.lineHeight, maxLineHeight);
+    this.sloganLineHeight = Math.min(this.sloganLineHeight, maxLineHeight);
+    
+    // Ensure letter spacing doesn't make text too wide
+    const maxLetterSpacing = 3;
+    this.letterSpacing = Math.min(this.letterSpacing, maxLetterSpacing);
+    this.sloganLetterSpacing = Math.min(this.sloganLetterSpacing, maxLetterSpacing);
+    
+    // Ensure icon margin is reasonable
+    const maxMargin = Math.min(150, this.iconSize * 2);
+    this.iconMargin = Math.min(this.iconMargin, maxMargin);
+  }
+
+  private validateShapeDimensions(availableWidth: number, availableHeight: number): void {
+    if (!this.shapeEnabled || !this.selectedShape) return;
+    
+    // Shape should never consume more than 90% of available space
+    const maxShapeWidth = availableWidth * 0.9;
+    const maxShapeHeight = availableHeight * 0.9;
+    
+    // Adjust shape line width if it would make shapes too thick
+    const maxLineWidth = Math.min(10, Math.min(maxShapeWidth, maxShapeHeight) / 20);
+    this.shapeLineWidth = Math.min(this.shapeLineWidth, maxLineWidth);
+  }
+
+  // Enhanced rendering with dynamic layout adjustments
+  private calculateDynamicLayout(canvas: { width: number; height: number }) {
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const safeMargin = 60;
+    
+    // Calculate all element dimensions first
+    const iconSize = this.showLogoIcon ? this.iconSize : 0;
+    const iconMargin = this.showLogoIcon ? this.iconMargin : 0;
+    
+    const brandHeight = this.brandName ? this.fontSize * this.lineHeight * (this.isMultiline ? 1.5 : 1) : 0;
+    const sloganHeight = (this.enableSlogan && this.sloganText) ? 
+      this.sloganFontSize * this.sloganLineHeight * Math.max(1, this.sloganLineCount) : 0;
+    
+    // Dynamic spacing based on element sizes
+    const baseSpacing = Math.max(24, Math.min(iconSize * 0.2, 48));
+    const textSpacing = Math.max(16, Math.min(this.fontSize * 0.4, 32));
+    
+    // Calculate layout based on icon alignment
+    let layout = {
+      iconX: centerX,
+      iconY: centerY,
+      brandY: centerY,
+      sloganY: centerY + textSpacing,
+      textX: centerX,
+      spacingAdjustment: 1
+    };
+    
+    if (this.showLogoIcon && (this.selectedIcon || this.userInitials)) {
+      layout = this.calculateLayoutWithIcon(canvas, centerX, centerY, safeMargin, iconSize, iconMargin, baseSpacing, textSpacing, brandHeight, sloganHeight);
+    } else {
+      layout = this.calculateLayoutWithoutIcon(centerY, textSpacing, brandHeight, sloganHeight);
+    }
+    
+    // Ensure all elements fit within canvas bounds
+    layout = this.adjustLayoutForBounds(canvas, layout, safeMargin, iconSize, brandHeight, sloganHeight);
+    
+    return layout;
+  }
+
+  private calculateLayoutWithIcon(canvas: any, centerX: number, centerY: number, safeMargin: number, 
+                                iconSize: number, iconMargin: number, baseSpacing: number, textSpacing: number, 
+                                brandHeight: number, sloganHeight: number) {
+    
+    if (this.iconAlignment === 'center') {
+      // Center align: Icon above text layout (keep existing functionality)
+      const totalHeight = iconSize + iconMargin + baseSpacing + brandHeight + (sloganHeight ? textSpacing + sloganHeight : 0);
+      const availableHeight = canvas.height - (safeMargin * 2);
+      
+      let spacingAdjustment = 1;
+      if (totalHeight > availableHeight) {
+        spacingAdjustment = availableHeight / totalHeight;
+      }
+      
+      const adjustedSpacing = baseSpacing * spacingAdjustment;
+      const adjustedTextSpacing = textSpacing * spacingAdjustment;
+      
+      const startY = centerY - (totalHeight * spacingAdjustment) / 2;
+      
+      return {
+        iconX: centerX,
+        iconY: startY + (iconSize / 2),
+        brandY: startY + iconSize + iconMargin + adjustedSpacing + (brandHeight / 2),
+        sloganY: startY + iconSize + iconMargin + adjustedSpacing + brandHeight + adjustedTextSpacing + (sloganHeight / 2),
+        textX: centerX,
+        spacingAdjustment
+      };
+    } else if (this.iconAlignment === 'left') {
+      // Left align: Centered group with Icon(left) + vertical text stack (brand name above slogan)
+      const iconRadius = iconSize / 2;
+      
+      // Calculate total width of the group (icon + spacing + estimated text width)
+      const estimatedTextWidth = Math.max(
+        this.brandName ? this.brandName.length * this.fontSize * 0.6 : 0,
+        (this.enableSlogan && this.sloganText) ? this.sloganText.length * this.sloganFontSize * 0.6 : 0
+      );
+      const groupWidth = iconSize + baseSpacing + estimatedTextWidth;
+      
+      // Center the group horizontally
+      const groupStartX = centerX - (groupWidth / 2);
+      const iconX = groupStartX + iconRadius;
+      const textX = iconX + iconRadius + baseSpacing;
+      
+      // Calculate text heights
+      const textStackHeight = brandHeight + (sloganHeight ? textSpacing + sloganHeight : 0);
+      
+      // Position icon so its bottom aligns with slogan bottom
+      const sloganBottomY = centerY + (textStackHeight / 2);
+      const iconY = sloganBottomY - iconRadius;
+      
+      // Position brand name at top of text stack
+      const brandY = centerY - (textStackHeight / 2) + (brandHeight / 2);
+      const sloganY = brandY + (brandHeight / 2) + textSpacing + (sloganHeight / 2);
+      
+      return {
+        iconX,
+        iconY,
+        brandY,
+        sloganY,
+        textX,
+        spacingAdjustment: 1
+      };
+    } else {
+      // Right align: Centered group with icon(left) + brand name on same line, slogan below both
+      const iconRadius = iconSize / 2;
+      
+      // Calculate total width of the group (icon + spacing + estimated brand name width)
+      const estimatedBrandWidth = this.brandName ? this.brandName.length * this.fontSize * 0.6 : 0;
+      const groupWidth = iconSize + baseSpacing + estimatedBrandWidth;
+      
+      // Center the group horizontally
+      const groupStartX = centerX - (groupWidth / 2);
+      const iconX = groupStartX + iconRadius;
+      
+      // Position icon at same vertical level as brand name
+      const iconY = centerY - (sloganHeight ? (textSpacing + sloganHeight) / 2 : 0);
+      
+      // Position brand name to the right of icon
+      const textX = iconX + iconRadius + baseSpacing;
+      const brandY = iconY; // Same line as icon
+      
+      // Position slogan below both icon and brand name (centered under the group)
+      const sloganY = brandY + (brandHeight / 2) + textSpacing + (sloganHeight / 2);
+      
+      return {
+        iconX,
+        iconY,
+        brandY,
+        sloganY,
+        textX, // Keep brand name next to icon
+        sloganCenterX: centerX, // Center slogan separately
+        spacingAdjustment: 1
+      };
+    }
+  }
+
+  private calculateLayoutWithoutIcon(centerY: number, textSpacing: number, brandHeight: number, sloganHeight: number) {
+    const totalTextHeight = brandHeight + (sloganHeight ? textSpacing + sloganHeight : 0);
+    const startY = centerY - (totalTextHeight / 2);
+    
+    return {
+      iconX: 0,
+      iconY: 0,
+      brandY: startY + (brandHeight / 2),
+      sloganY: startY + brandHeight + textSpacing + (sloganHeight / 2),
+      textX: centerY, // Will use centerX in rendering
+      spacingAdjustment: 1
+    };
+  }
+
+  private adjustLayoutForBounds(canvas: any, layout: any, safeMargin: number, iconSize: number, brandHeight: number, sloganHeight: number) {
+    // Check if elements exceed canvas bounds and adjust
+    const iconRadius = iconSize / 2;
+    
+    // Adjust icon position if it goes out of bounds
+    if (layout.iconX - iconRadius < safeMargin) {
+      layout.iconX = safeMargin + iconRadius;
+    }
+    if (layout.iconX + iconRadius > canvas.width - safeMargin) {
+      layout.iconX = canvas.width - safeMargin - iconRadius;
+    }
+    if (layout.iconY - iconRadius < safeMargin) {
+      layout.iconY = safeMargin + iconRadius;
+    }
+    if (layout.iconY + iconRadius > canvas.height - safeMargin) {
+      layout.iconY = canvas.height - safeMargin - iconRadius;
+    }
+    
+    // Adjust text positions
+    if (layout.brandY - brandHeight/2 < safeMargin) {
+      layout.brandY = safeMargin + brandHeight/2;
+    }
+    if (layout.brandY + brandHeight/2 > canvas.height - safeMargin) {
+      layout.brandY = canvas.height - safeMargin - brandHeight/2;
+    }
+    
+    if (sloganHeight > 0) {
+      if (layout.sloganY - sloganHeight/2 < safeMargin) {
+        layout.sloganY = safeMargin + sloganHeight/2;
+      }
+      if (layout.sloganY + sloganHeight/2 > canvas.height - safeMargin) {
+        layout.sloganY = canvas.height - safeMargin - sloganHeight/2;
+      }
+    }
+    
+    return layout;
+  }
+
+  // Override existing change handlers to include validation
 }

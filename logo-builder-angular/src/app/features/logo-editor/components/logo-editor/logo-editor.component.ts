@@ -1810,22 +1810,9 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     const sloganY = layout.sloganY;
     const textX = layout.textX !== centerX ? layout.textX : centerX; // Use centerX instead of centerY
 
-    // Draw shape frame (if enabled and selected) - Enhanced per figma-shape.md
+    // Draw shape frame (if enabled and selected) - Enhanced with dynamic sizing
     if (this.shapeEnabled && this.selectedShape) {
-      // Calculate content dimensions for dynamic shape sizing
-      const contentDimensions = {
-        maxTextWidth: Math.max(
-          this.brandName ? this.estimateTextWidth() * 0.7 : 0,
-          this.enableSlogan && this.sloganText ? this.estimateTextWidth() * 0.5 : 0
-        ),
-        iconSize: this.showLogoIcon ? this.iconSize : 0,
-        iconSpacing: this.showLogoIcon ? Math.max(24, this.iconSize * 0.2) : 0,
-        iconMargin: this.showLogoIcon ? this.iconMargin : 0,
-        textSpacing: Math.max(16, this.fontSize * 0.4),
-        brandHeight: this.brandName ? this.fontSize * this.lineHeight * (this.isMultiline ? 1.5 : 1) : 0,
-        sloganHeight: this.enableSlogan && this.sloganText ? this.sloganFontSize * this.sloganLineHeight : 0
-      };
-      this.drawShapeFrame(ctx, canvas.width, canvas.height, contentDimensions);
+      this.drawShapeFrame(ctx, canvas.width, canvas.height);
     }
 
     // Draw selected icon or initials (if enabled)
@@ -2098,51 +2085,50 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     ctx.closePath();
   }
 
-  // Enhanced shape drawing method per figma-shape.md requirements
-  private drawShapeFrame(ctx: CanvasRenderingContext2D, canvasWidth: number, canvasHeight: number, contentDimensions?: any): void {
+  // Enhanced shape drawing method with truly dynamic sizing
+  private drawShapeFrame(ctx: CanvasRenderingContext2D, canvasWidth: number, canvasHeight: number): void {
     if (!this.selectedShape) return;
 
     const centerX = canvasWidth / 2;
     const centerY = canvasHeight / 2;
     
-    // Calculate dynamic shape size based on content dimensions
+    // Calculate exact content bounds for dynamic shape sizing
+    const contentBounds = this.calculateExactContentBounds(canvasWidth, canvasHeight);
+    
+    // Calculate dynamic shape size based on content bounds
     let shapeWidth = canvasWidth * 0.6; // Reasonable default
     let shapeHeight = canvasHeight * 0.6; // Reasonable default
     
-    if (contentDimensions) {
-      // Enhanced shape calculation to ensure icons are always contained
-      const basePadding = 60; // Increased base padding around content
-      const edgeMargin = 80; // Margin from canvas edges to prevent clipping
+    if (contentBounds) {
+      // Enhanced shape calculation to ensure all content is always contained
+      const basePadding = 80; // Increased base padding around content
+      const edgeMargin = 100; // Margin from canvas edges to prevent clipping
       
-      // Dynamic content multiplier based on icon size to ensure proper containment
-      const iconSizeRatio = contentDimensions.iconSize / 160; // Normalize against max icon size (160)
-      const dynamicMultiplier = Math.max(1.4, 1.2 + (iconSizeRatio * 0.6)); // Scale multiplier with icon size
+      // Calculate total content dimensions including all elements
+      const totalContentWidth = contentBounds.width;
+      const totalContentHeight = contentBounds.height;
       
-      // Calculate total content dimensions with proper icon consideration
-      let totalContentWidth = contentDimensions.maxTextWidth;
-      let totalContentHeight = contentDimensions.brandHeight + (contentDimensions.sloganHeight > 0 ? contentDimensions.textSpacing + contentDimensions.sloganHeight : 0);
+      // Add extra padding for different content types
+      let extraPadding = basePadding;
       
-      // Add icon dimensions based on alignment
-      if (contentDimensions.iconSize > 0) {
-        if (this.iconAlignment === 'center') {
-          // Icon above text - add to height, use max width
-          totalContentHeight += contentDimensions.iconSize + this.iconMargin + contentDimensions.textSpacing;
-          totalContentWidth = Math.max(totalContentWidth, contentDimensions.iconSize);
-        } else {
-          // Icon beside text - add to width, use max height
-          totalContentWidth += contentDimensions.iconSize + contentDimensions.iconSpacing + contentDimensions.iconMargin * 2;
-          totalContentHeight = Math.max(totalContentHeight, contentDimensions.iconSize);
-        }
-        
-        // Add extra padding for large icons to ensure they never touch shape edges
-        const iconPadding = Math.max(40, contentDimensions.iconSize * 0.3);
-        totalContentWidth += iconPadding;
-        totalContentHeight += iconPadding;
+      // Add extra padding for icons to ensure they never touch shape edges
+      if (this.showLogoIcon && (this.selectedIcon || this.userInitials)) {
+        extraPadding += Math.max(40, this.iconSize * 0.4); // Icon-specific padding
+      }
+      
+      // Add extra padding for large text to ensure readability
+      if (this.fontSize > 40) {
+        extraPadding += (this.fontSize - 40) * 0.3; // Scale padding with font size
+      }
+      
+      // Add extra padding for shapes with corners to ensure text doesn't touch corners
+      if (this.selectedShape.hasCorners && this.cornerRoundness > 0) {
+        extraPadding += this.cornerRoundness * 0.5; // Scale with corner roundness
       }
       
       // Calculate desired shape dimensions with enhanced padding
-      const desiredWidth = (totalContentWidth + basePadding * 2) * dynamicMultiplier;
-      const desiredHeight = (totalContentHeight + basePadding * 2) * dynamicMultiplier;
+      const desiredWidth = totalContentWidth + (extraPadding * 2);
+      const desiredHeight = totalContentHeight + (extraPadding * 2);
       
       // Calculate maximum allowed dimensions (canvas size minus edge margins)
       const maxAllowedWidth = canvasWidth - (edgeMargin * 2);
@@ -2152,17 +2138,12 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       shapeWidth = Math.min(desiredWidth, maxAllowedWidth);
       shapeHeight = Math.min(desiredHeight, maxAllowedHeight);
       
-      // Enhanced minimum size calculation to guarantee icon containment
-      const minIconWidth = contentDimensions.iconSize > 0 ? contentDimensions.iconSize + basePadding * 2 : 0;
-      const minIconHeight = contentDimensions.iconSize > 0 ? contentDimensions.iconSize + basePadding * 2 : 0;
-      const minTextWidth = totalContentWidth + basePadding;
-      const minTextHeight = totalContentHeight + basePadding;
+      // Ensure minimum size for content containment
+      const minWidthForContent = totalContentWidth + basePadding;
+      const minHeightForContent = totalContentHeight + basePadding;
       
-      const absoluteMinWidth = Math.max(minIconWidth, minTextWidth);
-      const absoluteMinHeight = Math.max(minIconHeight, minTextHeight);
-      
-      shapeWidth = Math.max(shapeWidth, Math.min(absoluteMinWidth, maxAllowedWidth));
-      shapeHeight = Math.max(shapeHeight, Math.min(absoluteMinHeight, maxAllowedHeight));
+      shapeWidth = Math.max(shapeWidth, Math.min(minWidthForContent, maxAllowedWidth));
+      shapeHeight = Math.max(shapeHeight, Math.min(minHeightForContent, maxAllowedHeight));
     }
     
     // For uniform shapes (circle, square, etc.), ensure they're large enough to contain all content
@@ -2173,11 +2154,12 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       // For uniform shapes, use the larger dimension to ensure content fits
       shapeSize = Math.max(shapeWidth, shapeHeight);
       
-      // For circular shapes, ensure diagonal space is sufficient for icon positioning
-      if (this.selectedShape.name === 'Circle' && contentDimensions && contentDimensions.iconSize > 0) {
-        // Calculate diagonal space needed for icon + text layout
-        const diagonalSpace = Math.sqrt(Math.pow(shapeWidth, 2) + Math.pow(shapeHeight, 2));
-        shapeSize = Math.max(shapeSize, diagonalSpace * 0.8); // 80% of diagonal for safe positioning
+      // For circular shapes, ensure diagonal space is sufficient for all content
+      if (this.selectedShape.name === 'Circle' && contentBounds) {
+        // Calculate diagonal space needed for content layout
+        const diagonalSpace = Math.sqrt(Math.pow(contentBounds.width, 2) + Math.pow(contentBounds.height, 2));
+        const minCircleSize = diagonalSpace + 160; // Add padding for circle
+        shapeSize = Math.max(shapeSize, Math.min(minCircleSize, Math.min(canvasWidth - 120, canvasHeight - 120)));
       }
     }
     
@@ -2195,69 +2177,38 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     // Calculate corner radius for shapes with corners
     const cornerRadius = this.selectedShape.hasCorners ? (this.cornerRoundness / 100) * 40 : 0;
     
-    // Calculate content bounds for line positioning (shared across line shapes)
-    const iconRadius = this.iconSize / 2;
-    const textSpacing = Math.max(32, Math.ceil((this.fontSize * 0.8 + this.sloganFontSize * 0.4) / 16) * 16);
-    const brandHeight = this.isMultiline ? this.fontSize * this.lineHeight * 1.2 : this.fontSize;
-    const sloganHeight = this.sloganIsMultiline ? this.sloganFontSize * this.sloganLineHeight : this.sloganFontSize;
-    
-    let contentTop = centerY;
-    let contentBottom = centerY;
-    
-    // Calculate content bounds based on actual logo layout
-    if (this.showLogoIcon && (this.selectedIcon || this.userInitials)) {
-      if (this.iconAlignment === 'center') {
-        // Icon above text - calculate total height
-        const totalElementsHeight = (iconRadius * 2) + this.iconMargin + textSpacing + brandHeight + (this.enableSlogan ? textSpacing + sloganHeight : 0);
-        contentTop = centerY - totalElementsHeight / 2 - 20; // Extra margin
-        contentBottom = centerY + totalElementsHeight / 2 + 20; // Extra margin
-      } else {
-        // Icon beside text - calculate height based on taller element
-        const iconHeight = iconRadius * 2;
-        const textHeight = brandHeight + (this.enableSlogan ? textSpacing + sloganHeight : 0);
-        const totalHeight = Math.max(iconHeight, textHeight);
-        contentTop = centerY - totalHeight / 2 - 20; // Extra margin
-        contentBottom = centerY + totalHeight / 2 + 20; // Extra margin
-      }
-    } else {
-      // No icon - just text
-      const totalTextHeight = brandHeight + (this.enableSlogan ? textSpacing + sloganHeight : 0);
-      contentTop = centerY - totalTextHeight / 2 - 20; // Extra margin
-      contentBottom = centerY + totalTextHeight / 2 + 20; // Extra margin
-    }
-    
     ctx.beginPath();
     
     switch (this.selectedShape.name) {
       case 'Circle':
-        // Enhanced circle calculation to ensure icon containment
+        // Enhanced circle calculation to ensure all content containment
         let circleRadius = shapeSize / 2;
         
         // Apply canvas boundary constraints
         const maxCanvasRadius = Math.min((canvasHeight - 120) / 2, (canvasWidth - 120) / 2);
         circleRadius = Math.min(circleRadius, maxCanvasRadius);
         
-        // Ensure minimum radius for icon containment if icon is present
-        if (contentDimensions && contentDimensions.iconSize > 0) {
-          const minRadiusForIcon = (contentDimensions.iconSize + 80) / 2; // Icon + padding
-          circleRadius = Math.max(circleRadius, Math.min(minRadiusForIcon, maxCanvasRadius));
+        // Ensure minimum radius for content containment
+        if (contentBounds) {
+          const minRadiusForContent = Math.max(contentBounds.width, contentBounds.height) / 2 + 80;
+          circleRadius = Math.max(circleRadius, Math.min(minRadiusForContent, maxCanvasRadius));
         }
         
         ctx.arc(centerX, centerY, circleRadius, 0, 2 * Math.PI);
         break;
         
       case 'Rectangle':
-        // Enhanced rectangle calculation to ensure icon containment
+        // Enhanced rectangle calculation to ensure all content containment
         let rectWidth = Math.min(shapeWidth, canvasWidth - 120);
         let rectHeight = Math.min(shapeHeight, canvasHeight - 120);
         
-        // Ensure minimum dimensions for icon containment if icon is present
-        if (contentDimensions && contentDimensions.iconSize > 0) {
-          const minWidthForIcon = contentDimensions.iconSize + 120; // Icon + generous padding
-          const minHeightForIcon = contentDimensions.iconSize + 120; // Icon + generous padding
+        // Ensure minimum dimensions for content containment
+        if (contentBounds) {
+          const minWidthForContent = contentBounds.width + 160; // Content + generous padding
+          const minHeightForContent = contentBounds.height + 160; // Content + generous padding
           
-          rectWidth = Math.max(rectWidth, Math.min(minWidthForIcon, canvasWidth - 120));
-          rectHeight = Math.max(rectHeight, Math.min(minHeightForIcon, canvasHeight - 120));
+          rectWidth = Math.max(rectWidth, Math.min(minWidthForContent, canvasWidth - 120));
+          rectHeight = Math.max(rectHeight, Math.min(minHeightForContent, canvasHeight - 120));
         }
         
         if (cornerRadius > 0) {
@@ -2268,17 +2219,17 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
         break;
         
       case 'Diamond':
-        // Enhanced diamond calculation to ensure icon containment
+        // Enhanced diamond calculation to ensure all content containment
         let diamondRadius = shapeSize / 2;
         
         // Apply canvas boundary constraints
         const maxDiamondRadius = Math.min((canvasHeight - 120) / 2, (canvasWidth - 120) / 2);
         diamondRadius = Math.min(diamondRadius, maxDiamondRadius);
         
-        // Ensure minimum radius for icon containment if icon is present
-        if (contentDimensions && contentDimensions.iconSize > 0) {
-          const minRadiusForIcon = (contentDimensions.iconSize + 80) / 2; // Icon + padding
-          diamondRadius = Math.max(diamondRadius, Math.min(minRadiusForIcon, maxDiamondRadius));
+        // Ensure minimum radius for content containment
+        if (contentBounds) {
+          const minRadiusForContent = Math.max(contentBounds.width, contentBounds.height) / 2 + 80;
+          diamondRadius = Math.max(diamondRadius, Math.min(minRadiusForContent, maxDiamondRadius));
         }
         
         ctx.moveTo(centerX, centerY - diamondRadius);
@@ -2289,17 +2240,17 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
         break;
         
       case 'Pentagon':
-        // Enhanced pentagon calculation to ensure icon containment
+        // Enhanced pentagon calculation to ensure all content containment
         let pentagonRadius = shapeSize / 2;
         
         // Apply canvas boundary constraints
         const maxPentagonRadius = Math.min((canvasHeight - 120) / 2, (canvasWidth - 120) / 2);
         pentagonRadius = Math.min(pentagonRadius, maxPentagonRadius);
         
-        // Ensure minimum radius for icon containment if icon is present
-        if (contentDimensions && contentDimensions.iconSize > 0) {
-          const minRadiusForIcon = (contentDimensions.iconSize + 80) / 2; // Icon + padding
-          pentagonRadius = Math.max(pentagonRadius, Math.min(minRadiusForIcon, maxPentagonRadius));
+        // Ensure minimum radius for content containment
+        if (contentBounds) {
+          const minRadiusForContent = Math.max(contentBounds.width, contentBounds.height) / 2 + 80;
+          pentagonRadius = Math.max(pentagonRadius, Math.min(minRadiusForContent, maxPentagonRadius));
         }
         
         for (let i = 0; i < 5; i++) {
@@ -2313,17 +2264,17 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
         break;
         
       case 'Hexagon':
-        // Enhanced hexagon calculation to ensure icon containment
+        // Enhanced hexagon calculation to ensure all content containment
         let hexRadius = shapeSize / 2;
         
         // Apply canvas boundary constraints
         const maxHexRadius = Math.min((canvasHeight - 120) / 2, (canvasWidth - 120) / 2);
         hexRadius = Math.min(hexRadius, maxHexRadius);
         
-        // Ensure minimum radius for icon containment if icon is present
-        if (contentDimensions && contentDimensions.iconSize > 0) {
-          const minRadiusForIcon = (contentDimensions.iconSize + 80) / 2; // Icon + padding
-          hexRadius = Math.max(hexRadius, Math.min(minRadiusForIcon, maxHexRadius));
+        // Ensure minimum radius for content containment
+        if (contentBounds) {
+          const minRadiusForContent = Math.max(contentBounds.width, contentBounds.height) / 2 + 80;
+          hexRadius = Math.max(hexRadius, Math.min(minRadiusForContent, maxHexRadius));
         }
         
         for (let i = 0; i < 6; i++) {
@@ -2341,14 +2292,14 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
         ctx.strokeStyle = this.customColors.shape;
         ctx.lineWidth = this.shapeLineWidth;
         
-        // Enhanced square calculation to ensure icon containment
+        // Enhanced square calculation to ensure all content containment
         let squareSize = Math.min(shapeWidth, shapeHeight, canvasWidth - 120, canvasHeight - 120);
         
-        // Ensure minimum size for icon containment if icon is present
-        if (contentDimensions && contentDimensions.iconSize > 0) {
-          const minSizeForIcon = contentDimensions.iconSize + 120; // Icon + generous padding
+        // Ensure minimum size for content containment
+        if (contentBounds) {
+          const minSizeForContent = Math.max(contentBounds.width, contentBounds.height) + 160; // Content + generous padding
           const maxAllowedSize = Math.min(canvasWidth - 120, canvasHeight - 120);
-          squareSize = Math.max(squareSize, Math.min(minSizeForIcon, maxAllowedSize));
+          squareSize = Math.max(squareSize, Math.min(minSizeForContent, maxAllowedSize));
         }
         
         if (cornerRadius > 0) {
@@ -2368,9 +2319,9 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
         
         // Position lines relative to actual content bounds
         // Top line should be above all content (slogan, icon, brand name)
-        const topLineYPos = contentTop - 15; // 15px above content top
+        const topLineYPos = contentBounds ? contentBounds.top - 20 : centerY - 100; // 20px above content top
         // Bottom line should be below all content (tagline/slogan)
-        const bottomLineYPos = contentBottom + 15; // 15px below content bottom
+        const bottomLineYPos = contentBounds ? contentBounds.bottom + 20 : centerY + 100; // 20px below content bottom
         
         // Ensure lines don't go outside canvas bounds
         const safeTopLineYPos = Math.max(50, topLineYPos);
@@ -2404,17 +2355,11 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
         ctx.strokeStyle = this.customColors.shape;
         ctx.lineWidth = this.shapeLineWidth;
         
-        // Use shared variables already calculated above
-        let bottomLineContentBottom = centerY;
-        
-        // Use shared content bounds calculation
-        bottomLineContentBottom = contentBottom;
-        
         // Calculate line width based on content or minimum width
         const singleBottomLineWidth = Math.min(shapeWidth, canvasWidth - 120);
         
         // Position line below all content (at bottom of tagline/slogan)
-        const singleBottomLineY = bottomLineContentBottom + 15; // 15px below content bottom
+        const singleBottomLineY = contentBounds ? contentBounds.bottom + 20 : centerY + 100; // 20px below content bottom
         
         // Ensure line doesn't go outside canvas bounds
         const safeSingleBottomLineY = Math.min(canvasHeight - 50, singleBottomLineY);
@@ -2466,6 +2411,101 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     } else {
       ctx.stroke();
     }
+  }
+
+  // New method to calculate exact content bounds
+  private calculateExactContentBounds(canvasWidth: number, canvasHeight: number): { 
+    width: number; 
+    height: number; 
+    top: number; 
+    bottom: number; 
+    left: number; 
+    right: number; 
+  } | null {
+    const centerX = canvasWidth / 2;
+    const centerY = canvasHeight / 2;
+    
+    // Calculate text dimensions
+    const tempCanvas = document.createElement('canvas');
+    const tempCtx = tempCanvas.getContext('2d');
+    if (!tempCtx) return null;
+    
+    // Set up font for brand name
+    const brandFont = `${this.isBold ? 'bold ' : ''}${this.isItalic ? 'italic ' : ''}${this.fontSize}px ${this.getFontWithFallback(this.selectedFont)}`;
+    tempCtx.font = brandFont;
+    
+    // Calculate brand name width and height
+    const brandTextWidth = tempCtx.measureText(this.brandName).width;
+    const brandTextHeight = this.fontSize * this.lineHeight;
+    
+    // Set up font for slogan
+    const sloganFont = `${this.sloganIsBold ? 'bold ' : ''}${this.sloganIsItalic ? 'italic ' : ''}${this.sloganFontSize}px ${this.getFontWithFallback(this.sloganFont)}`;
+    tempCtx.font = sloganFont;
+    
+    // Calculate slogan width and height
+    const sloganTextWidth = tempCtx.measureText(this.sloganText).width;
+    const sloganTextHeight = this.sloganFontSize * this.sloganLineHeight;
+    
+    // Calculate icon dimensions
+    const iconWidth = this.showLogoIcon && (this.selectedIcon || this.userInitials) ? this.iconSize : 0;
+    const iconHeight = iconWidth;
+    
+    // Calculate spacing
+    const textSpacing = Math.max(16, this.fontSize * 0.3);
+    const iconMargin = this.showLogoIcon ? this.iconMargin : 0;
+    
+    let contentWidth = 0;
+    let contentHeight = 0;
+    let contentTop = centerY;
+    let contentBottom = centerY;
+    let contentLeft = centerX;
+    let contentRight = centerX;
+    
+    if (this.showLogoIcon && (this.selectedIcon || this.userInitials)) {
+      if (this.iconAlignment === 'center') {
+        // Icon above text
+        contentWidth = Math.max(brandTextWidth, sloganTextWidth, iconWidth);
+        contentHeight = iconHeight + iconMargin + textSpacing + brandTextHeight;
+        if (this.enableSlogan && this.sloganText) {
+          contentHeight += textSpacing + sloganTextHeight;
+        }
+        
+        contentTop = centerY - contentHeight / 2;
+        contentBottom = centerY + contentHeight / 2;
+        contentLeft = centerX - contentWidth / 2;
+        contentRight = centerX + contentWidth / 2;
+      } else {
+        // Icon beside text
+        contentWidth = iconWidth + iconMargin + Math.max(brandTextWidth, sloganTextWidth);
+        contentHeight = Math.max(iconHeight, brandTextHeight + (this.enableSlogan && this.sloganText ? textSpacing + sloganTextHeight : 0));
+        
+        contentTop = centerY - contentHeight / 2;
+        contentBottom = centerY + contentHeight / 2;
+        contentLeft = centerX - contentWidth / 2;
+        contentRight = centerX + contentWidth / 2;
+      }
+    } else {
+      // No icon - just text
+      contentWidth = Math.max(brandTextWidth, sloganTextWidth);
+      contentHeight = brandTextHeight;
+      if (this.enableSlogan && this.sloganText) {
+        contentHeight += textSpacing + sloganTextHeight;
+      }
+      
+      contentTop = centerY - contentHeight / 2;
+      contentBottom = centerY + contentHeight / 2;
+      contentLeft = centerX - contentWidth / 2;
+      contentRight = centerX + contentWidth / 2;
+    }
+    
+    return {
+      width: contentWidth,
+      height: contentHeight,
+      top: contentTop,
+      bottom: contentBottom,
+      left: contentLeft,
+      right: contentRight
+    };
   }
 
   private async drawIconImage(ctx: CanvasRenderingContext2D, x: number, y: number, icon: NounIconItem): Promise<void> {
@@ -3400,40 +3440,59 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       }
     }
     
-    // Calculate available space for text
-    const textSpaceWidth = availableWidth - iconSpaceWidth;
-    const textSpaceHeight = availableHeight - iconSpaceHeight;
+    // Calculate space consumed by shape (if enabled)
+    let shapeSpaceWidth = 0;
+    let shapeSpaceHeight = 0;
     
-    // Estimate text width and adjust font size if needed
-    if (this.brandName) {
-      const maxBrandFontSize = this.calculateMaxFontSize(this.brandName, textSpaceWidth, textSpaceHeight, true);
-      if (this.fontSize > maxBrandFontSize) {
-        this.fontSize = Math.max(24, maxBrandFontSize); // Ensure minimum readable size
-      }
+    if (this.shapeEnabled && this.selectedShape) {
+      // Shapes like hexagon/pentagon can consume significant space
+      // Add extra margin for shape padding and borders
+      shapeSpaceWidth = 40; // Extra padding for shape borders
+      shapeSpaceHeight = 40;
     }
     
-    if (this.enableSlogan && this.sloganText) {
-      const remainingHeight = textSpaceHeight - (this.fontSize * this.lineHeight * 1.2) - 32; // Space after brand name
-      const maxSloganFontSize = this.calculateMaxFontSize(this.sloganText, textSpaceWidth, remainingHeight, false);
-      if (this.sloganFontSize > maxSloganFontSize) {
-        this.sloganFontSize = Math.max(12, maxSloganFontSize); // Ensure minimum readable size
-      }
+    // Calculate available space for text (reduced by icon and shape space)
+    const textSpaceWidth = availableWidth - iconSpaceWidth - shapeSpaceWidth;
+    const textSpaceHeight = availableHeight - iconSpaceHeight - shapeSpaceHeight;
+    
+    // Enhanced bounds checking with reduced ranges and letter spacing consideration
+    const maxBrandFontSize = Math.min(72, this.calculateMaxFontSize(this.brandName || '', textSpaceWidth, textSpaceHeight, true));
+    const maxSloganFontSize = Math.min(48, this.calculateMaxFontSize(this.sloganText || '', textSpaceWidth, textSpaceHeight, false));
+    
+    // Apply additional reduction when letter spacing is high (adjusted for new 0.5 max)
+    const letterSpacingFactor = 1 - (this.letterSpacing * 0.4); // Reduce font size when letter spacing is high
+    const adjustedMaxBrandFontSize = Math.floor(maxBrandFontSize * letterSpacingFactor);
+    
+    // Ensure brand font size stays within safe bounds
+    if (this.fontSize > adjustedMaxBrandFontSize) {
+      this.fontSize = Math.max(24, adjustedMaxBrandFontSize);
     }
+    
+    // Ensure slogan font size stays within safe bounds
+    if (this.enableSlogan && this.sloganText && this.sloganFontSize > maxSloganFontSize) {
+      this.sloganFontSize = Math.max(12, maxSloganFontSize);
+    }
+    
+    // Additional safety checks for extreme cases
+    if (this.fontSize < 24) this.fontSize = 24;
+    if (this.fontSize > 72) this.fontSize = 72;
+    if (this.sloganFontSize < 12) this.sloganFontSize = 12;
+    if (this.sloganFontSize > 48) this.sloganFontSize = 48;
   }
 
   private calculateMaxFontSize(text: string, maxWidth: number, maxHeight: number, isBrandName: boolean): number {
     // Create temporary canvas context for measurement
     const tempCanvas = document.createElement('canvas');
     const ctx = tempCanvas.getContext('2d');
-    if (!ctx) return isBrandName ? 56 : 18; // Default values
+    if (!ctx) return isBrandName ? 48 : 18; // Reduced default values
     
     const isMultiline = isBrandName ? this.isMultiline : this.sloganIsMultiline;
     const lineHeight = isBrandName ? this.lineHeight : this.sloganLineHeight;
     const letterSpacing = isBrandName ? this.letterSpacing : this.sloganLetterSpacing;
     
-    // Binary search for optimal font size
-    let minSize = 12;
-    let maxSize = isBrandName ? 120 : 80;
+    // Use reduced ranges for safer bounds
+    let minSize = isBrandName ? 24 : 12;
+    let maxSize = isBrandName ? 72 : 48; // Reduced maximum sizes
     let optimalSize = minSize;
     
     while (minSize <= maxSize) {
@@ -3453,7 +3512,8 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       }
     }
     
-    return optimalSize;
+    // Ensure the result stays within the reduced ranges
+    return isBrandName ? Math.min(optimalSize, 72) : Math.min(optimalSize, 48);
   }
 
   private validateIconSize(availableWidth: number, availableHeight: number): void {
@@ -3481,12 +3541,16 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       maxIconSize = Math.min(availableIconWidth, availableHeight - this.iconMargin * 2);
     }
     
-    // Ensure icon doesn't exceed reasonable bounds
-    maxIconSize = Math.max(32, Math.min(maxIconSize, 520));
+    // Ensure icon doesn't exceed reasonable bounds with reduced range
+    maxIconSize = Math.max(32, Math.min(maxIconSize, 160));
     
     if (this.iconSize > maxIconSize) {
       this.iconSize = maxIconSize;
     }
+    
+    // Additional safety checks for icon size
+    if (this.iconSize < 32) this.iconSize = 32;
+    if (this.iconSize > 160) this.iconSize = 160;
   }
 
   private estimateTextWidth(): number {
@@ -3497,27 +3561,63 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
   }
 
   private validateSpacingValues(): void {
-    // Ensure line heights don't make text too tall
-    const maxLineHeight = 2.5; // Reasonable maximum
-    this.lineHeight = Math.min(this.lineHeight, maxLineHeight);
-    this.sloganLineHeight = Math.min(this.sloganLineHeight, maxLineHeight);
+    // Enhanced spacing validation with reduced ranges
+    // Brand text spacing validation
+    this.lineHeight = Math.max(0.8, Math.min(this.lineHeight, 1.6));
+    this.letterSpacing = Math.max(0, Math.min(this.letterSpacing, 0.5));
     
-    // Ensure letter spacing doesn't make text too wide
-    const maxLetterSpacing = 3;
-    this.letterSpacing = Math.min(this.letterSpacing, maxLetterSpacing);
-    this.sloganLetterSpacing = Math.min(this.sloganLetterSpacing, maxLetterSpacing);
+    // Slogan text spacing validation
+    this.sloganLineHeight = Math.max(0.8, Math.min(this.sloganLineHeight, 1.8));
+    this.sloganLetterSpacing = Math.max(0, Math.min(this.sloganLetterSpacing, 0.5));
     
-    // Ensure icon margin is reasonable
-    const maxMargin = Math.min(150, this.iconSize * 2);
-    this.iconMargin = Math.min(this.iconMargin, maxMargin);
+    // Icon margin validation with tighter bounds
+    const maxMargin = Math.min(80, Math.max(8, this.iconSize * 0.5));
+    this.iconMargin = Math.max(4, Math.min(this.iconMargin, maxMargin));
+    
+    // Additional safety checks for extreme cases
+    if (this.lineHeight < 0.8) this.lineHeight = 0.8;
+    if (this.lineHeight > 1.6) this.lineHeight = 1.6;
+    if (this.letterSpacing < 0) this.letterSpacing = 0;
+    if (this.letterSpacing > 0.5) this.letterSpacing = 0.5;
+    if (this.sloganLineHeight < 0.8) this.sloganLineHeight = 0.8;
+    if (this.sloganLineHeight > 1.8) this.sloganLineHeight = 1.8;
+    if (this.sloganLetterSpacing < 0) this.sloganLetterSpacing = 0;
+    if (this.sloganLetterSpacing > 0.5) this.sloganLetterSpacing = 0.5;
   }
 
   private validateShapeDimensions(availableWidth: number, availableHeight: number): void {
     if (!this.shapeEnabled || !this.selectedShape) return;
     
-    // Shape should never consume more than 90% of available space
-    const maxShapeWidth = availableWidth * 0.9;
-    const maxShapeHeight = availableHeight * 0.9;
+    // Calculate content bounds to validate against available space
+    const contentBounds = this.calculateExactContentBounds(availableWidth, availableHeight);
+    if (!contentBounds) return;
+    
+    // Shape should never consume more than 85% of available space to ensure proper padding
+    const maxShapeWidth = availableWidth * 0.85;
+    const maxShapeHeight = availableHeight * 0.85;
+    
+    // Calculate required shape size based on content
+    const requiredWidth = contentBounds.width + 160; // Content + padding
+    const requiredHeight = contentBounds.height + 160; // Content + padding
+    
+    // If content is too large for available space, reduce font sizes
+    if (requiredWidth > maxShapeWidth || requiredHeight > maxShapeHeight) {
+      const scaleFactor = Math.min(
+        maxShapeWidth / requiredWidth,
+        maxShapeHeight / requiredHeight
+      );
+      
+      // Scale down font sizes proportionally
+      if (scaleFactor < 1) {
+        this.fontSize = Math.max(24, Math.floor(this.fontSize * scaleFactor));
+        this.sloganFontSize = Math.max(12, Math.floor(this.sloganFontSize * scaleFactor));
+        
+        // Also reduce icon size if present
+        if (this.showLogoIcon && (this.selectedIcon || this.userInitials)) {
+          this.iconSize = Math.max(40, Math.floor(this.iconSize * scaleFactor));
+        }
+      }
+    }
     
     // Adjust shape line width if it would make shapes too thick
     const maxLineWidth = Math.min(10, Math.min(maxShapeWidth, maxShapeHeight) / 20);
@@ -3555,7 +3655,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     if (this.showLogoIcon && (this.selectedIcon || this.userInitials)) {
       layout = this.calculateLayoutWithIcon(canvas, centerX, centerY, safeMargin, iconSize, iconMargin, baseSpacing, textSpacing, brandHeight, sloganHeight);
     } else {
-      layout = this.calculateLayoutWithoutIcon(centerY, textSpacing, brandHeight, sloganHeight);
+      layout = this.calculateLayoutWithoutIcon(centerX, centerY, textSpacing, brandHeight, sloganHeight);
     }
     
     // Ensure all elements fit within canvas bounds
@@ -3660,7 +3760,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
     }
   }
 
-  private calculateLayoutWithoutIcon(centerY: number, textSpacing: number, brandHeight: number, sloganHeight: number) {
+  private calculateLayoutWithoutIcon(centerX: number, centerY: number, textSpacing: number, brandHeight: number, sloganHeight: number) {
     const totalTextHeight = brandHeight + (sloganHeight ? textSpacing + sloganHeight : 0);
     const startY = centerY - (totalTextHeight / 2);
     
@@ -3669,7 +3769,7 @@ export class LogoEditorComponent implements OnInit, OnDestroy {
       iconY: 0,
       brandY: startY + (brandHeight / 2),
       sloganY: startY + brandHeight + textSpacing + (sloganHeight / 2),
-      textX: centerY, // Will use centerX in rendering
+      textX: centerX, // Fixed: Use centerX instead of centerY for horizontal positioning
       spacingAdjustment: 1
     };
   }

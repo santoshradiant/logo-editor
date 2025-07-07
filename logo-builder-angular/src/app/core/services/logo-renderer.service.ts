@@ -358,85 +358,60 @@ export class LogoRendererService {
   }
 
   private renderLogoBrandText(logo: Logo): void {
-    if (!this.ctx || !logo.brandText) return;
+    if (!this.ctx || !this.canvas) return;
 
     this.ctx.save();
     
-    const fontSize = logo.brandFont.size || 48;
-    const fontWeight = logo.brandFont.weight || 600;
-    const fontFamily = logo.brandFont.family || 'Arial';
+    // Reset any transformations
+    this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+    // Set font properties
+    const fontSize = logo.brandFont?.size || 48;
+    const fontFamily = logo.brandFont?.family || 'Arial';
+    const fontWeight = logo.brandFont?.weight || 400;
+    const fontStyle = logo.brandFont?.style || 'normal';
     
-    this.ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
-    this.ctx.fillStyle = logo.primaryColor;
+    this.ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
+    this.ctx.fillStyle = logo.primaryColor || '#000000';
     this.ctx.textAlign = 'center';
     this.ctx.textBaseline = 'middle';
 
-    let x = this.canvas!.width / 2;
-    let y = this.canvas!.height / 2;
+    // Calculate center position
+    const centerX = Math.round(this.canvas.width / 2);
+    const centerY = Math.round(this.canvas.height / 2);
 
-    // Adjust position based on layout and symbol presence
-    if (logo.symbol && logo.symbol.position !== 'none') {
-      switch (logo.symbol.position) {
-        case 'left':
-          x = this.canvas!.width / 2 + 40;
-          break;
-        case 'right':
-          x = this.canvas!.width / 2 - 40;
-          break;
-        case 'top':
-          y = this.canvas!.height / 2 + 40;
-          break;
-        case 'bottom':
-          y = this.canvas!.height / 2 - 40;
-          break;
-      }
-    }
+    // Render text at exact center
+    this.ctx.fillText(logo.brandText || '', centerX, centerY);
 
-    // Adjust for tagline
-    if (logo.tagline) {
-      y -= 20;
-    }
-
-    this.ctx.fillText(logo.brandText, x, y);
     this.ctx.restore();
   }
 
   private renderLogoTaglineText(logo: Logo): void {
-    if (!this.ctx || !logo.tagline) return;
+    if (!this.ctx || !this.canvas) return;
 
     this.ctx.save();
     
-    const fontSize = logo.taglineFont.size || 16;
-    const fontWeight = logo.taglineFont.weight || 400;
-    const fontFamily = logo.taglineFont.family || 'Arial';
+    // Reset any transformations
+    this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+    // Set font properties
+    const fontSize = logo.taglineFont?.size || 24;
+    const fontFamily = logo.taglineFont?.family || 'Arial';
+    const fontWeight = logo.taglineFont?.weight || 400;
+    const fontStyle = logo.taglineFont?.style || 'normal';
     
-    this.ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
-    this.ctx.fillStyle = logo.secondaryColor;
+    this.ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
+    this.ctx.fillStyle = logo.secondaryColor || '#666666';
     this.ctx.textAlign = 'center';
     this.ctx.textBaseline = 'middle';
 
-    let x = this.canvas!.width / 2;
-    let y = this.canvas!.height / 2 + 40;
+    // Calculate center position with offset for tagline
+    const centerX = Math.round(this.canvas.width / 2);
+    const centerY = Math.round(this.canvas.height / 2) + 50; // Offset tagline below brand name
 
-    // Adjust position based on layout and symbol presence
-    if (logo.symbol && logo.symbol.position !== 'none') {
-      switch (logo.symbol.position) {
-        case 'left':
-          x = this.canvas!.width / 2 + 40;
-          break;
-        case 'right':
-          x = this.canvas!.width / 2 - 40;
-          break;
-        case 'top':
-          y = this.canvas!.height / 2 + 60;
-          break;
-        case 'bottom':
-          y = this.canvas!.height / 2 + 20;
-          break;
-      }
-    }
+    // Render text at exact center
+    this.ctx.fillText(logo.tagline || '', centerX, centerY);
 
-    this.ctx.fillText(logo.tagline, x, y);
     this.ctx.restore();
   }
 
